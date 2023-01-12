@@ -1,0 +1,215 @@
+---
+title: Survey sample size simulation
+author: Michael Flynn
+date: "`r Sys.Date()`"
+execute:
+  echo: false
+  message: false
+  warning: false
+format:
+  html:
+    toc: true
+editor_options: 
+  chunk_output_type: console
+---
+
+This document is intended to provide a basic Bayesian "power" analysis to help us understand the probability of detecting an effect as a function of the study's sample size.
+
+## Setup
+
+Here we load the packages used to simulate the data and run the analysis.
+```{r setup}
+# Load libraries
+library(simstudy)
+library(data.table)
+library(tidyverse)
+library(brms)
+library(marginaleffects)
+library(tidybayes)
+library(ggdist)
+library(arm)
+library(fabricatr)
+library(flynnprojects)
+
+```
+
+
+## Simulate base data
+
+This first step will simulate the data we expect to collect in the survey. Currently the survey experiment has a total of four possible treatment groupings:
+
+1. *Control*: This question asks respondents about their attitudes towards increasing the US military presence in Poland. 
+2. *Treatment 1*: The first treatment group includes both mentions of Russia and mentions of economic benefits that flow from a US presence.
+3. *Treatment 2*: The second treatment prompt only mentions the threat of Russian aggression.
+4. *Treatment 3*: The third treatment prompt only mentions the possibility of economic benefits flowing from US military personnel deployed tot he host state.
+
+
+```{r function-setup}
+
+# So here I want to write a function that will do the following
+# 1. Set the basic parameters that can vary (N, effect sizes)
+# 2. Simulate the data based on this information
+# 3. Run the mode.
+# 4. Recover parameters and save them
+# 5. Plot the accumulated parameters
+power_sim <- function(N, Groups, iters, seed,
+                      beta_p_1, beta_p_2, beta_p_3, beta_p_age, 
+                      beta_n_1, beta_n_2, beta_n_3, beta_n_age,
+                      beta_p_I, beta_n_I) {
+
+# Set treatment labels
+treatment_labels <- c("control", "t1", "t2", "t3")
+  
+#set seed for simulations  
+set.seed(seed)
+ITER <- 2000
+WARM <- ITER/2
+SEED <- seed
+CORES <- 4
+
+# Create data frame with nested list to store output of models
+sims <- data.frame(N = rep(N, iters),
+                   iters = rep(iters, iters),
+                   data = rep(NA, iters))
+
+for(i in 1:length(sims$data)) {
+
+tempdata <- fabricate(
+  treatment_group = add_level(
+    N = Groups,
+    label = treatment_labels
+  ),
+  individual = add_level(
+    N = sims$N[i],
+    age = round(runif(sims$N[i], 18, 80))
+  )
+) |> 
+  mutate(control = ifelse(label == "control", 1, 0),
+         t1 = ifelse(label == "t1", 1, 0),
+         t2 = ifelse(label == "t2", 1, 0),
+         t3 = ifelse(label == "t3", 1, 0),
+         xb_pos = beta_p_I + beta_p_1 * t1 + beta_p_2 * t2 + beta_p_3 * t3 + beta_p_age * age,
+         xb_neg = beta_n_I + beta_n_1 * t1 + beta_n_2 * t2 + beta_n_3 * t3 + beta_n_age * age,
+         p_pos = plogis(xb_pos),
+         p_neg = plogis(xb_neg),
+         y_pos = rbinom(length(p_pos), 1, prob = p_pos),
+         y_neg = rbinom(length(p_neg), 1, prob = p_neg),
+         response = case_when(
+           y_pos == 1 ~ "Positive",
+           y_neg == 1 ~ "Negative",
+           y_pos == 0 & y_neg == 0 ~ "Neutral",
+           y_pos == 1 & y_neg == 1 & p_pos > p_neg ~ "Positive"
+         ))
+
+
+tempmod <- brm(response ~ factor(label) + age,
+               data = tempdata,
+               family = categorical(link = "logit",
+                                    refcat = "Neutral"),
+               iter = ITER,
+               warmup = WARM,
+               seed = SEED,
+               cores = CORES,
+               backend = "cmdstanr")
+
+# I can't figure out how to nest the entire data frame without using the nest function here.
+# Also adding the probability that a given value is above or below 0
+samples <- as.data.frame(tidy_draws(tempmod)) |> 
+  sample_draws(ndraws = 100) |> 
+  mutate(across(starts_with("b_"),
+                ~bayestestR::pd(.x),
+                .names = "{col}_pd")) |> 
+  mutate(SampleSize = sims$N[i]*4)
+
+sims$data[i] <- nest(samples, data = everything())
+
+}
+
+# Un-nesting because keeping it nested imposes some overly complicated structures here that don't seem necessary.
+sims <- unnest(sims, cols = "data") 
+
+return(sims)
+
+}
+
+
+```
+
+
+
+```{r test-run}
+#| echo: false
+#| message: false
+
+Nlist <- c(50, 100, 150, 250)
+
+powtest <- power_sim(N = Nlist,
+                     Groups = 4,
+                     iters = 100,
+                     seed = 1234,
+                     beta_p_1 = rnorm(1, 1.1, 0.2),
+                     beta_p_2 = rnorm(1, 0.5, 0.2),
+                     beta_p_3 = rnorm(1, 0.1, 0.2),
+                     beta_n_1 = rnorm(1, -0.5, 0.2),
+                     beta_n_2 = rnorm(1, -0.1, 0.2),
+                     beta_n_3 = rnorm(1, -0.1, 0.2),
+                     beta_p_age = rnorm(1, -0.02, 0.004),
+                     beta_n_age = rnorm(1, +0.01, 0.004),
+                     beta_p_I = rnorm(1, -1, 0.1),
+                     beta_n_I = rnorm(1, -1, 0.1))
+
+```
+
+
+Now let's check some plots
+
+```{r posterior-plots}
+
+# First let's extract the data from the function and put it into a long format so it's easier to systematize the graphics
+# 
+powtest.df <- rbindlist(powtest$data, idcol = TRUE) |> 
+  dplyr::select(.id, .chain, .iteration, .draw, SampleSize, ends_with("_pd"), starts_with("b_")) |> 
+  melt(id.vars = c(".id", ".chain", ".iteration", ".draw", "SampleSize"),
+       measure.vars = c(6:25)) |> 
+  mutate(group = case_when(
+    grepl(".*_pd.*", variable) ~ "Probability Direction",
+    TRUE ~ "Effect"
+  )) 
+
+# Next let's make a plot of all of the coefficient values and the simulated posterior distributions for those variables
+powtest.df |> 
+  filter(group == "Effect") |>
+  filter(grepl(".*control|t\\d.*", variable)) |>
+  filter(SampleSize > 100) |> 
+  ggplot(aes(x = value, group = .id)) +
+  stat_slab(aes(color = stat(x > 0)),
+            size = 0.3,
+            fill = NA, 
+            show_interval = FALSE) +
+  facet_grid(SampleSize ~ variable) +
+  theme_flynn() +
+  scale_color_manual(values = c("#FFBD33" , "#1F1CFE")) +
+  labs(x = "Coefficient",
+       y = "Density",
+       color = "Direction")
+
+# Next let's look at the probability of finding the intended effect for each variable.
+powtest.df |> 
+  filter(group == "Probability Direction") |> 
+  group_by(SampleSize, .id, variable) |>
+  dplyr::summarise(mean = mean(value, na.rm = TRUE)) |> 
+  group_by(SampleSize, variable) |> 
+  dplyr::summarise(prop = sum(mean >= 0.95) / length(.id)) |> 
+  ungroup() |> 
+  ggplot(aes(x = SampleSize, y = prop, color = stat(y > 0.95))) +
+    geom_line() +
+  geom_point() +
+  theme_flynn() +
+  facet_wrap(~ variable, ncol = 3) +
+  scale_color_manual(values = c("#FFBD33" , "#1F1CFE")) +
+  labs(x = "Sample Size",
+       y = "Proportion",
+       color = "Detection in > 95% of Models")
+  
+
+```

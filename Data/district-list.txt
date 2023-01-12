@@ -1,0 +1,381 @@
+province	district
+Dolnośląskie	Bolesławiec
+Dolnośląskie	Dzierżoniów
+Dolnośląskie	Głogów
+Dolnośląskie	Góra
+Dolnośląskie	Jawor
+Dolnośląskie	Jelenia Góra
+Dolnośląskie	Jelenia Góra (City)
+Dolnośląskie	Kamienna Góra
+Dolnośląskie	Kłodzko
+Dolnośląskie	Legnica
+Dolnośląskie	Legnica (City)
+Dolnośląskie	Lubań
+Dolnośląskie	Lubiń
+Dolnośląskie	Lwówek Śląski
+Dolnośląskie	Milicz
+Dolnośląskie	Oława
+Dolnośląskie	Oleśnica
+Dolnośląskie	Polkowice
+Dolnośląskie	Środa Śląska
+Dolnośląskie	Strzelin
+Dolnośląskie	Świdnica
+Dolnośląskie	Trzebnica
+Dolnośląskie	Wałbrzych
+Dolnośląskie	Wołów
+Dolnośląskie	Wrocław
+Dolnośląskie	Wrocław (City)
+Dolnośląskie	Ząbkowice Śląskie
+Dolnośląskie	Zgorzelec
+Dolnośląskie	Złotoryja
+Kujawsko-Pomorskie	Aleksandrów
+Kujawsko-Pomorskie	Brodnica
+Kujawsko-Pomorskie	Bydgoszcz
+Kujawsko-Pomorskie	Bydgoszcz (City)
+Kujawsko-Pomorskie	Chełmno
+Kujawsko-Pomorskie	Golub-Dobrzyń
+Kujawsko-Pomorskie	Grudziądz
+Kujawsko-Pomorskie	Grudziądz (City)
+Kujawsko-Pomorskie	Inowrocław
+Kujawsko-Pomorskie	Lipno
+Kujawsko-Pomorskie	Mogilno
+Kujawsko-Pomorskie	Nakło
+Kujawsko-Pomorskie	Radziejów
+Kujawsko-Pomorskie	Rypin
+Kujawsko-Pomorskie	Sępólno
+Kujawsko-Pomorskie	Świecie
+Kujawsko-Pomorskie	Toruń
+Kujawsko-Pomorskie	Toruń (City)
+Kujawsko-Pomorskie	Tuchola
+Kujawsko-Pomorskie	Wąbrzeźno
+Kujawsko-Pomorskie	Włocławek
+Kujawsko-Pomorskie	Włocławek (City)
+Kujawsko-Pomorskie	Żnin
+Łódzkie	Bełchatów
+Łódzkie	Brzeziny
+Łódzkie	Kutno
+Łódzkie	Łask
+Łódzkie	Łęczyca
+Łódzkie	Łódź
+Łódzkie	Łódzki Wschodni
+Łódzkie	Łowicz
+Łódzkie	Opoczno
+Łódzkie	Pabianice
+Łódzkie	Pajęczno
+Łódzkie	Piotrków
+Łódzkie	Piotrków Trybunalski
+Łódzkie	Poddębice
+Łódzkie	Radomsko
+Łódzkie	Rawa
+Łódzkie	Sieradz
+Łódzkie	Skierniewice
+Łódzkie	Skierniewice (City)
+Łódzkie	Tomaszów Mazowiecki
+Łódzkie	Wieluń
+Łódzkie	Wieruszów
+Łódzkie	Zduńska Wola
+Łódzkie	Zgierz
+Lubelskie	Biała Podlaska
+Lubelskie	Biała Podlaska (City)
+Lubelskie	Biłgoraj
+Lubelskie	Chełm
+Lubelskie	Chełm (City)
+Lubelskie	Hrubieszów
+Lubelskie	Janów Lubelski
+Lubelskie	Kraśnik
+Lubelskie	Krasnystaw
+Lubelskie	Łęczna
+Lubelskie	Lubartów
+Lubelskie	Lublin
+Lubelskie	Lublin (City)
+Lubelskie	Łuków
+Lubelskie	Opole Lubelskie
+Lubelskie	Parczew
+Lubelskie	Puławy
+Lubelskie	Radzyń Podlaski
+Lubelskie	Ryki
+Lubelskie	Świdnik
+Lubelskie	Tomaszów Lubelski
+Lubelskie	Włodawa
+Lubelskie	Zamość
+Lubelskie	Zamość (City)
+Lubuskie	Gorzów
+Lubuskie	Gorzów Wielkopolski
+Lubuskie	Krosno Odrzańskie
+Lubuskie	Międzyrzecz
+Lubuskie	Nowa Sól
+Lubuskie	Słubice
+Lubuskie	Strzelce-Drezdenko
+Lubuskie	Sulęcin
+Lubuskie	Świebodzin
+Lubuskie	Wschowa
+Lubuskie	Żagań
+Lubuskie	Żary
+Lubuskie	Zielona Góra
+Lubuskie	Zielona Góra (City)
+Małopolskie	Bochnia
+Małopolskie	Brzesko
+Małopolskie	Chrzanów
+Małopolskie	Dąbrowa
+Małopolskie	Gorlice
+Małopolskie	Kraków
+Małopolskie	Kraków (City)
+Małopolskie	Limanowa
+Małopolskie	Miechów
+Małopolskie	Myślenice
+Małopolskie	Nowy Sącz
+Małopolskie	Nowy Sącz (City)
+Małopolskie	Nowy Targ
+Małopolskie	Olkusz
+Małopolskie	Oświęcim
+Małopolskie	Proszowice
+Małopolskie	Sucha
+Małopolskie	Tarnów
+Małopolskie	Tarnów (City)
+Małopolskie	Tatra
+Małopolskie	Wadowice
+Małopolskie	Wieliczka
+Mazowieckie	Białobrzegi
+Mazowieckie	Ciechanów
+Mazowieckie	Garwolin
+Mazowieckie	Gostynin
+Mazowieckie	Grodzisk Mazowiecki
+Mazowieckie	Grójec
+Mazowieckie	Kozienice
+Mazowieckie	Legionowo
+Mazowieckie	Lipsko
+Mazowieckie	Łosice
+Mazowieckie	Maków
+Mazowieckie	Mińsk
+Mazowieckie	Mława
+Mazowieckie	Nowy Dwór Mazowiecki
+Mazowieckie	Ostrołęka
+Mazowieckie	Ostrołęka (City)
+Mazowieckie	Ostrów Mazowiecka
+Mazowieckie	Otwock
+Mazowieckie	Piaseczno
+Mazowieckie	Płock
+Mazowieckie	Płock (City)
+Mazowieckie	Płońsk
+Mazowieckie	Pruszków
+Mazowieckie	Przasnysz
+Mazowieckie	Przysucha
+Mazowieckie	Pułtusk
+Mazowieckie	Radom
+Mazowieckie	Radom (City)
+Mazowieckie	Siedlce
+Mazowieckie	Siedlce (City)
+Mazowieckie	Sierpc
+Mazowieckie	Sochaczew
+Mazowieckie	Sokołów
+Mazowieckie	Szydłowiec
+Mazowieckie	Warszaw Zachodni
+Mazowieckie	Warszawa
+Mazowieckie	Węgrów
+Mazowieckie	Wołomin
+Mazowieckie	Wyszków
+Mazowieckie	Żuromin
+Mazowieckie	Zwoleń
+Mazowieckie	Żyrardów
+Opolskie	Brzeg
+Opolskie	Głubczyce
+Opolskie	Kędzierzyn-Koźle
+Opolskie	Kluczbork
+Opolskie	Krapkowice
+Opolskie	Namysłów
+Opolskie	Nysa
+Opolskie	Olesno
+Opolskie	Opole
+Opolskie	Opole (City)
+Opolskie	Prudnik
+Opolskie	Strzelce
+Podkarpackie	Bieszczady
+Podkarpackie	Brzozów
+Podkarpackie	Dębica
+Podkarpackie	Jarosław
+Podkarpackie	Jasło
+Podkarpackie	Kolbuszowa
+Podkarpackie	Krosno
+Podkarpackie	Krosno (City)
+Podkarpackie	Łańcut
+Podkarpackie	Lesko
+Podkarpackie	Leżajsk
+Podkarpackie	Lubaczów
+Podkarpackie	Mielec
+Podkarpackie	Nisko
+Podkarpackie	Przemyśl
+Podkarpackie	Przemyśl (City)
+Podkarpackie	Przeworsk
+Podkarpackie	Ropczyce-Sędziszów
+Podkarpackie	Rzeszów
+Podkarpackie	Rzeszów (City)
+Podkarpackie	Sanok
+Podkarpackie	Stalowa Wola
+Podkarpackie	Strzyżów
+Podkarpackie	Tarnobrzeg
+Podkarpackie	Tarnobrzeg (City)
+Podlaskie	Augustów
+Podlaskie	Białystok
+Podlaskie	Białystok (City)
+Podlaskie	Bielsk
+Podlaskie	Grajewo
+Podlaskie	Hajnówka
+Podlaskie	Kolno
+Podlaskie	Łomża
+Podlaskie	Łomża (City)
+Podlaskie	Mońki
+Podlaskie	Sejny
+Podlaskie	Siemiatycze
+Podlaskie	Sokółka
+Podlaskie	Suwałki
+Podlaskie	Suwałki (City)
+Podlaskie	Wysokie Mazowieckie
+Podlaskie	Zambrów
+Pomorskie	Bytów
+Pomorskie	Chojnice
+Pomorskie	Człuchów
+Pomorskie	Gdańsk
+Pomorskie	Gdańsk (City)
+Pomorskie	Gdynia
+Pomorskie	Kartuzy
+Pomorskie	Kościerzyna
+Pomorskie	Kwidzyn
+Pomorskie	Lębork
+Pomorskie	Malbork
+Pomorskie	Nowy Dwór Gdański
+Pomorskie	Puck
+Pomorskie	Słupsk
+Pomorskie	Słupsk (City)
+Pomorskie	Sopot
+Pomorskie	Starogard
+Pomorskie	Sztum
+Pomorskie	Tczew
+Pomorskie	Wejherowo
+Śląskie	Będzin
+Śląskie	Bielsko
+Śląskie	Bielsko-Biała
+Śląskie	Bieruń-Lędziny
+Śląskie	Bytom
+Śląskie	Chorzów
+Śląskie	Cieszyn
+Śląskie	Częstochowa
+Śląskie	Częstochowa (CIty)
+Śląskie	Dąbrowa Górnicza
+Śląskie	Gliwice
+Śląskie	Gliwice (City)
+Śląskie	Jastrzębie-Zdrój
+Śląskie	Jaworzno
+Śląskie	Katowice
+Śląskie	Kłobuck
+Śląskie	Lubliniec
+Śląskie	Mikołów
+Śląskie	Mysłowice
+Śląskie	Myszków
+Śląskie	Piekary Śląskie
+Śląskie	Pszczyna
+Śląskie	Racibórz
+Śląskie	Ruda Śląska
+Śląskie	Rybnik
+Śląskie	Rybnik (City)
+Śląskie	Siemianowice Śląskie
+Śląskie	Sosnowiec
+Śląskie	Świętochłowice
+Śląskie	Tarnowskie Góry
+Śląskie	Tychy
+Śląskie	Wodzisław
+Śląskie	Zabrze
+Śląskie	Zawiercie
+Śląskie	Żory
+Śląskie	Żywiec
+Świętokrzyskie	Busko
+Świętokrzyskie	Jędrzejów
+Świętokrzyskie	Kazimierza
+Świętokrzyskie	Kielce
+Świętokrzyskie	Kielce (City)
+Świętokrzyskie	Końskie
+Świętokrzyskie	Opatów
+Świętokrzyskie	Ostrowiec
+Świętokrzyskie	Pińczów
+Świętokrzyskie	Sandomierz
+Świętokrzyskie	Skarżysko
+Świętokrzyskie	Starachowice
+Świętokrzyskie	Staszów
+Świętokrzyskie	Włoszczowa
+Warmińsko-Mazurskie	Bartoszyce
+Warmińsko-Mazurskie	Braniewo
+Warmińsko-Mazurskie	Działdowo
+Warmińsko-Mazurskie	Elbląg
+Warmińsko-Mazurskie	Elbląg (City)
+Warmińsko-Mazurskie	Ełk
+Warmińsko-Mazurskie	Giżycko
+Warmińsko-Mazurskie	Gołdap
+Warmińsko-Mazurskie	Iława
+Warmińsko-Mazurskie	Kętrzyn
+Warmińsko-Mazurskie	Lidzbark
+Warmińsko-Mazurskie	Mrągowo
+Warmińsko-Mazurskie	Nidzica
+Warmińsko-Mazurskie	Nowe Miasto
+Warmińsko-Mazurskie	Olecko
+Warmińsko-Mazurskie	Olsztyn
+Warmińsko-Mazurskie	Olsztyn (City)
+Warmińsko-Mazurskie	Ostróda
+Warmińsko-Mazurskie	Pisz
+Warmińsko-Mazurskie	Szczytno
+Warmińsko-Mazurskie	Węgorzewo
+Wielkopolskie	Chodzież
+Wielkopolskie	Czarnków-Trzcianka
+Wielkopolskie	Gniezno
+Wielkopolskie	Gostyń
+Wielkopolskie	Grodzisk Wielkopolski
+Wielkopolskie	Jarocin
+Wielkopolskie	Kalisz
+Wielkopolskie	Kalisz (City)
+Wielkopolskie	Kępno
+Wielkopolskie	Koło
+Wielkopolskie	Konin
+Wielkopolskie	Konin (City)
+Wielkopolskie	Kościan
+Wielkopolskie	Krotoszyn
+Wielkopolskie	Leszno
+Wielkopolskie	Leszno (City)
+Wielkopolskie	Międzychód
+Wielkopolskie	Nowy Tomyśl
+Wielkopolskie	Oborniki
+Wielkopolskie	Ostrów Wielkopolski
+Wielkopolskie	Ostrzeszów
+Wielkopolskie	Piła
+Wielkopolskie	Pleszew
+Wielkopolskie	Poznań
+Wielkopolskie	Poznań (City)
+Wielkopolskie	Rawicz
+Wielkopolskie	Słupca
+Wielkopolskie	Śrem
+Wielkopolskie	Środa Wielkopolska
+Wielkopolskie	Szamotuły
+Wielkopolskie	Turek
+Wielkopolskie	Wągrowiec
+Wielkopolskie	Wolsztyn
+Wielkopolskie	Września
+Wielkopolskie	Złotów
+Zachodniopomorskie	Białogard
+Zachodniopomorskie	Choszczno
+Zachodniopomorskie	Drawsko
+Zachodniopomorskie	Goleniów
+Zachodniopomorskie	Gryfice
+Zachodniopomorskie	Gryfino
+Zachodniopomorskie	Kamień
+Zachodniopomorskie	Kołobrzeg
+Zachodniopomorskie	Koszalin
+Zachodniopomorskie	Koszalin (City)
+Zachodniopomorskie	Łobez
+Zachodniopomorskie	Myślibórz
+Zachodniopomorskie	Police
+Zachodniopomorskie	Pyrzyce
+Zachodniopomorskie	Sławno
+Zachodniopomorskie	Stargard
+Zachodniopomorskie	Świdwin
+Zachodniopomorskie	Świnoujście
+Zachodniopomorskie	Szczecin
+Zachodniopomorskie	Szczecinek
+Zachodniopomorskie	Wałcz
+Zachodniopomorskie	Zalew Szczeciński

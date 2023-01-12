@@ -158,6 +158,8 @@ powtest <- power_sim(N = Nlist,
                      beta_p_I = rnorm(1, -1, 0.1),
                      beta_n_I = rnorm(1, -1, 0.1))
 
+saveRDS(powtest, file = here::here("Data/power-sims.RData"))
+
 ```
 
 
@@ -180,7 +182,7 @@ powtest.df <- rbindlist(powtest$data, idcol = TRUE) |>
 powtest.df |> 
   filter(group == "Effect") |>
   filter(grepl(".*control|t\\d.*", variable)) |>
-  filter(SampleSize > 100) |> 
+  filter(SampleSize > 200) |> 
   ggplot(aes(x = value, group = .id)) +
   stat_slab(aes(color = stat(x > 0)),
             size = 0.3,

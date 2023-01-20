@@ -228,7 +228,7 @@ Nlist <- c(640, 1120, 1600, 2560, 3040)
 
 # First runt he function to simulate the results,
 powtest <- power_sim(N = Nlist,
-                     iters = 1,
+                     iters = 100,
                      seed = 1234,
                      beta_p_1 = rnorm(1, 1.0, 0.08),
                      beta_p_2 = rnorm(1, 0.5, 0.15),

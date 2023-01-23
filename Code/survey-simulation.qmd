@@ -69,7 +69,7 @@ power_sim <- function(N, iters, seed,
                       beta_p_1, 
                       beta_p_2, 
                       beta_p_3, 
-                      beta_p_age_1, beta_p_age_2, beta_p_age_3, beta_p_age_4, beta_p_age_5, 
+                      beta_p_age_2, beta_p_age_3, beta_p_age_4, beta_p_age_5, beta_p_age_6, 
                       beta_p_contact, 
                       beta_p_benefits, 
                       beta_p_income_1, beta_p_income_2, beta_p_income_3, beta_p_income_4, 
@@ -78,7 +78,7 @@ power_sim <- function(N, iters, seed,
                       beta_p_ed, 
                       beta_p_id,
                       beta_n_1, beta_n_2, beta_n_3, 
-                      beta_n_age_1, beta_n_age_2, beta_n_age_3, beta_n_age_4, beta_n_age_5, 
+                      beta_n_age_2, beta_n_age_3, beta_n_age_4, beta_n_age_5, beta_n_age_6, 
                       beta_n_contact, 
                       beta_n_benefits, 
                       beta_n_income_1, beta_n_income_2, beta_n_income_3, beta_n_income_4, 
@@ -86,8 +86,9 @@ power_sim <- function(N, iters, seed,
                       beta_n_minority, 
                       beta_n_ed, 
                       beta_n_id, 
-                      beta_p_I, I_error_p,
-                      beta_n_I, I_error_n) {
+                      beta_p_I, 
+                      beta_n_I, 
+                      I_error) {
 
 # Set seed
 set.seed(seed)
@@ -95,31 +96,33 @@ set.seed(seed)
 # Set treatment labels
 treatment_labels <- c("control", "t1", "t2", "t3")
 
-# Read in province list to generate groupings
-provincelist <- data.table::fread("Data/district-list.txt") |>
-  group_by(province) |>
-  mutate(error_p = round(I_error_p, 2),
-         error_n = round(I_error_n, 2))
-  
 
 #set seed and arguments for brms models  
 ITER <- 2000
 WARM <- ITER/2
 SEED <- seed
-CORES <- 4
+CORES <- 8
+CHAINS <- 4
+
+PRIORS <- prior(normal(0,1), class = b)
 
 # Create data frame with nested list to store output of models
 sims <- data.frame(N = rep(N, iters),
                    iters = rep(iters, iters),
                    data = rep(NA, iters))
 
+provincelist <- data.table::fread("Data/district-list.txt") |>
+  group_by(province) |>
+  mutate(error = round(I_error, 3))
+
 
 for(i in 1:length(sims$data)) {
 
+  
 # Set arguments for sample size and group sizes
 N_total <- sims$N[i]
 N_groups <- n_distinct(provincelist$province)
-N_pergroup <- floor(N_total/N_groups)
+N_pergroup <- sims$N[i]/N_groups
   
 tempdata <- fabricate(
   province = add_level(
@@ -129,43 +132,40 @@ tempdata <- fabricate(
     error_n = unique(provincelist$error_n)
   ),
   individual = add_level(
-    N = N_pergroup,
-    age = round(runif(N_total, 18, 85)),
-    contact_pers = rbinom(N_total, 1, 0.12), 
-    benefit_pers = rbinom(N_total, 1, 0.09), 
-    income = sample(c(1, 2, 3, 4, 5), replace = TRUE, N_total),
-    gender = rbinom(N_total, 1, 0.50),
-    minority = rbinom(N_total, 1, 0.13),
-    education = round(rnorm(N_total, 14.5, 3.7)),
-    ideology = round(rnorm(N_total, 5.8, 2.5)),
-    treatment = sample(treatment_labels, replace = TRUE, N_total)
+    N = N_pergroup
   )
-) |> 
-  mutate(control = ifelse(treatment == "control", 1, 0),
-         t1 = ifelse(label == "t1", 1, 0),
-         t2 = ifelse(label == "t2", 1, 0),
-         t3 = ifelse(label == "t3", 1, 0),
-         age_1 = ifelse(age >= 25 & age <=34, 1, 0),
-         age_2 = ifelse(age >= 35 & age <= 44, 1, 0),
-         age_3 = ifelse(age >= 45 & age <= 54, 1, 0),
-         age_4 = ifelse(age >= 55 & age <= 64, 1, 0),
-         age_5 = ifelse(age >= 65, 1, 0),
-         age = case_when(
-           age_1 == 1 ~ "Age 25-34",
-           age_2 == 1 ~ "Age 35-44",
-           age_3 == 1 ~ "Age 45-54",
-           age_4 == 1 ~ "Age 55-64",
-           age_5 == 1 ~ "Age 65+",
-           TRUE ~ "Age 18-24"
-         ),
+) |>
+  mutate(age = sample(c("Age 18-24", "Age 25-34", "Age 35-44", "Age 45-54", "Age 55-64", "Age 65+"), replace = TRUE, N_total),
+         contact_pers = rbinom(N_total, 1, 0.12),
+         benefit_pers = rbinom(N_total, 1, 0.09),
+         income = sample(c(1, 2, 3, 4, 5), replace = TRUE, N_total),
+         gender = rbinom(N_total, 1, 0.50),
+         minority = rbinom(N_total, 1, 0.13),
+         education = round(rnorm(N_total, 14.5, 3.7)),
+         ideology = round(rnorm(N_total, 5.8, 2.5)),
+         treatment = sample(treatment_labels,
+                            replace = TRUE,
+                            N_total),
+         control = ifelse(treatment == "control", 1, 0),
+         t1 = ifelse(treatment == "t1", 1, 0),
+         t2 = ifelse(treatment == "t2", 1, 0),
+         t3 = ifelse(treatment == "t3", 1, 0),
+         age_1 = ifelse(age == "Age 18-24", 1, 0),
+         age_2 = ifelse(age == "Age 25-34", 1, 0),
+         age_3 = ifelse(age == "Age 35-44", 1, 0),
+         age_4 = ifelse(age == "Age 45-54", 1, 0),
+         age_5 = ifelse(age == "Age 55-64", 1, 0),
+         age_6 = ifelse(age == "Age 65+", 1, 0),
          age = factor(age, levels = c("Age 18-24", "Age 25-34", "Age 35-44", "Age 45-54", "Age 55-64", "Age 65+")),
          age = relevel(age, ref = 1),
          income_1 = ifelse(income == 1, 1, 0),
          income_2 = ifelse(income == 2, 1, 0),
          income_3 = ifelse(income == 3, 1, 0),
          income_4 = ifelse(income == 4, 1, 0),
-         xb_pos = beta_p_I + error_p + beta_p_1 * t1 + beta_p_2 * t2 + beta_p_3 * t3 + beta_p_age_1 * age_1 + beta_p_age_2 * age_2 + beta_p_age_3 * age_3 + beta_p_age_4 * age_4 + beta_p_age_5 * age_5 + beta_p_income_1 * income_1 + beta_p_income_2 * income_2 + beta_p_income_3 * income_3 + beta_p_income_4 * income_4 + beta_p_contact * contact_pers + beta_p_benefits * benefit_pers + beta_p_gender * gender + beta_p_minority * minority + beta_p_ed * education + beta_p_id * ideology,
-         xb_neg = beta_n_I + error_n + beta_n_1 * t1 + beta_n_2 * t2 + beta_n_3 * t3 + beta_n_age_1 * age_1 + beta_n_age_2 * age_2 + beta_n_age_3 * age_3 + beta_n_age_4 * age_4 + beta_n_age_5 * age_5 + beta_n_income_1 * income_1 + beta_n_income_2 * income_2 + beta_n_income_3 * income_3 + beta_n_income_4 * income_4 + beta_n_contact * contact_pers + beta_n_benefits * benefit_pers + beta_n_gender * gender + beta_n_minority * minority + beta_n_ed * education + beta_n_id * ideology,
+         treatment = factor(treatment),
+         income = factor(income),
+         xb_pos = beta_p_I + error + beta_p_1 * t1 + beta_p_2 * t2 + beta_p_3 * t3 + beta_p_age_2 * age_2 + beta_p_age_3 * age_3 + beta_p_age_4 * age_3 + beta_p_age_5 * age_5 + beta_p_age_6 * age_6 + beta_p_income_1 * income_1 + beta_p_income_2 * income_2 + beta_p_income_3 * income_3 + beta_p_income_4 * income_4 + beta_p_contact * contact_pers + beta_p_benefits * benefit_pers + beta_p_gender * gender + beta_p_minority * minority + beta_p_ed * education + beta_p_id * ideology,
+         xb_neg = beta_n_I + error + beta_n_1 * t1 + beta_n_2 * t2 + beta_n_3 * t3 + beta_n_age_2 * age_2 + beta_n_age_3 * age_3 + beta_n_age_4 * age_4 + beta_n_age_5 * age_5 + beta_n_age_6 * age_6 + beta_n_income_1 * income_1 + beta_n_income_2 * income_2 + beta_n_income_3 * income_3 + beta_n_income_4 * income_4 + beta_n_contact * contact_pers + beta_n_benefits * benefit_pers + beta_n_gender * gender + beta_n_minority * minority + beta_n_ed * education + beta_n_id * ideology,
          p_pos = plogis(xb_pos),
          p_neg = plogis(xb_neg),
          y_pos = rbinom(length(p_pos), 1, prob = p_pos),
@@ -174,27 +174,31 @@ tempdata <- fabricate(
            y_pos == 1 ~ "Positive",
            y_neg == 1 ~ "Negative",
            y_pos == 0 & y_neg == 0 ~ "Neutral",
-           y_pos == 1 & y_neg == 1 & p_pos > p_neg ~ "Positive"
+           y_pos == 1 & y_neg == 1 & p_pos > p_neg ~ "Positive",
+           y_pos == 1 & y_neg == 1 & p_pos < p_neg ~ "Negative",
+           TRUE ~ "Neutral"
          ))
 
 
-tempmod <- brms::brm(response ~ factor(treatment) + factor(contact_pers) + factor(benefit_pers) + factor(income) + factor(minority) + factor(gender) + factor(age) + ideology + education + (1 | province),
+tempmod <- brms::brm(response ~ treatment + contact_pers + benefit_pers + income + minority + gender + age + ideology + education + (1 | province),
                data = tempdata,
                family = categorical(link = "logit",
                                     refcat = "Neutral"),
+               prior = PRIORS,
                iter = ITER,
                warmup = WARM,
                seed = SEED,
                cores = CORES,
+               chains = CHAINS,
                backend = "cmdstanr",
                control = list(max_treedepth = 12,
                               adapt_delta = 0.8),
-               threads = threading(2))
+               threads = threading(4))
 
 # I can't figure out how to nest the entire data frame without using the nest function here.
 # Also adding the probability that a given value is above or below 0
 samples <- as.data.frame(tidy_draws(tempmod)) |> 
-  sample_draws(ndraws = 50) |> 
+  sample_draws(ndraws = 100) |> 
   mutate(across(starts_with("b_"),
                 ~bayestestR::pd(.x),
                 .names = "{col}_pd")) |> 
@@ -224,20 +228,20 @@ tic()
 
 # Note that Nlist provides the N for the individual treatment groups. The total sample size is N & 4. This is a function of how fabricatr structures data.
 # Must use multiples of 16 since that's how many groups/provinces there are in the data
-Nlist <- c(640, 1120, 1600, 2560, 3040)
+Nlist <- c(1600, 2560, 3040)
 
 # First runt he function to simulate the results,
 powtest <- power_sim(N = Nlist,
-                     iters = 100,
-                     seed = 1234,
-                     beta_p_1 = rnorm(1, 1.0, 0.08),
-                     beta_p_2 = rnorm(1, 0.5, 0.15),
+                     iters = 10,
+                     seed = 3353,
+                     beta_p_1 = rnorm(1, 1.0, 0.05),
+                     beta_p_2 = rnorm(1, 0.5, 0.05),
                      beta_p_3 = rnorm(1, 0.1, 0.03),
-                     beta_p_age_1 = rnorm(1, -0.12, 0.03), 
-                     beta_p_age_2 = rnorm(1, -0.09, 0.03), 
-                     beta_p_age_3 = rnorm(1, -0.05, 0.02), 
-                     beta_p_age_4 = rnorm(1, 0.11, 0.04), 
-                     beta_p_age_5 = rnorm(1, 0.19, 0.04), 
+                     beta_p_age_2 = rnorm(1, -0.12, 0.03), 
+                     beta_p_age_3 = rnorm(1, -0.09, 0.03), 
+                     beta_p_age_4 = rnorm(1, -0.05, 0.02), 
+                     beta_p_age_5 = rnorm(1, 0.11, 0.04), 
+                     beta_p_age_6 = rnorm(1, 0.19, 0.04), 
                      beta_p_contact = rnorm(1, 0.52, 0.10), 
                      beta_p_benefits = rnorm(1, 0.04, 0.10), 
                      beta_p_income_1 = rnorm(1, -0.03, 0.04), 
@@ -248,16 +252,16 @@ powtest <- power_sim(N = Nlist,
                      beta_p_minority = rnorm(1, -0.03, 0.04), 
                      beta_p_ed = rnorm(1, 0.03, 0.02), 
                      beta_p_id = rnorm(1, 0.39, 0.03),
-                     beta_n_1 = rnorm(1, -0.9, 0.08), 
+                     beta_n_1 = rnorm(1, -0.9, 0.05), 
                      beta_n_2 = rnorm(1, -0.2, 0.02), 
                      beta_n_3 = rnorm(1, -0.5, 0.1), 
-                     beta_n_age_1 = rnorm(1, 0.09, 0.03), 
-                     beta_n_age_2 = rnorm(1, -0.01, 0.04), 
-                     beta_n_age_3 = rnorm(1, -0.10, 0.04), 
-                     beta_n_age_4 = rnorm(1, -0.18, 0.03), 
-                     beta_n_age_5 = rnorm(1, -0.06, 0.03), 
-                     beta_n_contact = rnorm(1, 0.18, 0.08), 
-                     beta_n_benefits = rnorm(1, -0.42, 0.1), 
+                     beta_n_age_2 = rnorm(1, 0.09, 0.03), 
+                     beta_n_age_3 = rnorm(1, -0.01, 0.04), 
+                     beta_n_age_4 = rnorm(1, -0.10, 0.04), 
+                     beta_n_age_5 = rnorm(1, -0.18, 0.03), 
+                     beta_n_age_6 = rnorm(1, -0.06, 0.03), 
+                     beta_n_contact = rnorm(1, 0.18, 0.02), 
+                     beta_n_benefits = rnorm(1, -0.42, 0.02), 
                      beta_n_income_1 = rnorm(1, -0.06, 0.02), 
                      beta_n_income_2 = rnorm(1, 0.01, 0.04), 
                      beta_n_income_3 = rnorm(1, -0.03, 0.04), 
@@ -266,10 +270,9 @@ powtest <- power_sim(N = Nlist,
                      beta_n_minority = rnorm(1, 0.06, 0.04), 
                      beta_n_ed = rnorm(1, 0.16, 0.03), 
                      beta_n_id = rnorm(1, -0.24, 0.03), 
-                     beta_p_I = rnorm(1, -1.85, 0.1), 
-                     I_error_p = rnorm(1, 0, 0.5),
-                     beta_n_I = rnorm(1, -0.5, 0.08), 
-                     I_error_n = rnorm(1, 0, 0.5))
+                     beta_p_I = rnorm(1, -2.0, 0.02), 
+                     beta_n_I = rnorm(1, -0.5, 0.01), 
+                     I_error = rnorm(1, 0, 0.05))
 
 
 # Next let's extract the data from the function and put it into a long format so it's easier to systematize the graphics
@@ -298,10 +301,9 @@ Now let's check some plots
 
 
 # Next let's make a plot of all of the coefficient values and the simulated posterior distributions for those variables
-powtest.df |> 
+test <- powtest.df |> 
   filter(group == "Effect") |>
-  filter(grepl(".*treatment|t\\d.*", variable)) |>
-  filter(SampleSize > 100) |> 
+  filter(grepl(".*treatment.*", variable)) |>
   ggplot(aes(x = value, group = .id)) +
   stat_slab(aes(color = stat(x > 0)),
             size = 0.3,
@@ -315,7 +317,7 @@ powtest.df |>
        y = "Density",
        color = "Direction")
 
-ggsave(here::here("Figures/fig-sim-spaghetti.jpg"), height = 6, width = 9, units = "in")
+ggsave(here::here("Figures/fig-sim-spaghetti.jpg"), height = 7, width = 14, units = "in")
 
 # Next let's look at the probability of finding the intended effect for each variable.
 powtest.df |> 

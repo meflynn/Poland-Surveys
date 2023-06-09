@@ -2,9 +2,13 @@
 # Great Powers in my Backyard: Frontline Ally Support for the U.S. Military
 
 [Michael A Allen](http://ma-allen.com/) - Boise State University
+
 [Michael E Flynn](https://www.m-flynn.com/) - Kansas State Unversity
+
 [Carla Martinez Machain](https://www.carlamm.com/) - University at
-Buffalo (SUNY) [Grzegorz Smulek]() - Jagiellonian University
+Buffalo (SUNY)
+
+[Grzegorz Smulek]() - Jagiellonian University
 
 ## Abstract
 

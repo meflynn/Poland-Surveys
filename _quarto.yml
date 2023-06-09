@@ -1,0 +1,32 @@
+project:
+  title: "Great Powers in my Backyard: Frontline Ally Support for the U.S. Military"
+  type: website
+
+  render:
+    - "**/*.qmd"
+
+  resources:
+    - "Appendix/"
+
+execute:
+  freeze: auto
+
+bibliography: References/references.bib
+csl: References/apsa.csl
+
+website:
+  repo-url: "https://github.com/meflynn/Poland-Surveys"
+
+  page-navigation: true
+
+  navbar:
+    pinned: true
+    search: true
+    left:
+      - text: "Appendix"
+        file: Appendix/poland_appendix.qmd
+
+format:
+  html:
+    theme: default
+    toc: true

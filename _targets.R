@@ -136,6 +136,8 @@ list(
   # Build appendix
   tar_quarto(poland_appendix,
              path = "Appendix/poland_appendix.qmd",
-             quiet = FALSE)
+             quiet = FALSE),
+
+  tar_quarto(website, path = ".", quiet = FALSE)
 
 )

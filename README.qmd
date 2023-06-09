@@ -1,0 +1,16 @@
+---
+format: gfm
+---
+
+
+# Great Powers in my Backyard: Frontline Ally Support for the U.S. Military
+
+[Michael A Allen](http://ma-allen.com/) - Boise State University
+[Michael E Flynn](https://www.m-flynn.com/) - Kansas State Unversity
+[Carla Martinez Machain](https://www.carlamm.com/) - University at Buffalo (SUNY)
+[Grzegorz Smulek]() - Jagiellonian University
+]
+
+## Abstract
+
+Over the last decade, researchers have begun developing a better understanding of the social, political, and economic effects of foreign military deployments on their host environments. Most recently, research has explored the determinants of popular support and opposition to U.S. military deployments in host countries. However, researchers still have little understanding of the broader range of causal factors that shape civilians’ views of U.S. military personnel in host countries. This study focuses on Poland as a case with an exceptionally high external security threat and a U.S. military presence. Through a survey experiment, we find that individuals with the strongest views about the U.S. military do not move from their position of support by contextualizing a potential troop increase. In contrast, the views of “swing supporters” with weaker opinions of the U.S. military can change depending on the expected location of potential new U.S. forces. 

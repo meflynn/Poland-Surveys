@@ -1,0 +1,439 @@
+---
+title: Survey sample size simulation
+author: Michael Flynn
+date: "`r Sys.Date()`"
+execute:
+  echo: false
+  message: false
+  warning: false
+format:
+  html:
+    toc: true
+editor_options: 
+  chunk_output_type: console
+---
+
+This document is intended to provide a basic Bayesian "power" analysis to help us understand the probability of detecting an effect as a function of the study's sample size.
+
+## Setup
+
+Here we load the packages used to simulate the data and run the analysis.
+```{r setup}
+# Load libraries
+library(simstudy)
+library(data.table)
+library(tidyverse)
+library(brms)
+library(marginaleffects)
+library(tidybayes)
+library(ggdist)
+library(arm)
+library(fabricatr)
+library(flynnprojects)
+library(job)
+library(future)
+library(furrr)
+library(tictoc)
+
+# Probably also have to expand memory for futures package using the following
+# #. Memory calculated using 2000*1024^2 = 2097152000 where 2000 is number of 
+# MB desired
+# Found here: https://stackoverflow.com/questions/40536067/how-to-adjust-future-global-maxsize
+options(future.globals.maxSize= 2097152000)
+
+# Set up future package for multicore processing.
+# This uses a nested multicore setup, so you can have four cores per model and
+# run four models in parallel
+#plan(multiprocess)
+plan(
+  list(
+    tweak(multisession, workers = 4),
+    tweak(multisession, workers = 4)
+    )
+  )
+
+```
+
+
+## Simulate base data
+
+This first step will simulate the data we expect to collect in the survey. Currently the survey experiment has a total of four possible treatment groupings:
+
+1. *Control*: This question asks respondents about their attitudes towards increasing the US military presence in Poland. 
+2. *Treatment 1*: The first treatment group includes both mentions of Russia and mentions of economic benefits that flow from a US presence.
+3. *Treatment 2*: The second treatment prompt only mentions the threat of Russian aggression.
+4. *Treatment 3*: The third treatment prompt only mentions the possibility of economic benefits flowing from US military personnel deployed tot he host state.
+
+Additionally we will adjust for the following predictor variables in the model:
+
+1. Age
+2. Income
+3. Income source
+4. Gender
+5. Minority
+6. Religion
+7. Education
+8. Ideology
+
+
+```{r function-setup}
+
+# So here I want to write a function that will do the following
+# 1. Set the basic parameters that can vary (N, effect sizes)
+# 2. Simulate the data based on this information
+# 3. Run the mode.
+# 4. Recover parameters and save them
+# 5. Plot the accumulated parameters
+power_sim <- function(N, iters, seed,
+                      beta_p_1, 
+                      beta_p_2, 
+                      beta_p_3, 
+                      beta_p_age_2, beta_p_age_3, beta_p_age_4, beta_p_age_5, beta_p_age_6, 
+                      beta_p_contact, 
+                      beta_p_benefits, 
+                      beta_p_income_1, beta_p_income_2, beta_p_income_3, beta_p_income_4,
+                      beta_p_source_1, beta_p_source_2, beta_p_source_3, beta_p_source_4, beta_p_source_5,
+                      beta_p_gender, 
+                      beta_p_minority, 
+                      beta_p_ed, 
+                      beta_p_id,
+                      beta_n_1, beta_n_2, beta_n_3, 
+                      beta_n_age_2, beta_n_age_3, beta_n_age_4, beta_n_age_5, beta_n_age_6, 
+                      beta_n_contact, 
+                      beta_n_benefits, 
+                      beta_n_income_1, beta_n_income_2, beta_n_income_3, beta_n_income_4,
+                      beta_n_source_1, beta_n_source_2, beta_n_source_3, beta_n_source_4, beta_n_source_5,
+                      beta_n_gender, 
+                      beta_n_minority, 
+                      beta_n_ed, 
+                      beta_n_id,
+                      beta_dk_1, beta_dk_2, beta_dk_3, 
+                      beta_dk_age_2, beta_dk_age_3, beta_dk_age_4, beta_dk_age_5, beta_dk_age_6, 
+                      beta_dk_contact, 
+                      beta_dk_benefits, 
+                      beta_dk_income_1, beta_dk_income_2, beta_dk_income_3, beta_dk_income_4,
+                      beta_dk_source_1, beta_dk_source_2, beta_dk_source_3, beta_dk_source_4, beta_dk_source_5,
+                      beta_dk_gender, 
+                      beta_dk_minority, 
+                      beta_dk_ed, 
+                      beta_dk_id,
+                      beta_p_I, 
+                      beta_n_I,
+                      beta_dk_I,
+                      I_error) {
+
+# Set seed
+set.seed(seed)
+
+# Set treatment labels
+treatment_labels <- c("control", "t1", "t2", "t3")
+
+
+#set seed and arguments for brms models  
+ITER <- 3000
+WARM <- ITER/2
+SEED <- seed
+CORES <- 4
+CHAINS <- 4
+
+PRIORS <- prior(normal(0, 0.5), class = b)
+
+# Create data frame with nested list to store output of models
+sims <- data.frame(N = rep(N, iters),
+                   iters = rep(iters, iters),
+                   data = rep(NA, iters))
+
+# We want the error for each province to be fixed and not vary/flip between simulations. There can still be a distribution around each error though, so long as it's mean stays mostly the same in a positive/negative position.
+provincelist <- data.table::fread("Data/district-list.txt") |>
+  group_by(province) |>
+  mutate(error = round(I_error, 3))
+
+# Create list to hold data outputs
+datalist <- list()
+
+for(i in 1:length(sims$data)) {
+
+# Set arguments for sample size and group sizes
+N_total <- sims$N[i]
+N_groups <- n_distinct(provincelist$province)
+N_pergroup <- sims$N[i]/N_groups
+  
+tempdata <- fabricate(
+  province = add_level(
+    N = N_groups,
+    label = unique(provincelist$province),
+    error = unique(provincelist$error)
+  ),
+  individual = add_level(
+    N = N_pergroup
+  )
+) |>
+  mutate(age = sample(c("Age 18-24", "Age 25-34", "Age 35-44", "Age 45-54", "Age 55-64", "Age 65+"), replace = TRUE, N_total),
+         income = sample(c(1, 2, 3, 4, 5), replace = TRUE, N_total),
+         source = sample(c(1, 2, 3, 4, 5, 6), replace = TRUE, N_total),
+         gender = rbinom(N_total, 1, 0.50),
+         minority = rbinom(N_total, 1, 0.13),
+         education = round(rnorm(N_total, 14.5, 3.7)),
+         ideology = round(rnorm(N_total, 5.8, 2.5)),
+         treatment = sample(treatment_labels,
+                            replace = TRUE,
+                            N_total),
+         control = ifelse(treatment == "control", 1, 0),
+         t1 = ifelse(treatment == "t1", 1, 0),
+         t2 = ifelse(treatment == "t2", 1, 0),
+         t3 = ifelse(treatment == "t3", 1, 0),
+         age_1 = ifelse(age == "Age 18-24", 1, 0),
+         age_2 = ifelse(age == "Age 25-34", 1, 0),
+         age_3 = ifelse(age == "Age 35-44", 1, 0),
+         age_4 = ifelse(age == "Age 45-54", 1, 0),
+         age_5 = ifelse(age == "Age 55-64", 1, 0),
+         age_6 = ifelse(age == "Age 65+", 1, 0),
+         age = factor(age, levels = c("Age 18-24", "Age 25-34", "Age 35-44", "Age 45-54", "Age 55-64", "Age 65+")),
+         age = relevel(age, ref = "Age 18-24"),
+         income_1 = ifelse(income == 1, 1, 0), # Category 5 is omitted/ref category
+         income_2 = ifelse(income == 2, 1, 0),
+         income_3 = ifelse(income == 3, 1, 0),
+         income_4 = ifelse(income == 4, 1, 0),
+         income = factor(income, levels = c(1, 2, 3, 4, 5)),
+         income = relevel(income, ref = 5),
+         source_1 = ifelse(source == 1, 1, 0), # Category 6 is omitted/ref category
+         source_2 = ifelse(source == 2, 1, 0),
+         source_3 = ifelse(source == 3, 1, 0),
+         source_4 = ifelse(source == 4, 1, 0),
+         source_5 = ifelse(source == 5, 1, 0),
+         source = factor(source, levels = c(1, 2, 3, 4, 5, 6)),
+         source = relevel(source, ref = 6),
+         treatment = factor(treatment),
+         treatment = relevel(treatment, ref = "control"),
+         xb_pos = beta_p_I + error + beta_p_1 * t1 + beta_p_2 * t2 + beta_p_3 * t3 + beta_p_age_2 * age_2 + beta_p_age_3 * age_3 + beta_p_age_4 * age_3 + beta_p_age_5 * age_5 + beta_p_age_6 * age_6 + beta_p_income_1 * income_1 + beta_p_income_2 * income_2 + beta_p_income_3 * income_3 + beta_p_income_4 * income_4 + beta_p_source_1 * source_1 + beta_p_source_2 * source_2 + beta_p_source_3 * source_3 + beta_p_source_4 * source_4 + beta_p_source_5 * source_5 + beta_p_gender * gender + beta_p_minority * minority + beta_p_ed * education + beta_p_id * ideology,
+         xb_neg = beta_n_I + error + beta_n_1 * t1 + beta_n_2 * t2 + beta_n_3 * t3 + beta_n_age_2 * age_2 + beta_n_age_3 * age_3 + beta_n_age_4 * age_3 + beta_n_age_5 * age_5 + beta_n_age_6 * age_6 + beta_n_income_1 * income_1 + beta_n_income_2 * income_2 + beta_n_income_3 * income_3 + beta_n_income_4 * income_4 + beta_n_source_1 * source_1 + beta_n_source_2 * source_2 + beta_n_source_3 * source_3 + beta_n_source_4 * source_4 + beta_n_source_5 * source_5 + beta_n_gender * gender + beta_n_minority * minority + beta_n_ed * education + beta_n_id * ideology,
+         xb_dk = beta_dk_I + error + beta_dk_1 * t1 + beta_dk_2 * t2 + beta_dk_3 * t3 + beta_dk_age_2 * age_2 + beta_dk_age_3 * age_3 + beta_dk_age_4 * age_3 + beta_dk_age_5 * age_5 + beta_dk_age_6 * age_6 + beta_dk_income_1 * income_1 + beta_dk_income_2 * income_2 + beta_dk_income_3 * income_3 + beta_dk_income_4 * income_4 + beta_dk_source_1 * source_1 + beta_dk_source_2 * source_2 + beta_dk_source_3 * source_3 + beta_dk_source_4 * source_4 + beta_dk_source_5 * source_5 + beta_dk_gender * gender + beta_dk_minority * minority + beta_dk_ed * education + beta_dk_id * ideology,
+         p_pos = plogis(xb_pos),
+         p_neg = plogis(xb_neg),
+         p_dk  = plogis(xb_dk),
+         y_pos = rbinom(length(p_pos), 1, prob = p_pos),
+         y_neg = rbinom(length(p_neg), 1, prob = p_neg),
+         y_dk = rbinom(length(p_dk), 1, prob = p_dk),
+         response = case_when(
+           y_pos == 1 ~ "Positive",
+           y_neg == 1 ~ "Negative",
+           y_dk  == 1 ~ "DKDA",
+           y_pos == 0 & y_neg == 0 & y_dk == 0 ~ "Neutral",
+           y_pos == 1 & y_neg == 1 & p_pos > p_neg ~ "Positive",
+           y_pos == 1 & y_neg == 1 & p_pos < p_neg ~ "Negative",
+           y_pos == 1 & y_neg == 1 & y_dk == 1 & p_pos < p_neg ~ "Negative",
+           y_pos == 1 & y_neg == 1 & y_dk == 1 & p_dk < p_neg ~ "Negative",
+           TRUE ~ "Neutral"
+         )
+         
+         )
+
+# Record data in datalist
+datalist[[i]] <- tempdata
+# Record sample size
+datalist[[i]]$N <- N
+
+}
+
+tempmod <- furrr::future_map(
+  .x = datalist,
+  .f = ~ brms::brm(
+    formula = response ~ treatment + income + + source + minority + gender + age + ideology + education + (1 | province),  
+    data = .x,
+    family = categorical(link = "logit",
+                         refcat = "Neutral"),
+    prior = PRIORS,
+    iter = ITER,
+    warmup = WARM,
+    seed = SEED,
+    cores = CORES,
+    chains = CHAINS,
+    #recompile = FALSE,
+    #combine = FALSE,
+    backend = "cmdstanr",
+    control = list(max_treedepth = 10,
+                   adapt_delta = 0.82
+                   ),
+    threads = threading(2)
+    ),
+  .progress = TRUE
+)
+
+# I can't figure out how to nest the entire data frame without using the nest function here.
+# Also adding the probability that a given value is above or below 0
+
+samples <- map(
+  .x = tempmod,
+  .f = ~ as.data.frame(tidy_draws(.x)) |> 
+    sample_draws(ndraws = 200) |> 
+    mutate(across(starts_with("b_"),
+                ~bayestestR::pd(.x),
+                .names = "{col}_pd"))
+) 
+
+# Return list of samples
+return(list(tempmod, samples))
+
+}
+
+
+```
+
+
+
+```{r test-run}
+#| echo: false
+#| message: false
+
+tic()
+
+# Note that Nlist provides the N for the individual treatment groups. The total sample size is N & 4. This is a function of how fabricatr structures data.
+# Must use multiples of 16 since that's how many groups/provinces there are in the data
+Nlist <- c(1600, 2560, 4800, 12800)
+ITERS <- 200
+
+
+# First runt he function to simulate the results,
+powtest <- power_sim(N = Nlist,
+                     iters = ITERS,
+                     seed = 3353,
+                     beta_p_1 = rnorm(1, 1.0, 0.3),
+                     beta_p_2 = rnorm(1, 0.5, 0.1),
+                     beta_p_3 = rnorm(1, 0.1, 0.02),
+                     beta_p_age_2 = rnorm(1, -0.12, 0.03), 
+                     beta_p_age_3 = rnorm(1, -0.09, 0.02), 
+                     beta_p_age_4 = rnorm(1, -0.05, 0.02), 
+                     beta_p_age_5 = rnorm(1, 0.11, 0.03), 
+                     beta_p_age_6 = rnorm(1, 0.19, 0.05), 
+                     beta_p_income_1 = rnorm(1, -0.03, 0.01), 
+                     beta_p_income_2 = rnorm(1, 0.02, 0.01), 
+                     beta_p_income_3 = rnorm(1, 0.002, 0.0005), 
+                     beta_p_income_4 = rnorm(1, 0.08, 0.02),
+                     beta_p_source_1 = rnorm(1, 0, 0.5),
+                     beta_p_source_2 = rnorm(1, 0, 0.5),
+                     beta_p_source_3 = rnorm(1, 0, 0.5),
+                     beta_p_source_4 = rnorm(1, 0, 0.5),
+                     beta_p_source_5 = rnorm(1, 0, 0.5),
+                     beta_p_gender = rnorm(1, 0.8, 0.2), 
+                     beta_p_minority = rnorm(1, -0.03, 0.01), 
+                     beta_p_ed = rnorm(1, 0.03, 0.01), 
+                     beta_p_id = rnorm(1, 0.39, 0.1),
+                     beta_n_1 = rnorm(1, -0.80, 0.3), 
+                     beta_n_2 = rnorm(1, -0.5, 0.2), 
+                     beta_n_3 = rnorm(1, -0.1, 0.05), 
+                     beta_n_age_2 = rnorm(1, 0.09, 0.2), 
+                     beta_n_age_3 = rnorm(1, -0.01, 0.002), 
+                     beta_n_age_4 = rnorm(1, -0.10, 0.03), 
+                     beta_n_age_5 = rnorm(1, -0.18, 0.1), 
+                     beta_n_age_6 = rnorm(1, -0.06, 0.02), 
+                     beta_n_income_1 = rnorm(1, -0.06, 0.02), 
+                     beta_n_income_2 = rnorm(1, 0.01, 0.005), 
+                     beta_n_income_3 = rnorm(1, -0.03, 0.01), 
+                     beta_n_income_4 = rnorm(1, 0.04, 0.01),
+                     beta_n_source_1 = rnorm(1, 0, 0.5),
+                     beta_n_source_2 = rnorm(1, 0, 0.5),
+                     beta_n_source_3 = rnorm(1, 0, 0.5),
+                     beta_n_source_4 = rnorm(1, 0, 0.5),
+                     beta_n_source_5 = rnorm(1, 0, 0.5),
+                     beta_n_gender = rnorm(1, 0.02, 0.01), 
+                     beta_n_minority = rnorm(1, 0.06, 0.02), 
+                     beta_n_ed = rnorm(1, 0.16, 0.05), 
+                     beta_n_id = rnorm(1, -0.24, 0.1),
+                     beta_dk_1 = rnorm(1, -0.5, 0.25), # Making the uncertainty around DK a little larger
+                     beta_dk_2 = rnorm(1, -0.2, 0.1), 
+                     beta_dk_3 = rnorm(1, -0.1, 0.08), 
+                     beta_dk_age_2 = rnorm(1, -0.13, 0.05), 
+                     beta_dk_age_3 = rnorm(1, -0.27, 0.1), 
+                     beta_dk_age_4 = rnorm(1, -0.31, 0.1), 
+                     beta_dk_age_5 = rnorm(1, -0.46, 0.2), 
+                     beta_dk_age_6 = rnorm(1, -0.80, 0.3), 
+                     beta_dk_income_1 = rnorm(1, 0.40, 0.20), 
+                     beta_dk_income_2 = rnorm(1, 0.20, 0.12), 
+                     beta_dk_income_3 = rnorm(1, 0.10, 0.06), 
+                     beta_dk_income_4 = rnorm(1, 0.04, 0.03),
+                     beta_dk_source_1 = rnorm(1, 0, 1),
+                     beta_dk_source_2 = rnorm(1, 0, 1),
+                     beta_dk_source_3 = rnorm(1, 0, 1),
+                     beta_dk_source_4 = rnorm(1, 0, 1),
+                     beta_dk_source_5 = rnorm(1, 0, 1),
+                     beta_dk_gender = rnorm(1, 0.38, 0.2), 
+                     beta_dk_minority = rnorm(1, -0.1, 0.05), 
+                     beta_dk_ed = rnorm(1, -0.04, 0.03), 
+                     beta_dk_id = rnorm(1, -0.21, 0.1),
+                     beta_p_I = rnorm(1, -2.0, 0.1), 
+                     beta_n_I = rnorm(1, -0.5, 0.1), 
+                     beta_dk_I = rnorm(1, -1.0, 0.1),
+                     I_error = rnorm(1, 0, 0.0))
+
+
+# Next let's extract the data from the function and put it into a long format so it's easier to systematize the graphics
+# 
+powtest.df <- rbindlist(powtest[[2]], idcol = TRUE) |> 
+  dplyr::select(.id, .chain, .iteration, .draw, ends_with("_pd"), starts_with("b_")) |> 
+  mutate(SampleSize = rep(Nlist, each = 200*ITERS) ) |> 
+  melt(id.vars = c(".id", ".chain", ".iteration", ".draw", "SampleSize"),
+       measure.vars = c(5:136)) |> 
+  mutate(group = case_when(
+    grepl(".*_pd.*", variable) ~ "Probability Direction",
+    TRUE ~ "Effect"
+  )) 
+
+
+# Let's save the data so we can access it later
+readr::write_csv(powtest.df, file = here::here("Data/power-sims.csv"))
+
+toc()
+```
+
+
+Now let's check some plots
+
+```{r posterior-plots}
+
+# Next let's make a plot of all of the coefficient values and the simulated posterior distributions for those variables
+test <- powtest.df |> 
+  filter(group == "Effect") |>
+  filter(grepl(".*treatment.*", variable)) |>
+  ggplot(aes(x = value, group = .id)) +
+  stat_slab(aes(color = after_stat(x > 0)),
+            size = 0.3,
+            fill = NA, 
+            show_interval = FALSE) +
+  geom_vline(xintercept = 0, size = 1.2) +
+  facet_grid(SampleSize ~ variable) +
+  theme_flynn() +
+  scale_color_manual(values = c("#FFBD33" , "#1F1CFE"), labels = c("< 0", "> 0")) +
+  labs(x = "Coefficient",
+       y = "Density",
+       color = "Direction")
+
+ggsave(here::here("Figures/fig-sim-spaghetti.jpg"), 
+       height = 7, 
+       width = 14, 
+       scale = 1.5,
+       units = "in")
+
+# Next let's look at the probability of finding the intended effect for each variable.
+powtest.df |> 
+  filter(group == "Probability Direction") |> 
+  filter(grepl(".*treatment|t\\d.*", variable)) |>
+  group_by(SampleSize, variable) |>
+  dplyr::summarise(mean = mean(value, na.rm = TRUE)) |> 
+  ungroup() |> 
+  ggplot(aes(x = SampleSize, y = mean, color = stat(y > 0.80))) +
+    geom_line() +
+  geom_point() +
+  theme_flynn() +
+  facet_wrap(~ variable, ncol = 3) +
+  scale_color_manual(values = c("#FFBD33" , "#1F1CFE")) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(x = "Sample Size",
+       y = "Mean Pr(Direction)",
+       color = "Mean Pr(Direction) > 80%")
+  
+ggsave(here::here("Figures/fig-sim-threshold.jpg"), 
+       height = 5, 
+       width = 7,
+       scale= 1.5,
+       units = "in")
+```

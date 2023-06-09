@@ -1,0 +1,20 @@
+.Rproj.user
+.Rhistory
+.Rdata
+.httr-oauth
+.DS_Store
+*.pdf
+*.docx
+*.xlsx
+*.png
+*.do
+*.jpg
+*Contracts/
+*Presentations/
+*Figures/
+*Output/
+*Survey Design/
+*Data/
+*Writing/
+_targets
+

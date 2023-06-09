@@ -1,0 +1,3 @@
+main:
+  script: /Users/michaelflynn/Dropbox/Projects/Poland Surveys/_targets.R
+  store: /Users/michaelflynn/Dropbox/Projects/Poland Surveys/_targets

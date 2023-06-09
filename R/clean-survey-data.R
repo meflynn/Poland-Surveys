@@ -1,0 +1,251 @@
+
+
+clean_survey_f <- function(data) {
+
+  favorable.scale <- c("Very favorable", "Somewhat favorable", "Neutral", "Somewhat unfavorable", "Very unfavorable", "Don’t know/Decline to answer")
+
+  relations.scale <- c("Very peaceful", "Somewhat peaceful", "Neutral", "Somewhat hostile", "Very hostile", "Don't know/decline to answer")
+
+  readxl::read_excel(data) |>
+    slice(-c(1)) |>
+    dplyr::rename(gender = Q2,
+                  minority = Q3,
+                  education = Q4,
+                  age = Q5,
+                  province = Q6_1,
+                  district = Q6_2,
+                  income = Q9,
+                  income_source = Q59,
+                  religion = Q10,
+                  ideology = Q11_1,
+                  treatment_c_100k_full = Q61,
+                  treatment_c_5k_full = Q63,
+                  treatment_sec_econ_100k_full = Q64,
+                  treatment_sec_econ_5k_full = Q65,
+                  treatment_econ_100k_full = Q68,
+                  treatment_econ_5k_full = Q69,
+                  treatment_sec_100k_full = Q66,
+                  treatment_sec_5k_full = Q67,
+                  dem_gov = Q12,
+                  coop_peace_security = Q15,
+                  coop_econ = Q16,
+                  trustworthy_gov = Q57,
+                  relations_russia = Q18,
+                  relations_neighbors = Q70,
+                  american_gov = Q19,
+                  american_people = Q20,
+                  american_inf_amount = Q21,
+                  american_inf_qual = Q22,
+                  chinese_gov = Q23,
+                  chinese_people = Q26,
+                  chinese_inf_amount = Q27,
+                  chinese_inf_qual = Q28,
+                  german_gov = Q71,
+                  german_people = Q72,
+                  german_inf_amount = Q73,
+                  german_inf_qual = Q74,
+                  american_troops = Q29,
+                  troops_econ_nat = Q30,
+                  troops_econ_loc = Q31,
+                  troops_pub_saf = Q32,
+                  troops_sec_threats = Q33,
+                  troops_dem = Q35,
+                  troops_rights = Q36,
+                  contact_pers = Q37,
+                  contact_pers_type = Q75,
+                  contact_pers_type_text = Q75_11_TEXT,
+                  contact_nonpers = Q38,
+                  contact_nonpers_type = Q76,
+                  contact_nonpers_type_text = Q76_11_TEXT,
+                  benefit_pers = Q39,
+                  benefit_pers_rely = Q40,
+                  benefit_nonpers = Q41,
+                  benefit_nonpers_rely = Q42,
+                  troops_feel_safer = Q43,
+                  troops_host_benefit = Q49,
+                  troops_host_benefit_text = Q49_7_TEXT,
+                  troops_host_drawback = Q50,
+                  troops_host_drawback_text = Q50_6_TEXT,
+                  troops_remain_duration = Q51,
+                  troops_poland_gov = Q52,
+                  troops_protest = Q53,
+                  troops_protest_hypothetical = Q77
+                  ) |>
+    mutate(treatment_group = case_when(
+      !is.na(treatment_c_100k_full) | !is.na(treatment_c_5k_full) ~ "Control",
+      !is.na(treatment_sec_econ_100k_full) | !is.na(treatment_sec_econ_5k_full) ~ "Security and Economic",
+      !is.na(treatment_econ_100k_full) | !is.na(treatment_econ_5k_full) ~ "Economic",
+      !is.na(treatment_sec_100k_full) | !is.na(treatment_sec_5k_full) ~ "Security"
+    ),
+    troops_100k = case_when(
+      !is.na(treatment_c_100k_full) ~ treatment_c_100k_full,
+      !is.na(treatment_sec_econ_100k_full) ~ treatment_sec_econ_100k_full,
+      !is.na(treatment_econ_100k_full) ~ treatment_econ_100k_full,
+      !is.na(treatment_sec_100k_full) ~ treatment_sec_100k_full
+    ),
+    troops_5k = case_when(
+      !is.na(treatment_c_5k_full) ~ treatment_c_5k_full,
+      !is.na(treatment_sec_econ_5k_full) ~ treatment_sec_econ_5k_full,
+      !is.na(treatment_econ_5k_full) ~ treatment_econ_5k_full,
+      !is.na(treatment_sec_5k_full) ~ treatment_sec_5k_full),
+    troops_100k = case_when(
+      grepl("Strongly support", treatment_c_100k_full) ~ "Support",
+      grepl("Somewhat support", treatment_c_100k_full) ~ "Support",
+      grepl("Neither support nor oppose", treatment_c_100k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_c_100k_full) ~ "Oppose",
+      grepl("Strongly oppose", treatment_c_100k_full) ~ "Oppose",
+      grepl("Don’t know/decline to answer", treatment_c_100k_full) ~ "DKDA",
+
+      grepl("Strongly support", treatment_sec_econ_100k_full) ~ "Support",
+      grepl("Somewhat support", treatment_sec_econ_100k_full) ~ "Support",
+      grepl("Neither support nor oppose", treatment_sec_econ_100k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_sec_econ_100k_full) ~ "Oppose",
+      grepl("Strongly oppose", treatment_sec_econ_100k_full) ~ "Oppose",
+      grepl("Don’t know/decline to answer", treatment_sec_econ_100k_full) ~ "DKDA",
+
+      grepl("Strongly support", treatment_sec_100k_full) ~ "Support",
+      grepl("Somewhat support", treatment_sec_100k_full) ~ "Support",
+      grepl("Neither support nor oppose", treatment_sec_100k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_sec_100k_full) ~ "Oppose",
+      grepl("Strongly oppose", treatment_sec_100k_full) ~ "Oppose",
+      grepl("Don’t know/decline to answer", treatment_sec_100k_full) ~ "DKDA",
+
+      grepl("Strongly support", treatment_econ_100k_full) ~ "Support",
+      grepl("Somewhat support", treatment_econ_100k_full) ~ "Support",
+      grepl("Neither support nor oppose", treatment_econ_100k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_econ_100k_full) ~ "Oppose",
+      grepl("Strongly oppose", treatment_econ_100k_full) ~ "Oppose",
+      grepl("Don’t know/decline to answer", treatment_econ_100k_full) ~ "DKDA",
+    ),
+    troops_5k = case_when(
+      grepl("Strongly support", treatment_c_5k_full) ~ "Support",
+      grepl("Somewhat support", treatment_c_5k_full) ~ "Support",
+      grepl("Neither support nor oppose", treatment_c_5k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_c_5k_full) ~ "Oppose",
+      grepl("Strongly oppose", treatment_c_5k_full) ~ "Oppose",
+      grepl("Don’t know/decline to answer", treatment_c_5k_full) ~ "DKDA",
+
+      grepl("Strongly support", treatment_sec_econ_5k_full) ~ "Support",
+      grepl("Somewhat support", treatment_sec_econ_5k_full) ~ "Support",
+      grepl("Neither support nor oppose", treatment_sec_econ_5k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_sec_econ_5k_full) ~ "Oppose",
+      grepl("Strongly oppose", treatment_sec_econ_5k_full) ~ "Oppose",
+      grepl("Don’t know/decline to answer", treatment_sec_econ_5k_full) ~ "DKDA",
+
+      grepl("Strongly support", treatment_sec_5k_full) ~ "Support",
+      grepl("Somewhat support", treatment_sec_5k_full) ~ "Support",
+      grepl("Neither support nor oppose", treatment_sec_5k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_sec_5k_full) ~ "Oppose",
+      grepl("Strongly oppose", treatment_sec_5k_full) ~ "Oppose",
+      grepl("Don’t know/decline to answer", treatment_sec_5k_full) ~ "DKDA",
+
+      grepl("Strongly support", treatment_econ_5k_full) ~ "Support",
+      grepl("Somewhat support", treatment_econ_5k_full) ~ "Support",
+      grepl("Neither support nor oppose", treatment_econ_5k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_econ_5k_full) ~ "Oppose",
+      grepl("Strongly oppose", treatment_econ_5k_full) ~ "Oppose",
+      grepl("Don’t know/decline to answer", treatment_econ_5k_full) ~ "DKDA",
+    ),
+    troops_100k_full = case_when(
+      grepl("Strongly support", treatment_c_100k_full) ~ "Strongly support",
+      grepl("Somewhat support", treatment_c_100k_full) ~ "Somewhat support",
+      grepl("Neither support nor oppose", treatment_c_100k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_c_100k_full) ~ "Somewhat oppose",
+      grepl("Strongly oppose", treatment_c_100k_full) ~ "Strongly oppose",
+      grepl("Don’t know/decline to answer", treatment_c_100k_full) ~ "DKDA",
+
+      grepl("Strongly support", treatment_sec_econ_100k_full) ~ "Strongly support",
+      grepl("Somewhat support", treatment_sec_econ_100k_full) ~ "Somewhat support",
+      grepl("Neither support nor oppose", treatment_sec_econ_100k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_sec_econ_100k_full) ~ "Somewhat oppose",
+      grepl("Strongly oppose", treatment_sec_econ_100k_full) ~ "Strongly oppose",
+      grepl("Don’t know/decline to answer", treatment_sec_econ_100k_full) ~ "DKDA",
+
+      grepl("Strongly support", treatment_sec_100k_full) ~ "Strongly support",
+      grepl("Somewhat support", treatment_sec_100k_full) ~ "Somewhat support",
+      grepl("Neither support nor oppose", treatment_sec_100k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_sec_100k_full) ~ "Somewhat oppose",
+      grepl("Strongly oppose", treatment_sec_100k_full) ~ "Strongly oppose",
+      grepl("Don’t know/decline to answer", treatment_sec_100k_full) ~ "DKDA",
+
+      grepl("Strongly support", treatment_econ_100k_full) ~ "Strongly support",
+      grepl("Somewhat support", treatment_econ_100k_full) ~ "Somewhat support",
+      grepl("Neither support nor oppose", treatment_econ_100k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_econ_100k_full) ~ "Somewhat oppose",
+      grepl("Strongly oppose", treatment_econ_100k_full) ~ "Strongly oppose",
+      grepl("Don’t know/decline to answer", treatment_econ_100k_full) ~ "DKDA",
+    ),
+    troops_5k_full = case_when(
+      grepl("Strongly support", treatment_c_5k_full) ~ "Strongly support",
+      grepl("Somewhat support", treatment_c_5k_full) ~ "Somewhat support",
+      grepl("Neither support nor oppose", treatment_c_5k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_c_5k_full) ~ "Somewhat oppose",
+      grepl("Strongly oppose", treatment_c_5k_full) ~ "Strongly oppose",
+      grepl("Don’t know/decline to answer", treatment_c_5k_full) ~ "DKDA",
+
+      grepl("Strongly support", treatment_sec_econ_5k_full) ~ "Strongly support",
+      grepl("Somewhat support", treatment_sec_econ_5k_full) ~ "Somewhat support",
+      grepl("Neither support nor oppose", treatment_sec_econ_5k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_sec_econ_5k_full) ~ "Somewhat oppose",
+      grepl("Strongly oppose", treatment_sec_econ_5k_full) ~ "Strongly oppose",
+      grepl("Don’t know/decline to answer", treatment_sec_econ_5k_full) ~ "DKDA",
+
+      grepl("Strongly support", treatment_sec_5k_full) ~ "Strongly support",
+      grepl("Somewhat support", treatment_sec_5k_full) ~ "Somewhat support",
+      grepl("Neither support nor oppose", treatment_sec_5k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_sec_5k_full) ~ "Somewhat oppose",
+      grepl("Strongly oppose", treatment_sec_5k_full) ~ "Strongly oppose",
+      grepl("Don’t know/decline to answer", treatment_sec_5k_full) ~ "DKDA",
+
+      grepl("Strongly support", treatment_econ_5k_full) ~ "Strongly support",
+      grepl("Somewhat support", treatment_econ_5k_full) ~ "Somewhat support",
+      grepl("Neither support nor oppose", treatment_econ_5k_full) ~ "Neutral",
+      grepl("Somewhat oppose", treatment_econ_5k_full) ~ "Somewhat oppose",
+      grepl("Strongly oppose", treatment_econ_5k_full) ~ "Strongly oppose",
+      grepl("Don’t know/decline to answer", treatment_econ_5k_full) ~ "DKDA",
+    ),
+    ideology_z = arm::rescale(as.numeric(ideology)),
+    treatment_group = factor(treatment_group,
+                             levels = c("Control",
+                                        "Security and Economic",
+                                        "Economic",
+                                        "Security")
+                             ),
+    troops_5k_full = factor(troops_5k_full,
+                            levels = c("Strongly support", "Somewhat support", "Neutral", "Somewhat oppose", "Strongly oppose", "DKDA"),
+                            ordered = FALSE
+                            ),
+    troops_100k_full = factor(troops_100k_full,
+                              levels = c("Strongly support", "Somewhat support", "Neutral", "Somewhat oppose", "Strongly oppose", "DKDA")
+                              ),
+    contact_pers = factor(contact_pers,
+                          levels = c("No",
+                                     "Yes",
+                                     "Don’t know/Decline to answer")
+                          ),
+    gender = factor(gender, levels = c("Male",
+                                       "None of the above",
+                                       "Female")
+                    ),
+    age = factor(age),
+    income = factor(income),
+    income_source = factor(income_source),
+    minority = factor(minority, levels = c("No",
+                                           "Yes",
+                                           "Decline to answer")
+                      ),
+    education = factor(education),
+    province = factor(province),
+    american_troops = factor(american_troops,
+                             levels = favorable.scale),
+    relations_russia = factor(relations_russia,
+                              levels = relations.scale))
+}
+
+
+clean_minerva_f <- function(data) {
+
+  get(load(data)) # Not sure why get() is required, but there you go.
+
+}
+

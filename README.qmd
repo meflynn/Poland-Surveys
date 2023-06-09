@@ -9,7 +9,7 @@ format: gfm
 [Michael E Flynn](https://www.m-flynn.com/) - Kansas State Unversity
 [Carla Martinez Machain](https://www.carlamm.com/) - University at Buffalo (SUNY)
 [Grzegorz Smulek]() - Jagiellonian University
-]
+
 
 ## Abstract
 

@@ -5,6 +5,9 @@ project:
   render:
     - "**/*.qmd"
 
+    # But not this
+    - "!Code/"
+
   resources:
     - "Appendix/"
 

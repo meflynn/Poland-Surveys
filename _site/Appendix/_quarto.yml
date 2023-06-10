@@ -1,0 +1,7 @@
+project:
+  output-dir: .
+
+format:
+#  pdf: default
+  html:
+    toc: true

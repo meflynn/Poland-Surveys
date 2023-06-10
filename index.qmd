@@ -1,0 +1,7 @@
+---
+title: Poland Paper
+author:
+  - name: Michael Allen
+---
+
+# Abstract

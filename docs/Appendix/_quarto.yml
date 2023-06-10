@@ -1,5 +1,5 @@
 project:
-  output-dir: .
+  title: "Appendix"
 
 format:
 #  pdf: default

@@ -9,6 +9,10 @@ author:
     affiliation: University at Buffalo (SUNY)
   - name: Grzegorz Smulek
     affiliation: Jagiellonian University
+format:
+#  pdf: default
+  html:
+    toc: true
 bibliography: ../References/references.bib
 csl: ../References/apsa.csl
 link-citations: true
@@ -504,10 +508,10 @@ tables.out.grouped[[7]]
 
 ### Province-Level Contact Models 
 
-![Contrasts between distance for security treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contact-contrasts-security:5k-security:100k.png){#fig-con-sec height=6in width=6in}
+![Contrasts between distance for security treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](Figures/contact-contrasts-security:5k-security:100k.png){#fig-con-sec height=6in width=6in}
 
 
-![Contrasts between distance for economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contact-contrasts-economic:5k-economic:100k.png){#fig-con-econ height=6in width=6in}
+![Contrasts between distance for economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](Figures/contact-contrasts-economic:5k-economic:100k.png){#fig-con-econ height=6in width=6in}
 
 
 

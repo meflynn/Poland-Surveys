@@ -1,7 +1,8 @@
 project:
   title: "Appendix"
 
-format:
-#  pdf: default
-  html:
-    toc: true
+  render:
+    - "*.qmd"
+
+profile:
+  default: nice

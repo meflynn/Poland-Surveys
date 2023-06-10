@@ -54,6 +54,7 @@ plan(
 # Enable custom fonts
 sysfonts::font_add_google("Oswald")
 showtext::showtext_auto()
+showtext::showtext_opts(dpi = 300)
 
 
 # tar_make_future() configuration (okay to leave alone):

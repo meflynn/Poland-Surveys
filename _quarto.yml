@@ -1,6 +1,7 @@
 project:
   title: "Great Powers in my Backyard: Frontline Ally Support for the U.S. Military"
   type: website
+  output-dir: docs
 
   render:
     - "**/*.qmd"

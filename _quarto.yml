@@ -8,11 +8,10 @@ project:
 
     # But not this
     - "!Code/"
-    #- "!Appendix/"
 
   resources:
-    - "Appendix/"
-    - "Figures/"
+    - "*Appendix/"
+    - "*Figures/"
 
 execute:
   freeze: auto
@@ -30,7 +29,7 @@ website:
     search: true
     left:
       - text: "Appendix"
-        file: Appendix/poland_appendix.qmd
+        href: Appendix/poland_appendix.qmd
 
 format:
   html:

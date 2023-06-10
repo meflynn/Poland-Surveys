@@ -134,9 +134,9 @@ list(
   tar_target(model_2_contrast_map, figure_district_contrasts_map_f(model_2_district, group.effects = TRUE)),
 
   # Build appendix
-#  tar_quarto(poland_appendix,
-#             path = "Appendix/poland_appendix.qmd",
-#             quiet = FALSE),
+  tar_quarto(poland_appendix,
+             path = "Appendix/poland_appendix.qmd",
+             quiet = FALSE),
 
   tar_quarto(website, path = ".", quiet = FALSE)
 

@@ -2,6 +2,7 @@
 
 sysfonts::font_add_google("Oswald", family = "oswald")
 showtext::showtext_auto()
+showtext::showtext_opts(dpi = 300)
 
 # Views of US
 figure_us_troops_f <- function(data) {
@@ -18,7 +19,7 @@ figure_us_troops_f <- function(data) {
          y = "Percent",
          title = "Views of U.S. Military Personnel Stationed in Poland, 2023")
 
-  ggsave(here("Figures/views-us-troops.jpg"), dpi = 400, width = 5, height = 3)
+  ggsave(here("Figures/views-us-troops.png"), dpi = 400, width = 5, height = 3)
 
 }
 
@@ -38,7 +39,7 @@ figure_russia_views_f <- function(data) {
          y = "Percent",
          title = "Views of Polish-Russian Relations, 2023")
 
-  ggsave(here("Figures/views-russian-relations.jpg"), dpi = 400, width = 5, height = 3)
+  ggsave(here("Figures/views-russian-relations.png"), dpi = 400, width = 5, height = 3)
 
 }
 
@@ -91,7 +92,7 @@ figure_us_troops_compare_f <- function(data1, data2) {
          fill = "Expressed Attitude",
          title = "Polish Adults' Views of U.S. Military Personnel in Poland")
 
-  ggsave(here("Figures/views-us-troops-time.jpg"), dpi = 400, width = 7, height = 3)
+  ggsave(here("Figures/views-us-troops-time.png"), dpi = 400, width = 7, height = 3)
 
 }
 
@@ -178,7 +179,7 @@ figure_province_predprob_f <- function(modelobject, outcome.cats, group.effects)
                           )
   # Generate list of plot names
   plotnames <- furrr::future_map(.x = plotlist,
-                                 .f = ~ glue::glue("predicted-prob-{unique(.x$data$model)}.pdf"))
+                                 .f = ~ glue::glue("predicted-prob-{unique(.x$data$model)}.png"))
 
   # Save the plots while applying the plot names
   pwalk(list(plotnames, plotlist),
@@ -305,7 +306,7 @@ figure_province_dist_contrasts_f <- function(modelobject, group.effects) {
                               )
   # Write a list of the file names to be used when saving ggplot objects.
   plotnames <- map(.x = plotgroups,
-                   .f = ~ str_to_lower(gsub(" ", "", glue::glue("contrasts-{.x}.pdf"))))
+                   .f = ~ str_to_lower(gsub(" ", "", glue::glue("contrasts-{.x}.png"))))
 
   # Save ggplot objects
   pwalk(list(plotnames, plotout),
@@ -421,7 +422,7 @@ figure_province_contrasts_map_f <- function(modelobject, group.effects) {
     labs(title = "Median posterior contrasts by province and response",
          fill = "Contrast from distance")
 
-  ggsave(here::here("Figures/map-province.pdf"),
+  ggsave(here::here("Figures/map-province.png"),
          height = 5,
          width = 7,
          units = "in")
@@ -487,7 +488,7 @@ figure_district_contrasts_map_f <- function(modelobject, group.effects) {
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: {model}"))) |>
     dplyr::select(.epred, group_term, province, district, .category, .draw)  |>
-    group_by(province, district, .category) |>
+    dplyr::group_by(province, district, .category) |>
     compare_levels(variable = .epred,
                    by = group_term) |>
     filter(.category %in% c("Support", "Oppose")) |>
@@ -501,7 +502,7 @@ figure_district_contrasts_map_f <- function(modelobject, group.effects) {
       grepl("^Security: 5k", group_term) ~ "Security",
       grepl(".*Security and.*", group_term) ~ "Security and Economic"
     )) |>
-    group_by(province, district, .category, group_term) |>
+    dplyr::group_by(province, district, .category, group_term) |>
     dplyr::summarise(median = median(.epred))
 
   map <- geodata::gadm("POL", level = 2, path = here::here("Data")) |>
@@ -532,11 +533,10 @@ figure_district_contrasts_map_f <- function(modelobject, group.effects) {
     labs(title = "Median posterior contrasts by district and response",
          fill = "Contrast from distance")
 
-  ggsave(here::here("Figures/map-district.pdf"),
+  ggsave(here::here("Figures/map-district.png"),
          height = 5,
          width = 7,
-         units = "in",
-         useDingbats = TRUE)
+         units = "in")
 
 
 
@@ -664,7 +664,7 @@ figure_district_dist_contrasts_f <- function(modelobject, group.effects) {
   )
   # Write a list of the file names to be used when saving ggplot objects.
   plotnames <- map(.x = plotgroups,
-                   .f = ~ str_to_lower(gsub(" ", "", glue::glue("contrasts-district-{.x}.pdf"))))
+                   .f = ~ str_to_lower(gsub(" ", "", glue::glue("contrasts-district-{.x}.png"))))
 
   # Save ggplot objects
   pwalk(list(plotnames, plotout),
@@ -799,7 +799,7 @@ figure_province_dist_contact_contrasts_f <- function(modelobject, group.effects)
                                )
   # Write a list of the file names to be used when saving ggplot objects.
   plotnames <- map(.x = plotgroups,
-                   .f = ~ str_to_lower(gsub(" ", "", glue::glue("contact-contrasts-{.x}.pdf"))))
+                   .f = ~ str_to_lower(gsub(" ", "", glue::glue("contact-contrasts-{.x}.png"))))
 
   # Save ggplot objects
   pwalk(list(plotnames, plotout),
@@ -935,7 +935,7 @@ figure_district_dist_contact_contrasts_f <- function(modelobject, group.effects)
   )
   # Write a list of the file names to be used when saving ggplot objects.
   plotnames <- map(.x = plotgroups,
-                   .f = ~ str_to_lower(gsub(" ", "", glue::glue("contact-district-contrasts-{.x}.pdf"))))
+                   .f = ~ str_to_lower(gsub(" ", "", glue::glue("contact-district-contrasts-{.x}.png"))))
 
   # Save ggplot objects
   pwalk(list(plotnames, plotout),

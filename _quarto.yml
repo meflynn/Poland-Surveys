@@ -8,9 +8,11 @@ project:
 
     # But not this
     - "!Code/"
+    - "!Appendix/"
 
   resources:
     - "Appendix/"
+    - "Figures/"
 
 execute:
   freeze: auto

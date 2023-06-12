@@ -12,9 +12,10 @@
 *Presentations/
 *Output/
 *Survey Design/
-*Data/
 *Writing/
 _targets
 
+*gadm/
+*gadm*
 
 /.quarto/

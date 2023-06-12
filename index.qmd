@@ -1,7 +1,14 @@
 ---
 title: Poland Paper
 author:
-  - name: Michael Allen
+  - name: Michael A. Allen
+    affiliation: Boise State University
+  - name: Michael E. Flynn
+    affiliation: Kansas State University
+  - name: Carla Martinez Machain
+    affiliation: University at Buffalo (SUNY)
+  - name: Grzegorz Smulek
+    affiliation: Jagiellonian University
 format:
   html: 
     toc: true

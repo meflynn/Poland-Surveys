@@ -27,7 +27,7 @@ website:
   navbar:
     pinned: true
     search: true
-    left:
+    right:
       - text: "Appendix"
         href: Appendix/poland_appendix.qmd
 

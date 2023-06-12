@@ -1,6 +1,7 @@
 .Rproj.user
 .Rhistory
 .Rdata
+*.rds
 .httr-oauth
 .DS_Store
 *.pdf
@@ -10,12 +11,17 @@
 *.jpg
 *Contracts/
 *Presentations/
+*Figures/
 *Output/
+*Data/
 *Survey Design/
 *Writing/
+
 _targets
 
 *gadm/
 *gadm*
+
+Data/power-sims.csv
 
 /.quarto/

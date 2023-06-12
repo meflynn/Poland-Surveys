@@ -945,5 +945,6 @@ figure_district_dist_contact_contrasts_f <- function(modelobject, group.effects)
         units = "in",
         path = here::here("Figures/"))
 
-}
 
+}
+# Test

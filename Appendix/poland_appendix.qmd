@@ -492,11 +492,23 @@ This section displays several figures derived from the models above. These figur
 
 Here we present a series of figures that contrast the posterior distribution samples from the two models predicting responses to the question regarding support for the construction of a new U.S. military facility in Poland. As we discuss in the manuscript, each survey participant is presented with one of four short vignettes and then asked about their level of support for the construction of a new U.S. military facility---first at a proposed distance of 100km and then a distance of 5km.
 
-For each model we draw 400 sample values from the posterior distribution to generate a set of predicted probability values for the four possible outcomes responses/choices (i.e. Neutral, Oppose, Support, and Don't know/Decline). To generate these values we set all of the predictor variables to their modal or mean values. We allow the grouping categories to take on the values observed in the data---for example, the first set of models includes varying intercepts on the province grouping term, and so we end up with 16 groups of predicted probabilities corresponding to the 16 provinces in the data. When we calculate the contrasts we calculate the within-group (e.g. province) differences in the predicted probability values.
+For each model we draw 500 sample values from the posterior distribution to generate a set of predicted probability values for the four possible outcomes responses/choices (i.e. Neutral, Oppose, Support, and Don't know/Decline). To generate these values we set all of the predictor variables to their modal or mean values. We allow the treatment variables and grouping categories to take on the values observed in the data---for example, the first set of models includes four treatment categories and varying intercepts on the province grouping term, and so we end up with 64 (4 treatment groups $\times$ 16 provinces) groups of predicted probabilities corresponding to the 16 provinces in the data.  When we calculate the contrasts we calculate the within-group (e.g. province) differences in the predicted probability values.
 
 Once we have these predicted values for each of the two models, we then compare the posterior samples by subtracting the 100k posterior values from the 5k posterior values. Accordingly, positive values indicate that support is higher when the proposed distance is smaller, while smaller values indicate that support is stronger where the proposed distance is greater. For example, if the median posterior value for the "Support" outcome response is 0.80 for the 5km model and 0.60 for the 100k model, the resulting contrast value would be 0.20, which would tell us that the median predicted level for the support response is 20 percentage points higher for the 5k model. 
 
+We present a series of figures depicting these contrasts below. The dotplots depict the distribution of the posterior contrasts, with blue indicating observed values fall above 0 and red indicating that the observed values fall below 0. We also plot point intervals showing the median posterior contrast value, surrounded by 50% and 89% credible intervals. The dashed line represents 0. Finally, in each panel we also show the $Pr(Direction)$ statistic---the probability that the median value falls above/below 0. This takes on a value in the range of $[0.5, 1.0]$.
+
+
+
 ### Province-Level Models
+
+In this section we present a series of figures plotting the posterior contrasts for each of the treatment group categories. Higher/more positive values indicate a higher probability of the given response in the 5km model and lower/more negative probability values indicate a higher probability of a given response in the 100km model.[^Note that we omit the Don't know/Decline category because there are generally very few observations for this response group. For both the 100km and 5km questions we see only about 3% of respondents answer "Don't know/Decline to answer".] 
+
+In general we observe similar patterns across all four panels, so rather than repeat ourselves we provide a general summary of the findings. Across all four panels we see that there is a slightly higher probability of a respondent responding with "Neutral" when the proposed distance is closer as compared to farther away. The posterior sample median generally ranges from approximately 0.02 to 0.09. Similarly, the $Pr(Direction)$ statistic ranges from approximately 0.72 to 0.94, indicating fairly strong probabilities of observing a positive effect here.
+
+Though neutrality is also important, the remaining panels for Support and Opposition to the proposed U.S. military facility are perhaps more intuitively impactful.
+
+
 
 ![Contrasts between distance for control group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contrasts-control:5k-control:100k.png){#fig-distance-control}
 
@@ -504,7 +516,12 @@ Once we have these predicted values for each of the two models, we then compare 
 
 ![Contrasts between distance for economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contrasts-economic:5k-economic:100k.png){#fig-distance-econ}
 
-![Contrasts between distance for combined security and economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contrasts-securityandeconomic:5k-securityandeconomic:100k.png){#fig-distance-sececon} \### District-Level Models
+![Contrasts between distance for combined security and economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contrasts-securityandeconomic:5k-securityandeconomic:100k.png){#fig-distance-sececon} 
+
+
+
+
+## District-Level Models
 
 The following figures show the contrasts in predicted probabilities for the 5k and 100k distance questions, within treatment groups.
 
@@ -515,6 +532,9 @@ The following figures show the contrasts in predicted probabilities for the 5k a
 ![Contrasts between distance for economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contrasts-district-economic:5k-economic:100k.png){#fig-distance-district-econ}
 
 ![Contrasts between distance for combined security and economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contrasts-district-securityandeconomic:5k-securityandeconomic:100k.png){#fig-distance-district-sececon}
+
+
+
 
 ## Moderating Effect of Contact
 

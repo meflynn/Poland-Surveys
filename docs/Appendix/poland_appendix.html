@@ -140,6 +140,7 @@ div.csl-indent {
   <li><a href="#moderating-effect-of-contact" id="toc-moderating-effect-of-contact" class="nav-link" data-scroll-target="#moderating-effect-of-contact">Moderating Effect of Contact</a>
   <ul class="collapse">
   <li><a href="#province-level-contact-models" id="toc-province-level-contact-models" class="nav-link" data-scroll-target="#province-level-contact-models">Province-Level Contact Models</a></li>
+  <li><a href="#district-level-contact-models" id="toc-district-level-contact-models" class="nav-link" data-scroll-target="#district-level-contact-models">District-Level Contact Models</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#model-prior-information" id="toc-model-prior-information" class="nav-link" data-scroll-target="#model-prior-information">Model Prior Information</a></li>
@@ -5636,7 +5637,7 @@ Distance: 5k
 </div>
 <div id="fig-distance-sec" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="../Figures/security:5k-security:100k.png" class="img-fluid figure-img"></p>
+<p><img src="../Figures/contrasts-security:5k-security:100k.png" class="img-fluid figure-img"></p>
 <figcaption class="figure-caption">Figure&nbsp;2: Contrasts between distance for security treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
 </figure>
 </div>
@@ -5646,10 +5647,30 @@ Distance: 5k
 <figcaption class="figure-caption">Figure&nbsp;3: Contrasts between distance for economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
 </figure>
 </div>
-<div id="fig-distance-sececon" class="quarto-figure quarto-figure-center anchored">
+<p><img src="../Figures/contrasts-securityandeconomic:5k-securityandeconomic:100k.png" id="fig-distance-sececon" class="img-fluid" alt="Contrasts between distance for combined security and economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior."> ### District-Level Models</p>
+<p>The following figures show the contrasts in predicted probabilities for the 5k and 100k distance questions, within treatment groups.</p>
+<div id="fig-distance-district-control" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="../Figures/contrasts-securityandeconomic:5k-securityandeconomic:100k.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;4: Contrasts between distance for combined security and economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
+<p><img src="../Figures/contrasts-district-control:5k-control:100k.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;4: Contrasts between distance for control group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
+</figure>
+</div>
+<div id="fig-distance-district-sec" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="../Figures/contrasts-district-security:5k-security:100k.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;5: Contrasts between distance for security treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
+</figure>
+</div>
+<div id="fig-distance-district-econ" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="../Figures/contrasts-district-economic:5k-economic:100k.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;6: Contrasts between distance for economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
+</figure>
+</div>
+<div id="fig-distance-district-sececon" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="../Figures/contrasts-district-securityandeconomic:5k-securityandeconomic:100k.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;7: Contrasts between distance for combined security and economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
 </figure>
 </div>
 </section>
@@ -5661,25 +5682,52 @@ Distance: 5k
 <div id="fig-con-control" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="../Figures/contact-contrasts-control:5k-control:100k.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;5: Contrasts between contact groups and distance for control group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;8: Contrasts between contact groups and distance for control group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
 </figure>
 </div>
 <div id="fig-con-sec" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="../Figures/contact-contrasts-security:5k-security:100k.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;6: Contrasts between contact groups and distance for security treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;9: Contrasts between contact groups and distance for security treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
 </figure>
 </div>
 <div id="fig-con-econ" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="../Figures/contact-contrasts-economic:5k-economic:100k.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;7: Contrasts between contact groups and distance for economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;10: Contrasts between contact groups and distance for economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
 </figure>
 </div>
 <div id="fig-con-sececon" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="../Figures/contact-contrasts-securityandeconomic:5k-securityandeconomic:100k.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;8: Contrasts between contact groups and distance for combined security and economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;11: Contrasts between contact groups and distance for combined security and economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
+</figure>
+</div>
+</section>
+<section id="district-level-contact-models" class="level3">
+<h3 class="anchored" data-anchor-id="district-level-contact-models">District-Level Contact Models</h3>
+<div id="fig-con-district-control" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="../Figures/contact-district-contrasts-control:5k-control:100k.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;12: Contrasts between contact groups and distance for control group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
+</figure>
+</div>
+<div id="fig-con-district-sec" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="../Figures/contact-district-contrasts-security:5k-security:100k.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;13: Contrasts between contact groups and distance for security treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
+</figure>
+</div>
+<div id="fig-con-district-econ" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="../Figures/contact-district-contrasts-economic:5k-economic:100k.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;14: Contrasts between contact groups and distance for economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
+</figure>
+</div>
+<div id="fig-con-district-sececon" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="../Figures/contact-district-contrasts-securityandeconomic:5k-securityandeconomic:100k.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;15: Contrasts between contact groups and distance for combined security and economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.</figcaption>
 </figure>
 </div>
 </section>

@@ -120,7 +120,7 @@ out
 
 ## Model Tables
 
-This section contains the tables for the models we run in our analysis. 
+This section contains the tables for the models we run in our analysis. All of the models were run using `brms` package version `r utils::packageVersion("brms")` [@Burkner2017; @Burkner2018; Stan2023]. 
 
 1. @tbl-bivariate shows the results of a multinomial logit model where we regress the outcome variable on the treatment group variable.
 2. @tbl-base-model shows the results of our primary multinomial multilevel logit model. This model regresses the outcome response onto the treatment variable and several other predictor variables. Varying intercepts by province.
@@ -498,6 +498,8 @@ tables.out.grouped[[7]]
 ```
 
 # Results Figures
+
+This section displays several figures derived from the models above. These figures are intended to help communicate the results of our analysis in a more substantively meaningful and accessible way. In general, given our use of multilevel multinomial logit models, we display results on a probability scale rather than discussing results in terms of odds ratios. All of the figures shown here were generated using the tidybayes package [@KayTidyBayes]. 
 
 ## Effect of Distance on Expressed Attitudes
 

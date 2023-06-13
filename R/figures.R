@@ -9,7 +9,7 @@ figure_us_troops_f <- function(data) {
 
   ggplot(data = data, aes(x = american_troops, y = after_stat(count/sum(count)))) +
     geom_bar(fill = "dodgerblue1", color = "black", linewidth = 0.1) +
-    theme_flynn(base_family = "Oswald", base_size = 22) +
+    theme_flynn(base_family = "Oswald", base_size = 11) +
     scale_y_continuous(labels = scales::percent_format(),
                        breaks = seq(0, 0.5, 0.1),
                        limits = c(0, 0.5),
@@ -29,7 +29,7 @@ figure_russia_views_f <- function(data) {
 
   ggplot(data = data, aes(x = relations_russia, y = after_stat(count/sum(count)))) +
     geom_bar(fill = "dodgerblue1", color = "black", linewidth = 0.1) +
-    theme_flynn(base_family = "Oswald", base_size = 22) +
+    theme_flynn(base_family = "Oswald", base_size = 11) +
     scale_y_continuous(labels = scales::percent_format(),
                        breaks = seq(0, 0.5, 0.1),
                        limits = c(0, 0.5),
@@ -69,7 +69,7 @@ figure_us_troops_compare_f <- function(data1, data2) {
 
   ggplot(data.combined, aes(y = year, fill = american_troops, x = obs)) +
     geom_bar(stat = "identity", position = "fill", linewidth = 0.15, color = "black") +
-    theme_flynn(base_family = "Oswald", base_size = 32) +
+    theme_flynn(base_family = "Oswald", base_size = 11) +
     theme(plot.title.position = "plot",
           plot.background = element_blank(),
           axis.line = element_blank(),
@@ -92,7 +92,7 @@ figure_us_troops_compare_f <- function(data1, data2) {
          fill = "Expressed Attitude",
          title = "Polish Adults' Views of U.S. Military Personnel in Poland")
 
-  ggsave(here("Figures/views-us-troops-time.png"), dpi = 400, width = 7, height = 3)
+  ggsave(here("Figures/views-us-troops-time.png"), dpi = 300, width = 7, height = 3)
 
 }
 

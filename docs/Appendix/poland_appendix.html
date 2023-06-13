@@ -534,7 +534,7 @@ Treatment Group
 </section>
 <section id="model-tables" class="level2">
 <h2 class="anchored" data-anchor-id="model-tables">Model Tables</h2>
-<p>This section contains the tables for the models we run in our analysis.</p>
+<p>This section contains the tables for the models we run in our analysis. All of the models were run using <code>brms</code> package version 2.19.0 [<span class="citation" data-cites="Burkner2017">Bürkner (<a href="#ref-Burkner2017" role="doc-biblioref">2017</a>)</span>; <span class="citation" data-cites="Burkner2018">Bürkner (<a href="#ref-Burkner2018" role="doc-biblioref">2018</a>)</span>; Stan2023].</p>
 <ol type="1">
 <li><a href="#tbl-bivariate">Table&nbsp;2</a> shows the results of a multinomial logit model where we regress the outcome variable on the treatment group variable.</li>
 <li><a href="#tbl-base-model">Table&nbsp;3</a> shows the results of our primary multinomial multilevel logit model. This model regresses the outcome response onto the treatment variable and several other predictor variables. Varying intercepts by province.</li>
@@ -5625,6 +5625,7 @@ Distance: 5k
 </section>
 <section id="results-figures" class="level1">
 <h1>Results Figures</h1>
+<p>This section displays several figures derived from the models above. These figures are intended to help communicate the results of our analysis in a more substantively meaningful and accessible way. In general, given our use of multilevel multinomial logit models, we display results on a probability scale rather than discussing results in terms of odds ratios. All of the figures shown here were generated using the tidybayes package <span class="citation" data-cites="KayTidyBayes">(<a href="#ref-KayTidyBayes" role="doc-biblioref">Kay n.d.</a>)</span>.</p>
 <section id="effect-of-distance-on-expressed-attitudes" class="level2">
 <h2 class="anchored" data-anchor-id="effect-of-distance-on-expressed-attitudes">Effect of Distance on Expressed Attitudes</h2>
 <section id="province-level-models" class="level3">
@@ -7168,6 +7169,15 @@ Allen, Michael A., Michael E Flynn, Carla Martinez Machain Machain, and Andrew S
 </div>
 <div id="ref-Allenetal2022" class="csl-entry" role="listitem">
 Allen, Michael A., Michael E. Flynn, Carla Martinez Machain, and Andrew Stravers. 2022. <em>Beyond the <span>Wire</span>: <span>US Military Deployments</span> and <span>Host Country Public Opinion</span></em>. <span>Oxford, New York</span>: <span>Oxford University Press</span>.
+</div>
+<div id="ref-Burkner2017" class="csl-entry" role="listitem">
+Bürkner, Paul-Christian. 2017. <span>“<a href="https://doi.org/10.18637/jss.v080.i01"><span class="nocase">brms</span>: An <span>R</span> Package for <span>Bayesian</span> Multilevel Models Using <span>Stan</span></a>.”</span> <em>Journal of Statistical Software</em> 80(1): 1–28.
+</div>
+<div id="ref-Burkner2018" class="csl-entry" role="listitem">
+———. 2018. <span>“<a href="https://doi.org/10.32614/RJ-2018-017">Advanced <span>Bayesian</span> Multilevel Modeling with the <span>R</span> Package <span class="nocase">brms</span></a>.”</span> <em>The R Journal</em> 10(1): 395–411.
+</div>
+<div id="ref-KayTidyBayes" class="csl-entry" role="listitem">
+Kay, Matthew. <em><span class="nocase">tidybayes</span>: Tidy Data and Geoms for <span>Bayesian</span> Models</em>. <a href="http://mjskay.github.io/tidybayes/">http://mjskay.github.io/tidybayes/</a>.
 </div>
 </div>
 

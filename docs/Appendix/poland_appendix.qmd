@@ -82,18 +82,13 @@ tar_load(model_7_contact_int)
 tar_load(model_8_contact_int_districts)
 ```
 
-
 # Overview
 
-These appendices contain supplementary information for the paper Supplementary Appendix for Outside Threats and Public Perceptions of the U.S. Military in Poland. Herein we provide a number of additional resources related to the project. First, we provide basic information about the survey and data collection procedures. Second, we provide some basic descriptive statistis and information to help readers better understand the data and the distribution of key variables and responses. Third, to save space in the primary manuscript we include all of the model tables for the project here. Fourth, we also include a number of additional figures to help communicate the results of our analysis. Finally, we include a number of diagnostic plots generated from the models we run. In general, we focus on a few specific types of plots and, where necessary, on key variables. For example, traceplots for multilevel multinomial logit models can quickly become both numerous and unwiedly in the confines of a PDF or printed document. 
-
-
-
+These appendices contain supplementary information for the paper Supplementary Appendix for Outside Threats and Public Perceptions of the U.S. Military in Poland. Herein we provide a number of additional resources related to the project. First, we provide basic information about the survey and data collection procedures. Second, we provide some basic descriptive statistis and information to help readers better understand the data and the distribution of key variables and responses. Third, to save space in the primary manuscript we include all of the model tables for the project here. Fourth, we also include a number of additional figures to help communicate the results of our analysis. Finally, we include a number of diagnostic plots generated from the models we run. In general, we focus on a few specific types of plots and, where necessary, on key variables. For example, traceplots for multilevel multinomial logit models can quickly become both numerous and unwiedly in the confines of a PDF or printed document.
 
 # Tables
 
-This section contains a number of tables that provide descriptive insights into the data, and information on the models we run for our analysis. 
-
+This section contains a number of tables that provide descriptive insights into the data, and information on the models we run for our analysis.
 
 ## Balance Tables
 
@@ -105,7 +100,7 @@ Last, the final column shows the total number of responses for each category/row
 
 We do not conduct a formal balance test, but this table helps us to ensure that the randomization procedure worked as intended. In general, we see most response-treatment groups falling at around the 25% mark, which is what we should expect if individuals were randomly assigned to one of the four treatment categories. We see more substantial deviations where the total number of observations for a given response is low. For example, with only 40 total respondents indicating that their primary income source was in the agricultural sector, small differences in the number of people who fall into each treatment group have a larger effect on the percentage value.
 
-The final row shows the mean value and standard deviation (in parentheses) for the ideology score, which is the only ordered integer response variable we included in the survey. Since we mean-center this measure, each category should have a mean of approximately 0 and a standard deviation of 0.5. 
+The final row shows the mean value and standard deviation (in parentheses) for the ideology score, which is the only ordered integer response variable we included in the survey. Since we mean-center this measure, each category should have a mean of approximately 0 and a standard deviation of 0.5.
 
 ```{r balance-table-chunk}
 #| tbl-cap: Balance table for predictors used in primary models.
@@ -120,17 +115,16 @@ out
 
 ## Model Tables
 
-This section contains the tables for the models we run in our analysis. All of the models were run using `brms` package version `r utils::packageVersion("brms")` [@Burkner2017; @Burkner2018; Stan2023]. 
+This section contains the tables for the models we run in our analysis. All of the models were run using `brms` package version `r utils::packageVersion("brms")` [@Burkner2017; @Burkner2018; Stan2023].
 
-1. @tbl-bivariate shows the results of a multinomial logit model where we regress the outcome variable on the treatment group variable.
-2. @tbl-base-model shows the results of our primary multinomial multilevel logit model. This model regresses the outcome response onto the treatment variable and several other predictor variables. Varying intercepts by province.
-3. @tbl-district-model shows the results of our a multinomial multilevel logit model that regresses the outcome response onto the treatment variable and several other predictor variables. Varying intercepts by province and district.
-4. @tbl-full-response shows the results of a model where we use the full six category response variable rather than the four category response used in our primary models.
-5. @tbl-varying shows the results of a model that replicates our primary multilevel model, but allows the effects of the treatment variable to vary across province.
-6. @tbl-treat-group changes the basic model specification slightly and uses the treatment group as the grouping term for the varying intercepts. We also include a variable indicating whether the respondent reported having personal contact with a U.S. service member, and we allow this effect to vary across treatment groups.
-7. @tbl-contact-int builds upon our primary model in @tbl-base-model by adding a variable indicating whether the respondent reported having personal contact with a U.S. service member, and an interaction term between the contact variable and the treatment. We also include varying intercepts on province.
-8. @tbl-contact-int-district replicates the models from @tbl-contact-int but includes varying intercepts on both province and district.
-
+1.  @tbl-bivariate shows the results of a multinomial logit model where we regress the outcome variable on the treatment group variable.
+2.  @tbl-base-model shows the results of our primary multinomial multilevel logit model. This model regresses the outcome response onto the treatment variable and several other predictor variables. Varying intercepts by province.
+3.  @tbl-district-model shows the results of our a multinomial multilevel logit model that regresses the outcome response onto the treatment variable and several other predictor variables. Varying intercepts by province and district.
+4.  @tbl-full-response shows the results of a model where we use the full six category response variable rather than the four category response used in our primary models.
+5.  @tbl-varying shows the results of a model that replicates our primary multilevel model, but allows the effects of the treatment variable to vary across province.
+6.  @tbl-treat-group changes the basic model specification slightly and uses the treatment group as the grouping term for the varying intercepts. We also include a variable indicating whether the respondent reported having personal contact with a U.S. service member, and we allow this effect to vary across treatment groups.
+7.  @tbl-contact-int builds upon our primary model in @tbl-base-model by adding a variable indicating whether the respondent reported having personal contact with a U.S. service member, and an interaction term between the contact variable and the treatment. We also include varying intercepts on province.
+8.  @tbl-contact-int-district replicates the models from @tbl-contact-int but includes varying intercepts on both province and district.
 
 ```{r model-tables-setup}
 #| include: false
@@ -367,8 +361,6 @@ group.list <- list(coef.groups.1,
 
 ```
 
-
-
 ```{r table-output}
 #| include: false
 
@@ -431,14 +423,12 @@ tables.out.grouped <- future_map2(
 
 ```
 
-
 ```{r bivariate-model-table}
 #| tbl-cap: Multinomial logistic regressions with treatment effects and outcome response. Models only include the treatment received by the respondent and their response.
 #| label: tbl-bivariate
 tables.out.grouped[[1]]
 
 ```
-
 
 ```{r base-model-table}
 #| tbl-cap: Multilevel multinomial logistic regressions with respondents grouped by province. These model the response as a function of the treatment variables and several predictor variables, with varying intercepts by province.
@@ -448,7 +438,6 @@ tables.out.grouped[[2]]
 
 ```
 
-
 ```{r district-model-table}
 #| tbl-cap: Multilevel multinomial logistic regressions with respondents grouped by province and district. These model the response as a function of the treatment variables and several predictor variables, with varying intercepts by province and by district.
 #| label: tbl-district-model
@@ -457,7 +446,6 @@ tables.out.grouped[[3]]
 
 ```
 
-
 ```{r full-response-model-table}
 #| tbl-cap: Multilevel multinomial logistic regressions with respondents grouped by province. These model the response as a function of the treatment variables and several predictor variables, with varying intercepts by province. Here we use the original six response categories rather than the four aggregated categories from the main model.
 #| label: tbl-full-response
@@ -465,7 +453,6 @@ tables.out.grouped[[3]]
 tables.out.grouped[[4]]
 
 ```
-
 
 ```{r varying-effects-model-table}
 #| tbl-cap: Multilevel multinomial logistic regressions with respondents grouped by province. These model the response as a function of the treatment variables and several predictor variables, with varying intercepts by province. We also allow the effect of the treatment variables to vary by province.
@@ -499,9 +486,15 @@ tables.out.grouped[[7]]
 
 # Results Figures
 
-This section displays several figures derived from the models above. These figures are intended to help communicate the results of our analysis in a more substantively meaningful and accessible way. In general, given our use of multilevel multinomial logit models, we display results on a probability scale rather than discussing results in terms of odds ratios. All of the figures shown here were generated using the tidybayes package [@KayTidyBayes]. 
+This section displays several figures derived from the models above. These figures are intended to help communicate the results of our analysis in a more substantively meaningful and accessible way. In general, given our use of multilevel multinomial logit models, we display results on a probability scale rather than discussing results in terms of odds ratios. All of the figures shown here were generated using the tidybayes package [@KayTidyBayes].
 
 ## Effect of Distance on Expressed Attitudes
+
+Here we present a series of figures that contrast the posterior distribution samples from the two models predicting responses to the question regarding support for the construction of a new U.S. military facility in Poland. As we discuss in the manuscript, each survey participant is presented with one of four short vignettes and then asked about their level of support for the construction of a new U.S. military facility---first at a proposed distance of 100km and then a distance of 5km.
+
+For each model we draw 400 sample values from the posterior distribution to generate a set of predicted probability values for the four possible outcomes responses/choices (i.e. Neutral, Oppose, Support, and Don't know/Decline). To generate these values we set all of the predictor variables to their modal or mean values. We allow the grouping categories to take on the values observed in the data---for example, the first set of models includes varying intercepts on the province grouping term, and so we end up with 16 groups of predicted probabilities corresponding to the 16 provinces in the data. When we calculate the contrasts we calculate the within-group (e.g. province) differences in the predicted probability values.
+
+Once we have these predicted values for each of the two models, we then compare the posterior samples by subtracting the 100k posterior values from the 5k posterior values. Accordingly, positive values indicate that support is higher when the proposed distance is smaller, while smaller values indicate that support is stronger where the proposed distance is greater. For example, if the median posterior value for the "Support" outcome response is 0.80 for the 5km model and 0.60 for the 100k model, the resulting contrast value would be 0.20, which would tell us that the median predicted level for the support response is 20 percentage points higher for the 5k model. 
 
 ### Province-Level Models
 
@@ -511,8 +504,7 @@ This section displays several figures derived from the models above. These figur
 
 ![Contrasts between distance for economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contrasts-economic:5k-economic:100k.png){#fig-distance-econ}
 
-![Contrasts between distance for combined security and economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contrasts-securityandeconomic:5k-securityandeconomic:100k.png){#fig-distance-sececon}
-### District-Level Models
+![Contrasts between distance for combined security and economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contrasts-securityandeconomic:5k-securityandeconomic:100k.png){#fig-distance-sececon} \### District-Level Models
 
 The following figures show the contrasts in predicted probabilities for the 5k and 100k distance questions, within treatment groups.
 
@@ -524,12 +516,9 @@ The following figures show the contrasts in predicted probabilities for the 5k a
 
 ![Contrasts between distance for combined security and economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contrasts-district-securityandeconomic:5k-securityandeconomic:100k.png){#fig-distance-district-sececon}
 
-
-
-
 ## Moderating Effect of Contact
 
-### Province-Level Contact Models 
+### Province-Level Contact Models
 
 ![Contrasts between contact groups and distance for control group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contact-contrasts-control:5k-control:100k.png){#fig-con-control}
 
@@ -569,7 +558,6 @@ kableExtra::kbl(priors_clean,
 
 The following section contains model diagnostic plots for all of the models included in our analysis, as well as supplementary analyses.
 
-
 ## Traceplots
 
 ```{r bivar-traceplots-100k}
@@ -594,9 +582,6 @@ bayesplot::mcmc_trace(model_0_bivariate[[2]],
   labs(title = "Bivariate Models, 5k")
 ```
 
-
-
-
 ```{r province-traceplots-100k}
 #| message: false
 #| warning: false
@@ -618,8 +603,6 @@ bayesplot::mcmc_trace(model_1_province[[2]],
                       regex_pars = c(".*treatment.*")) +
   labs(title = "Province Models, 5k")
 ```
-
-
 
 ```{r district-traceplots-100k}
 #| message: false
@@ -643,9 +626,6 @@ bayesplot::mcmc_trace(model_2_district[[2]],
   labs(title = "District Models, 5k")
 ```
 
-
-
-
 ```{r full-traceplots-100k}
 #| message: false
 #| warning: false
@@ -667,9 +647,6 @@ bayesplot::mcmc_trace(model_3_full_response[[2]],
                       regex_pars = c(".*treatment.*")) +
   labs(title = "Full Response Models, 5k")
 ```
-
-
-
 
 ```{r ve-traceplots-100k}
 #| message: false
@@ -693,9 +670,6 @@ bayesplot::mcmc_trace(model_4_varying_effects[[2]],
   labs(title = "Varying Effects Models, 5k")
 ```
 
-
-
-
 ```{r ordered-traceplots-100k}
 #| message: false
 #| warning: false
@@ -717,9 +691,6 @@ bayesplot::mcmc_trace(model_5_ordered_response[[2]],
                       regex_pars = c(".*treatment.*")) +
   labs(title = "Ordered Models, 5k")
 ```
-
-
-
 
 ```{r contact-traceplots-100k}
 #| message: false
@@ -743,10 +714,6 @@ bayesplot::mcmc_trace(model_6_contact[[2]],
   labs(title = "Contact Models, 5k")
 ```
 
-
-
-
-
 ```{r contact-interaction-traceplots-100k}
 #| message: false
 #| warning: false
@@ -768,9 +735,6 @@ bayesplot::mcmc_trace(model_7_contact_int[[2]],
                       regex_pars = c(".*treatment.*")) +
   labs(title = "Contact and Treatment Interaction Models, 5k")
 ```
-
-
-
 
 ```{r contact-interaction-districts-traceplots-100k}
 #| message: false
@@ -794,10 +758,6 @@ bayesplot::mcmc_trace(model_8_contact_int_districts[[2]],
   labs(title = "Contact and Treatment Interaction District Models, 5k")
 ```
 
-
-
-
-
 ## Rhat Statistics
 
 ```{r bivar-rhat-100k}
@@ -817,9 +777,6 @@ patchwork::wrap_plots(temp[[1]],
                       temp[[2]])
 ```
 
-
-
-
 ```{r province-rhat}
 #| message: false
 #| warning: false
@@ -836,10 +793,6 @@ temp <- map(.x = seq_along(model_1_province),
 patchwork::wrap_plots(temp[[1]],
                       temp[[2]])
 ```
-
-
-
-
 
 ```{r district-rhat}
 #| message: false
@@ -858,10 +811,6 @@ patchwork::wrap_plots(temp[[1]],
                       temp[[2]])
 ```
 
-
-
-
-
 ```{r full-response-rhat}
 #| message: false
 #| warning: false
@@ -878,9 +827,6 @@ temp <- map(.x = seq_along(model_3_full_response),
 patchwork::wrap_plots(temp[[1]],
                       temp[[2]])
 ```
-
-
-
 
 ```{r varying-effects-rhat}
 #| message: false
@@ -899,9 +845,6 @@ patchwork::wrap_plots(temp[[1]],
                       temp[[2]])
 ```
 
-
-
-
 ```{r ordered-rhat}
 #| message: false
 #| warning: false
@@ -918,9 +861,6 @@ temp <- map(.x = seq_along(model_5_ordered_response),
 patchwork::wrap_plots(temp[[1]],
                       temp[[2]])
 ```
-
-
-
 
 ```{r contact-rhat}
 #| message: false
@@ -939,9 +879,6 @@ patchwork::wrap_plots(temp[[1]],
                       temp[[2]])
 ```
 
-
-
-
 ```{r contact-interaction-rhat}
 #| message: false
 #| warning: false
@@ -958,9 +895,6 @@ temp <- map(.x = seq_along(model_7_contact_int),
 patchwork::wrap_plots(temp[[1]],
                       temp[[2]])
 ```
-
-
-
 
 ```{r contact-interaction-district-rhat}
 #| message: false
@@ -979,10 +913,7 @@ patchwork::wrap_plots(temp[[1]],
                       temp[[2]])
 ```
 
-
-
 \newpage
-
 
 # References
 

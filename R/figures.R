@@ -19,7 +19,7 @@ figure_us_troops_f <- function(data) {
          y = "Percent",
          title = "Views of U.S. Military Personnel Stationed in Poland, 2023")
 
-  ggsave(here("Figures/views-us-troops.png"), dpi = 400, width = 5, height = 3)
+  ggsave(here("Figures/views-us-troops.png"), dpi = 300, width = 5, height = 3)
 
 }
 
@@ -39,7 +39,7 @@ figure_russia_views_f <- function(data) {
          y = "Percent",
          title = "Views of Polish-Russian Relations, 2023")
 
-  ggsave(here("Figures/views-russian-relations.png"), dpi = 400, width = 5, height = 3)
+  ggsave(here("Figures/views-russian-relations.png"), dpi = 300, width = 5, height = 3)
 
 }
 
@@ -76,9 +76,7 @@ figure_us_troops_compare_f <- function(data1, data2) {
           axis.ticks.y.left = element_blank(),
           axis.text.y.left = element_text(face = "bold"),
           panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          legend.text = element_text(margin = margin(l = -0.25, 0, 0, 0, unit = "cm")),
-          legend.title = element_text(margin = margin(b = -0.2, unit = "cm"))) +
+          panel.grid.minor = element_blank()) +
     guides(fill = guide_legend(reverse = TRUE)) +
     scale_x_continuous(labels = scales::percent_format(), expand = c(0, 0)) +
     scale_y_discrete(expand = c(0, 0)) +
@@ -144,19 +142,27 @@ figure_province_predprob_f <- function(modelobject, outcome.cats, group.effects)
                  model = str_extract(model, "\\d+k"))
         ) |> # plot the results of the model objects
         furrr::future_map(.f = ~ ggplot(data = .x |> filter(.category %in% outcome.cats), # Choose which outcome categories to include in plot
-                                        aes(x = .epred,
-                                            fill = treatment_group,
-                                            color = treatment_group)) +
+                                        aes(x = .epred)) +
                             facet_wrap(~ .category,
                                        ncol = 1) +
-                            ggdist::stat_dotsinterval(scale = 0.9,
+                            ggdist::stat_dotsinterval(aes(fill = treatment_group),
+                                                      scale = 0.9,
                                                       overflow = "compress",
                                                       quantiles = 100,
                                                       .width = c(0.50, 0.89),
                                                       position = position_dodge(width = 1.2),
                                                       slab_linewidth = 0,
-                                                      point_size = 3
-                                                      ) +
+                                                      point_size = 0,
+                                                      interval_color = NA,
+                                                      point_color = NA) +
+                            ggdist::stat_pointinterval(aes(group = treatment_group),
+                                                       scale = 0.9,
+                                                      .width = c(0.50, 0.89),
+                                                      position = position_dodge(width = 1.2),
+                                                      slab_linewidth = 0,
+                                                      point_size = 2,
+                                                      interval_color = "black",
+                                                      point_color = "black") +
                             theme_flynn(base_family = "oswald") +
                             theme(axis.text.y.left = element_blank(),
                                   axis.ticks.y.left = element_blank()) +
@@ -165,17 +171,11 @@ figure_province_predprob_f <- function(modelobject, outcome.cats, group.effects)
                                                         option = "turbo",
                                                         begin = 0.0,
                                                         end = 1.0) +
-                            viridis::scale_color_viridis(discrete = TRUE,
-                                                         option = "turbo",
-                                                         begin = 0.0,
-                                                         end = 1.0) +
-                            guides(color = guide_legend(reverse = TRUE),
-                                   fill = guide_legend(reverse = TRUE)) +
+                            guides(fill = guide_legend(reverse = TRUE)) +
                             labs(x = "Predicted Probability",
                                  y = "",
-                                 color = "Treatment Group",
                                  fill = "Treatment Group",
-                                 title = glue::glue("Predicted probability of supporting or opposing U.S. base at {.x$model}"))
+                                 title = glue::glue("{.x$model}"))
                           )
   # Generate list of plot names
   plotnames <- furrr::future_map(.x = plotlist,
@@ -188,6 +188,25 @@ figure_province_predprob_f <- function(modelobject, outcome.cats, group.effects)
         width = 8,
         units = "in",
         path = here::here("Figures/"))
+
+  # Generate combined plot.
+  patchwork::wrap_plots(plotlist[[1]], plotlist[[2]]) +
+    patchwork::plot_layout(guides = "collect",
+                           ncol = 2) +
+    patchwork::plot_annotation(
+      title = "Predicted Probability of Responses to Proposed U.S. Military Facility at...",
+      theme = theme(text = element_text(family = "oswald"),
+                    plot.title = element_text(family = "oswald",
+                                              face = "bold",
+                                              size = 16))
+      )
+
+
+  ggsave(here::here("Figures/predicted-prob-combined.png"),
+         width = 8,
+         height = 6,
+         units = "in",
+         dpi = 300)
 
 }
 

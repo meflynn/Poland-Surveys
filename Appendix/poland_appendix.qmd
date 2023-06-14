@@ -65,7 +65,7 @@ tar_config_set(store = here::here('_targets'),
 
 # Need to decalre target source because I call the table function for the balance
 # table below.
-tar_source()
+targets::tar_source()
 
 # Load various model objects
 tar_load(survey_clean)
@@ -106,8 +106,10 @@ The final row shows the mean value and standard deviation (in parentheses) for t
 #| tbl-cap: Balance table for predictors used in primary models.
 #| label: tbl-balance-table
 # Need to reference the source file/folder for the function I'm calling
-source("../R/tables.R")
-#tar_source()
+#source("../R/tables.R")
+tar_source()
+tar_load(survey_clean)
+
 out <- table_balance_f(survey_clean)
 
 out

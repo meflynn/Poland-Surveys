@@ -114,7 +114,8 @@ list(
   tar_target(model_1_figures,
              figure_province_predprob_f(modelobject = model_1_province,
                                         outcome.cats = c("Oppose",
-                                                         "Support"
+                                                         "Support",
+                                                         "Neutral"
                                                          ),
                                         group.effects = TRUE)),
   tar_target(model_1_contrasts,

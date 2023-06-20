@@ -86,6 +86,7 @@ list(
   tar_target(figure_us_troops, figure_us_troops_f(survey_clean)),
   tar_target(figure_us_troops_time, figure_us_troops_compare_f(survey_clean, minerva_clean)),
   tar_target(figure_russia_relations, figure_russia_views_f(survey_clean)),
+  tar_target(figure_contact_type, figure_contact_type_f(survey_clean)),
 
   #Balance Table
   tar_target(table_balance, table_balance_f(survey_clean)),
@@ -127,6 +128,9 @@ list(
   tar_target(model_7_contrasts,
              figure_province_dist_contact_contrasts_f(model_7_contact_int,
                                                       group.effects = TRUE)),
+  tar_target(model_7_contact_treatment_effect,
+             figure_province_dist_contact_treatment_effect_f(model_7_contact_int,
+                                                             group.effects = TRUE)),
   tar_target(model_8_contrasts,
              figure_district_dist_contact_contrasts_f(model_8_contact_int_districts,
                                                       group.effects = TRUE)),

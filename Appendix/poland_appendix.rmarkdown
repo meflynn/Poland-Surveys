@@ -82,6 +82,7 @@ tar_load(model_7_contact_int)
 tar_load(model_8_contact_int_districts)
 ```
 
+
 # Overview
 
 These appendices contain supplementary information for the paper Supplementary Appendix for Outside Threats and Public Perceptions of the U.S. Military in Poland. Herein we provide a number of additional resources related to the project. First, we provide basic information about the survey and data collection procedures. Second, we provide some basic descriptive statistics and information to help readers better understand the data and the distribution of key variables and responses. Third, to save space in the primary manuscript we include all of the model tables for the project here. Fourth, we also include a number of additional figures to help communicate the results of our analysis. Finally, we include a number of diagnostic plots generated from the models we run. In general, we focus on a few specific types of plots and, where necessary, on key variables. For example, traceplots for multilevel multinomial logit models can quickly become both numerous and unwieldy in the confines of a PDF or printed document.
@@ -168,6 +169,7 @@ We do not conduct a formal balance test, but this table helps us to ensure that 
 
 The final row shows the mean value and standard deviation (in parentheses) for the ideology score, which is the only ordered integer response variable we included in the survey. Since we mean-center this measure, each category should have a mean of approximately 0 and a standard deviation of 0.5.
 
+
 ```{r balance-table-chunk}
 #| tbl-cap: Balance table for predictors used in primary models.
 #| label: tbl-balance-table
@@ -181,6 +183,7 @@ out <- table_balance_f(survey_clean)
 out
 ```
 
+
 ## Model Tables
 
 This section contains the tables for the models we run in our analysis. All of the models were run using `brms` package version `r utils::packageVersion("brms")` [@Burkner2017; @Burkner2018; Stan2023].
@@ -193,6 +196,7 @@ This section contains the tables for the models we run in our analysis. All of t
 6.  @tbl-treat-group changes the basic model specification slightly and uses the treatment group as the grouping term for the varying intercepts. We also include a variable indicating whether the respondent reported having personal contact with a U.S. service member, and we allow this effect to vary across treatment groups.
 7.  @tbl-contact-int builds upon our primary model in @tbl-base-model by adding a variable indicating whether the respondent reported having personal contact with a U.S. service member, and an interaction term between the contact variable and the treatment. We also include varying intercepts on province.
 8.  @tbl-contact-int-district replicates the models from @tbl-contact-int but includes varying intercepts on both province and district.
+
 
 ```{r model-tables-setup}
 #| include: false
@@ -552,6 +556,7 @@ tables.out.grouped[[7]]
 
 ```
 
+
 # Results Figures
 
 This section displays several figures derived from the models above. These figures are intended to help communicate the results of our analysis in a more substantively meaningful and accessible way. In general, given our use of multilevel multinomial logit models, we display results on a probability scale rather than discussing results in terms of odds ratios. All of the figures shown here were generated using the `{tidybayes}` package [@KayTidyBayes].
@@ -652,6 +657,7 @@ In general, we find some evidence that those who report personal contact with U.
 
 The table below shows a table containing the priors used in our primary models. These prior values are based on the results of @Allen2020 and @Allenetal2022.
 
+
 ```{r prior-table}
 
 kableExtra::kbl(priors_clean,
@@ -664,11 +670,13 @@ kableExtra::kbl(priors_clean,
 
 ```
 
+
 # Model Diagnostics
 
 The following section contains model diagnostic plots for all of the models included in our analysis, as well as supplementary analyses.
 
 ## Traceplots
+
 
 ```{r bivar-traceplots-100k}
 #| message: false
@@ -868,7 +876,9 @@ bayesplot::mcmc_trace(model_8_contact_int_districts[[2]],
   labs(title = "Contact and Treatment Interaction District Models, 5k")
 ```
 
+
 ## Rhat Statistics
+
 
 ```{r bivar-rhat-100k}
 #| message: false
@@ -1023,9 +1033,11 @@ patchwork::wrap_plots(temp[[1]],
                       temp[[2]])
 ```
 
+
 \newpage
 
 # References
 
 ::: {#refs}
 :::
+

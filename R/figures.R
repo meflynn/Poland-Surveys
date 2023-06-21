@@ -812,7 +812,7 @@ figure_district_dist_contrasts_f <- function(modelobject, group.effects) {
                                  viridis::scale_fill_viridis(discrete = TRUE,
                                                              option = "turbo",
                                                              direction = -1,
-                                                             begin = 0.1,
+                                                             begin = 0.101,
                                                              end = 1.0) +
                                  theme_flynn(base_family = "oswald") +
                                  theme(axis.text.y.left = element_blank(),

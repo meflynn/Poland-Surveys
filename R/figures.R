@@ -1027,14 +1027,11 @@ figure_province_dist_contact_contrasts_f <- function(modelobject, group.effects)
                                ) |>
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: Contact {contact_pers} at {model}"))) |>
-    dplyr::select(.epred, group_term, contact_pers, province, .category, .draw)  |>
-    group_by(contact_pers, province, .category) |>
+    dplyr::select(.epred, group_term, province, .category, .draw)  |>
+    group_by(province, .category) |>
     compare_levels(variable = .epred,
                    by = group_term) |>
-    compare_levels(variable = .epred,
-                   by = contact_pers) |>
     filter(.category != "DKDA") |>
-    filter(contact_pers == "Yes - No") |>
     mutate(.category = factor(.category,
                               levels = c("Neutral", "Support", "Oppose")))
 
@@ -1087,7 +1084,7 @@ figure_province_dist_contact_contrasts_f <- function(modelobject, group.effects)
                                       y = "",
                                       fill = "Outcome Category",
                                       color = "Outcome Category",
-                                      title = glue::glue("Contrasts between Contact = Yes and Contact = No for {plotgroups[[.x]]}"),
+                                      title = glue::glue("Contrasts for {plotgroups[[.x]]}"),
                                       subtitle = "Varying intercepts on province"
                                       )
                                )

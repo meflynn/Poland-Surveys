@@ -1,5 +1,17 @@
 // generated with brms 2.19.0
 functions {
+  /* compute correlated group-level effects
+   * Args:
+   *   z: matrix of unscaled group-level effects
+   *   SD: vector of standard deviation parameters
+   *   L: cholesky factor correlation matrix
+   * Returns:
+   *   matrix of scaled group-level effects
+   */
+  matrix scale_r_cor(matrix z, vector SD, matrix L) {
+    // r is stored in another dimension order than z
+    return transpose(diag_pre_multiply(SD, L) * z);
+  }
   /* integer sequence of values
    * Args:
    *   start: starting integer
@@ -28,18 +40,15 @@ functions {
                             vector bQ_muDKDA, data matrix XQ_muDKDA,
                             data array[] int J_1,
                             data vector Z_1_muStronglysupport_1,
+                            data vector Z_1_muSomewhatsupport_2,
+                            data vector Z_1_muSomewhatoppose_3,
+                            data vector Z_1_muStronglyoppose_4,
+                            data vector Z_1_muDKDA_5,
                             vector r_1_muStronglysupport_1,
-                            data array[] int J_2,
-                            data vector Z_2_muSomewhatsupport_1,
-                            vector r_2_muSomewhatsupport_1,
-                            data array[] int J_3,
-                            data vector Z_3_muSomewhatoppose_1,
-                            vector r_3_muSomewhatoppose_1,
-                            data array[] int J_4,
-                            data vector Z_4_muStronglyoppose_1,
-                            vector r_4_muStronglyoppose_1,
-                            data array[] int J_5, data vector Z_5_muDKDA_1,
-                            vector r_5_muDKDA_1) {
+                            vector r_1_muSomewhatsupport_2,
+                            vector r_1_muSomewhatoppose_3,
+                            vector r_1_muStronglyoppose_4,
+                            vector r_1_muDKDA_5) {
     real ptarget = 0;
     int N = end - start + 1;
     // initialize linear predictor term
@@ -72,25 +81,25 @@ functions {
     for (n in 1 : N) {
       // add more terms to the linear predictor
       int nn = n + start - 1;
-      muSomewhatsupport[n] += r_2_muSomewhatsupport_1[J_2[nn]]
-                              * Z_2_muSomewhatsupport_1[nn];
+      muSomewhatsupport[n] += r_1_muSomewhatsupport_2[J_1[nn]]
+                              * Z_1_muSomewhatsupport_2[nn];
     }
     for (n in 1 : N) {
       // add more terms to the linear predictor
       int nn = n + start - 1;
-      muSomewhatoppose[n] += r_3_muSomewhatoppose_1[J_3[nn]]
-                             * Z_3_muSomewhatoppose_1[nn];
+      muSomewhatoppose[n] += r_1_muSomewhatoppose_3[J_1[nn]]
+                             * Z_1_muSomewhatoppose_3[nn];
     }
     for (n in 1 : N) {
       // add more terms to the linear predictor
       int nn = n + start - 1;
-      muStronglyoppose[n] += r_4_muStronglyoppose_1[J_4[nn]]
-                             * Z_4_muStronglyoppose_1[nn];
+      muStronglyoppose[n] += r_1_muStronglyoppose_4[J_1[nn]]
+                             * Z_1_muStronglyoppose_4[nn];
     }
     for (n in 1 : N) {
       // add more terms to the linear predictor
       int nn = n + start - 1;
-      muDKDA[n] += r_5_muDKDA_1[J_5[nn]] * Z_5_muDKDA_1[nn];
+      muDKDA[n] += r_1_muDKDA_5[J_1[nn]] * Z_1_muDKDA_5[nn];
     }
     for (n in 1 : N) {
       mu[n] = transpose([muStronglysupport[n], muSomewhatsupport[n], 0,
@@ -124,30 +133,11 @@ data {
   array[N] int<lower=1> J_1; // grouping indicator per observation
   // group-level predictor values
   vector[N] Z_1_muStronglysupport_1;
-  // data for group-level effects of ID 2
-  int<lower=1> N_2; // number of grouping levels
-  int<lower=1> M_2; // number of coefficients per level
-  array[N] int<lower=1> J_2; // grouping indicator per observation
-  // group-level predictor values
-  vector[N] Z_2_muSomewhatsupport_1;
-  // data for group-level effects of ID 3
-  int<lower=1> N_3; // number of grouping levels
-  int<lower=1> M_3; // number of coefficients per level
-  array[N] int<lower=1> J_3; // grouping indicator per observation
-  // group-level predictor values
-  vector[N] Z_3_muSomewhatoppose_1;
-  // data for group-level effects of ID 4
-  int<lower=1> N_4; // number of grouping levels
-  int<lower=1> M_4; // number of coefficients per level
-  array[N] int<lower=1> J_4; // grouping indicator per observation
-  // group-level predictor values
-  vector[N] Z_4_muStronglyoppose_1;
-  // data for group-level effects of ID 5
-  int<lower=1> N_5; // number of grouping levels
-  int<lower=1> M_5; // number of coefficients per level
-  array[N] int<lower=1> J_5; // grouping indicator per observation
-  // group-level predictor values
-  vector[N] Z_5_muDKDA_1;
+  vector[N] Z_1_muSomewhatsupport_2;
+  vector[N] Z_1_muSomewhatoppose_3;
+  vector[N] Z_1_muStronglyoppose_4;
+  vector[N] Z_1_muDKDA_5;
+  int<lower=1> NC_1; // number of group-level correlations
   int prior_only; // should the likelihood be ignored?
 }
 transformed data {
@@ -200,28 +190,25 @@ parameters {
   vector[K_muStronglyoppose] bQ_muStronglyoppose; // regression coefficients at QR scale
   vector[K_muDKDA] bQ_muDKDA; // regression coefficients at QR scale
   vector<lower=0>[M_1] sd_1; // group-level standard deviations
-  array[M_1] vector[N_1] z_1; // standardized group-level effects
-  vector<lower=0>[M_2] sd_2; // group-level standard deviations
-  array[M_2] vector[N_2] z_2; // standardized group-level effects
-  vector<lower=0>[M_3] sd_3; // group-level standard deviations
-  array[M_3] vector[N_3] z_3; // standardized group-level effects
-  vector<lower=0>[M_4] sd_4; // group-level standard deviations
-  array[M_4] vector[N_4] z_4; // standardized group-level effects
-  vector<lower=0>[M_5] sd_5; // group-level standard deviations
-  array[M_5] vector[N_5] z_5; // standardized group-level effects
+  matrix[M_1, N_1] z_1; // standardized group-level effects
+  cholesky_factor_corr[M_1] L_1; // cholesky factor of correlation matrix
 }
 transformed parameters {
-  vector[N_1] r_1_muStronglysupport_1; // actual group-level effects
-  vector[N_2] r_2_muSomewhatsupport_1; // actual group-level effects
-  vector[N_3] r_3_muSomewhatoppose_1; // actual group-level effects
-  vector[N_4] r_4_muStronglyoppose_1; // actual group-level effects
-  vector[N_5] r_5_muDKDA_1; // actual group-level effects
+  matrix[N_1, M_1] r_1; // actual group-level effects
+  // using vectors speeds up indexing in loops
+  vector[N_1] r_1_muStronglysupport_1;
+  vector[N_1] r_1_muSomewhatsupport_2;
+  vector[N_1] r_1_muSomewhatoppose_3;
+  vector[N_1] r_1_muStronglyoppose_4;
+  vector[N_1] r_1_muDKDA_5;
   real lprior = 0; // prior contributions to the log posterior
-  r_1_muStronglysupport_1 = sd_1[1] * z_1[1];
-  r_2_muSomewhatsupport_1 = sd_2[1] * z_2[1];
-  r_3_muSomewhatoppose_1 = sd_3[1] * z_3[1];
-  r_4_muStronglyoppose_1 = sd_4[1] * z_4[1];
-  r_5_muDKDA_1 = sd_5[1] * z_5[1];
+  // compute actual group-level effects
+  r_1 = scale_r_cor(z_1, sd_1, L_1);
+  r_1_muStronglysupport_1 = r_1[ : , 1];
+  r_1_muSomewhatsupport_2 = r_1[ : , 2];
+  r_1_muSomewhatoppose_3 = r_1[ : , 3];
+  r_1_muStronglyoppose_4 = r_1[ : , 4];
+  r_1_muDKDA_5 = r_1[ : , 5];
   lprior += normal_lpdf(bQ_muStronglysupport[1] | 0, 2);
   lprior += normal_lpdf(bQ_muStronglysupport[2] | 0, 2);
   lprior += normal_lpdf(bQ_muStronglysupport[3] | 0, 2);
@@ -368,10 +355,11 @@ transformed parameters {
   lprior += normal_lpdf(bQ_muDKDA[28] | 0, 2);
   lprior += normal_lpdf(bQ_muDKDA[29] | 0, 2);
   lprior += normal_lpdf(sd_1[1] | 0, 2) - 1 * normal_lccdf(0 | 0, 2);
-  lprior += normal_lpdf(sd_2[1] | 0, 2) - 1 * normal_lccdf(0 | 0, 2);
-  lprior += normal_lpdf(sd_3[1] | 0, 2) - 1 * normal_lccdf(0 | 0, 2);
-  lprior += normal_lpdf(sd_4[1] | 0, 2) - 1 * normal_lccdf(0 | 0, 2);
-  lprior += normal_lpdf(sd_5[1] | 0, 2) - 1 * normal_lccdf(0 | 0, 2);
+  lprior += normal_lpdf(sd_1[2] | 0, 2) - 1 * normal_lccdf(0 | 0, 2);
+  lprior += normal_lpdf(sd_1[3] | 0, 2) - 1 * normal_lccdf(0 | 0, 2);
+  lprior += normal_lpdf(sd_1[4] | 0, 2) - 1 * normal_lccdf(0 | 0, 2);
+  lprior += normal_lpdf(sd_1[5] | 0, 2) - 1 * normal_lccdf(0 | 0, 2);
+  lprior += lkj_corr_cholesky_lpdf(L_1 | 1);
 }
 model {
   // likelihood including constants
@@ -382,19 +370,15 @@ model {
                          bQ_muSomewhatoppose, XQ_muSomewhatoppose,
                          bQ_muStronglyoppose, XQ_muStronglyoppose, bQ_muDKDA,
                          XQ_muDKDA, J_1, Z_1_muStronglysupport_1,
-                         r_1_muStronglysupport_1, J_2,
-                         Z_2_muSomewhatsupport_1, r_2_muSomewhatsupport_1,
-                         J_3, Z_3_muSomewhatoppose_1, r_3_muSomewhatoppose_1,
-                         J_4, Z_4_muStronglyoppose_1, r_4_muStronglyoppose_1,
-                         J_5, Z_5_muDKDA_1, r_5_muDKDA_1);
+                         Z_1_muSomewhatsupport_2, Z_1_muSomewhatoppose_3,
+                         Z_1_muStronglyoppose_4, Z_1_muDKDA_5,
+                         r_1_muStronglysupport_1, r_1_muSomewhatsupport_2,
+                         r_1_muSomewhatoppose_3, r_1_muStronglyoppose_4,
+                         r_1_muDKDA_5);
   }
   // priors including constants
   target += lprior;
-  target += std_normal_lpdf(z_1[1]);
-  target += std_normal_lpdf(z_2[1]);
-  target += std_normal_lpdf(z_3[1]);
-  target += std_normal_lpdf(z_4[1]);
-  target += std_normal_lpdf(z_5[1]);
+  target += std_normal_lpdf(to_vector(z_1));
 }
 generated quantities {
   // obtain the actual coefficients
@@ -411,5 +395,14 @@ generated quantities {
                                                   * bQ_muStronglyoppose;
   // obtain the actual coefficients
   vector[K_muDKDA] b_muDKDA = XR_muDKDA_inv * bQ_muDKDA;
+  // compute group-level correlations
+  corr_matrix[M_1] Cor_1 = multiply_lower_tri_self_transpose(L_1);
+  vector<lower=-1, upper=1>[NC_1] cor_1;
+  // extract upper diagonal of correlation matrix
+  for (k in 1 : M_1) {
+    for (j in 1 : (k - 1)) {
+      cor_1[choose(k - 1, 2) + j] = Cor_1[j, k];
+    }
+  }
 }
 

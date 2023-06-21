@@ -136,7 +136,7 @@ SEED <- seed
 CORES <- 4
 CHAINS <- 4
 
-PRIORS <- prior(normal(0, 0.5), class = b)
+PRIORS <- prior(normal(0, 2.0), class = b)
 
 # Create data frame with nested list to store output of models
 sims <- data.frame(N = rep(N, iters),
@@ -363,7 +363,7 @@ powtest <- power_sim(N = Nlist,
                      beta_p_I = rnorm(1, -2.0, 0.1), 
                      beta_n_I = rnorm(1, -0.5, 0.1), 
                      beta_dk_I = rnorm(1, -1.0, 0.1),
-                     I_error = rnorm(1, 0, 0.0))
+                     I_error = rnorm(1, 0, 0.1))
 
 
 # Next let's extract the data from the function and put it into a long format so it's easier to systematize the graphics

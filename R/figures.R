@@ -296,7 +296,8 @@ figure_province_dist_contrasts_f <- function(modelobject, group.effects) {
                               income = names(which.max(table(modelobject[[1]]$data$income))),
                               income_source = names(which.max(table(modelobject[[1]]$data$income_source))),
                               education = names(which.max(table(modelobject[[1]]$data$education))),
-                              ideology_z = mean(modelobject[[1]]$data$ideology_z))
+                              ideology_z = mean(modelobject[[1]]$data$ideology_z)
+                              )
 
   # Begin list of plots.
   # First start with model objects and then create data frames containing expected
@@ -371,10 +372,10 @@ figure_province_dist_contrasts_f <- function(modelobject, group.effects) {
                                 theme_flynn(base_family = "oswald") +
                                 theme(axis.text.y.left = element_blank(),
                                       axis.ticks.y.left = element_blank(),
-                                      plot.margin = margin(t = 0.1,
-                                                           b = 0.1,
-                                                           l = 0.1,
-                                                           r = 0.2,
+                                      plot.margin = margin(t = 0.10,
+                                                           b = 0.10,
+                                                           l = 0.10,
+                                                           r = 0.22,
                                                            unit = "cm"
                                                            )
                                       ) +
@@ -400,9 +401,6 @@ figure_province_dist_contrasts_f <- function(modelobject, group.effects) {
         units = "in",
         path = here::here("Figures/"))
 
-
-
-
   # Generate combined plot for select panels to show substantive treatment effects.
   # Only includes contrasts between treatment levels within distance question.
 
@@ -418,6 +416,7 @@ figure_province_dist_contrasts_f <- function(modelobject, group.effects) {
       plot$labels$subtitle <- stringr::str_replace(as.character(plot$labels$subtitle), "Varying intercepts on province", "")
 
       plot
+
   })
 
   patchwork::wrap_plots(plots) +

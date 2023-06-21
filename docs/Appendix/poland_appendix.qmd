@@ -84,7 +84,73 @@ tar_load(model_8_contact_int_districts)
 
 # Overview
 
-These appendices contain supplementary information for the paper Supplementary Appendix for Outside Threats and Public Perceptions of the U.S. Military in Poland. Herein we provide a number of additional resources related to the project. First, we provide basic information about the survey and data collection procedures. Second, we provide some basic descriptive statistis and information to help readers better understand the data and the distribution of key variables and responses. Third, to save space in the primary manuscript we include all of the model tables for the project here. Fourth, we also include a number of additional figures to help communicate the results of our analysis. Finally, we include a number of diagnostic plots generated from the models we run. In general, we focus on a few specific types of plots and, where necessary, on key variables. For example, traceplots for multilevel multinomial logit models can quickly become both numerous and unwiedly in the confines of a PDF or printed document.
+These appendices contain supplementary information for the paper Supplementary Appendix for Outside Threats and Public Perceptions of the U.S. Military in Poland. Herein we provide a number of additional resources related to the project. First, we provide basic information about the survey and data collection procedures. Second, we provide some basic descriptive statistics and information to help readers better understand the data and the distribution of key variables and responses. Third, to save space in the primary manuscript we include all of the model tables for the project here. Fourth, we also include a number of additional figures to help communicate the results of our analysis. Finally, we include a number of diagnostic plots generated from the models we run. In general, we focus on a few specific types of plots and, where necessary, on key variables. For example, traceplots for multilevel multinomial logit models can quickly become both numerous and unwieldy in the confines of a PDF or printed document.
+
+
+# Power Analysis
+
+Before analyzing the data we developed a Bayesian power analysis in an effort to evaluate the probability of correcting identifying true effects versus false positives. We follow @kruschkeDoingBayesianData2015 in carrying out this test and implement it in the following steps. 
+
+First, we wrote a function that would simulate data that look like the expected sample data. In addition to our survey plan, we used data from @Allenetal2020 and @Allenetal2022 to establish a baseline expectation for what the distribution of the variables should look like. 
+
+Second, we generate a set of expected coefficient/effect values for all of the variables in our model. Note that for each effect we allow the expected effect to vary, establishing a mean and standard deviation for the expected effect rather than fixing its value. Where our variables overlap with those included in @Allenetal2022, we use their posterior estimates to generate our expected effect sizes and distributions. Where our variables differ (for example, we include variables that capture respondents' income sources/occupational fields) we set the expected effects to 0 with a standard deviation of 0.5 to reflect our uncertainty in the parameter values. This does not apply to the treatment variables, which we address more fully below. We also include varying intercepts for the 16 Polish provinces to match our plan to model the actual data using varying intercepts.
+
+Third, following this procedure we generate 200 hypothetical data sets for a given sample size value.  
+
+Fourth, we chose a set of hypothetical sample size values to evaluate the model's ability to recover the expected parameter space. Specifically, we choose sample sizes of 1600, 2560, 4800, and 12800. Our actual data are close to 2,500, but we chose the other values to assess the model's performance across a wider range of hypothetical circumstances. 
+
+In total, we end up with $I \times K$ datasets and models, where $I$ is the number of iterations per sample size (i.e. 200) and $K$ is the number of different sample sizes (i.e. 4. In our case, we generate 800 sample data sets and run the model a total of 800 times. As in our primary manuscript, we model the hypothetical data using a Bayesian multilevel multinomial logistic regression using `{brms}` [@Burker2017; @Burkner2018]. 
+
+For the treatment values, we do not have strong priors as to what constitute accurate effects. Accordingly, we generate parameters with a couple of considerations. First, given that we are estimating a multinomial logistic regression, the plausible parameter space is fairly constrained. Extreme values (e.g. $|\beta| > 4$) are unlikely (except in cases where observations appear to be rare). Second, we look at the effect sizes on similar variables in @Allenetal2020 and @Allenetal2022. Third, we generally expect that the different treatment prompts will increase support for a U.S. presence and decrease opposition. However, we also expect they will yield different magnitudes, with the combined treatment mentioning security concerns *and* economic benefits yielding the largest of the three. We also view this as an opportunity to evaluate our ability to recover effects of different sizes, and so we set the parameter distributions to values that we think fall within the plausible range, but also run the range of "small" to "large" effects. 
+
+Given these considerations, the distributions we use in the power analysis are as follows.
+
+$$
+\begin{align}
+
+\text{Support}
+\begin{cases}
+Treatment_{SecurtyandEconomic} &\sim N(1.0, 0.3) \\
+Treatment_{Security} &\sim N(0.5, 0.1) \\
+Treatment_{Economic} &\sim N(0.1, 0.02) \\
+\end{cases} 
+\\
+\\
+\text{Oppose}
+\begin{cases}
+Treatment_{SecurtyandEconomic} &\sim N(-0.8, 0.3) \\
+Treatment_{Security} &\sim N(-0.5, 0.2) \\
+Treatment_{Economic} &\sim N(-0.1, 0.05) \\
+\end{cases}
+\\
+\\
+\text{Don't know/Decline to answer}
+\begin{cases}
+Treatment_{SecurtyandEconomic} &\sim N(-0.5, 0.25) \\
+Treatment_{Security} &\sim N(-0.2, 0.1) \\
+Treatment_{Economic} &\sim N(-0.1, 0.08) \\
+\end{cases}
+
+
+\end{align}
+$$
+
+The following figures show the results of our power analysis. The first figure shows the average $Pr(Direction)$ score for the treatment variables. The $Pr(Direction)$ statistic tells us the proportion of the posterior distribution that falls above/below 0 on the same side as the median value. If we had a median coefficient estimate where the median $\beta = 0.5$ and $Pr(Direction) = 0.97$, this tells us that there is a 97% chance of a positive effect. An average $Pr(Direction)$ of 0.90, for example, would therefore tell us that, on average, there is a 90% chance of a positive effect.  
+
+It is common to see power analyses presented in terms of what proportion of models' 95% confidence intervals exclude 0 and demonstrate an effect. We adopt this alternative approach because it allows us to more directly incorporate information about the posterior distribution into our assessment than the conventional frequentist approach.
+
+![](../Figures/fig-sim-threshold.jpg){#fig-threshold-plot}
+
+The second figure shows spaghetti plots whereby the posterior distributions for the treatment effects from the 200 different models are overlaid on top of one another. While this figure does not provide us with a specific statistic as in the case of the previous figure, it does give us a visual check on the distribution of the recovered coefficients and the accompanying uncertainty. 
+
+![](../Figures/fig-sim-spaghetti.jpg){#fig-spaghetti-plot}
+
+In general, the models do a good job of recovering the parameter values we set in our simulation. The average $Pr(Direction)$ score is typically above 80%. This indicates that for the largest effect sizes we have a fairly strong chance of recovering the parameter of interest. However, for the smaller effect sizes we are looking at only a 50-60% chance of recovering the parameter of interest. Accordingly, we should be cautious in treating small effects as definitive given our relatively small sample size.
+
+However, our expectations regarding the effects of the treatments prove to be quite wrong. As we show in the tables below, the treatment effects do not generally correlate strongly with the outcome response.
+
+
+
 
 # Tables
 
@@ -488,7 +554,7 @@ tables.out.grouped[[7]]
 
 # Results Figures
 
-This section displays several figures derived from the models above. These figures are intended to help communicate the results of our analysis in a more substantively meaningful and accessible way. In general, given our use of multilevel multinomial logit models, we display results on a probability scale rather than discussing results in terms of odds ratios. All of the figures shown here were generated using the tidybayes package [@KayTidyBayes].
+This section displays several figures derived from the models above. These figures are intended to help communicate the results of our analysis in a more substantively meaningful and accessible way. In general, given our use of multilevel multinomial logit models, we display results on a probability scale rather than discussing results in terms of odds ratios. All of the figures shown here were generated using the `{tidybayes}` package [@KayTidyBayes].
 
 ## Effect of Distance on Expressed Attitudes
 
@@ -573,9 +639,12 @@ In general, we find some evidence that those who report personal contact with U.
 
 ![Contrasts between contact groups and distance for combined security and economic treatment group. 50% and 89% credible intervals shown around point estimate. Dots represent distribution quantiles from posterior sample draws. Dot coloring indicates portion of posterior samples that fall above or below 0. Pr(Direction) value indicates the probability or proportion of the posterior samples that fall above or below 0 on the same side as the median of the posterior.](../Figures/contact-district-contrasts-securityandeconomic:5k-securityandeconomic:100k.png){#fig-con-district-sececon}
 
+
+
+
 # Model Prior Information
 
-The table below shows a data.frame containing the priors used in our primary models. These prior values are based on the results of @Allen2020 and @Allenetal2022
+The table below shows a table containing the priors used in our primary models. These prior values are based on the results of @Allen2020 and @Allenetal2022.
 
 ```{r prior-table}
 

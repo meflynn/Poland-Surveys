@@ -255,7 +255,7 @@ figure_province_predprob_f <- function(modelobject, outcome.cats, group.effects)
       theme = theme(text = element_text(family = "oswald"),
                     plot.title = element_text(family = "oswald",
                                               face = "bold",
-                                              size = 16))
+                                              size = 15))
       )
 
 
@@ -1159,15 +1159,12 @@ figure_district_dist_contact_contrasts_f <- function(modelobject, group.effects)
                                          model = str_extract(model, "\\d+k"))
   ) |>
     data.table::rbindlist(idcol = TRUE) |>
-    mutate(group_term = factor(glue::glue("{treatment_group}: {model}"))) |>
-    dplyr::select(.epred, group_term, contact_pers, province, district, .category, .draw)  |>
-    group_by(contact_pers, province, district, .category) |>
+    mutate(group_term = factor(glue::glue("{treatment_group}: Contact {contact_pers} at {model}"))) |>
+    dplyr::select(.epred, group_term, province, district, .category, .draw)  |>
+    group_by(province, district, .category) |>
     compare_levels(variable = .epred,
                    by = group_term) |>
-    compare_levels(variable = .epred,
-                   by = contact_pers) |>
     filter(.category != "DKDA") |>
-    filter(contact_pers == "Yes - No") |>
     mutate(.category = factor(.category,
                               levels = c("Neutral", "Support", "Oppose")))
 
@@ -1220,7 +1217,7 @@ figure_district_dist_contact_contrasts_f <- function(modelobject, group.effects)
                                       y = "",
                                       fill = "Outcome Category",
                                       color = "Outcome Category",
-                                      title = glue::glue("Contrasts between Contact = Yes and Contact = No for {plotgroups[[.x]]}"),
+                                      title = glue::glue("Contrasts for {plotgroups[[.x]]}"),
                                       subtitle = "Varying intercepts on province and district"
                                  )
   )

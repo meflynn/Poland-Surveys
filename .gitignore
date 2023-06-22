@@ -8,7 +8,6 @@
 *.docx
 *.xlsx
 *.do
-*.jpg
 *Contracts/
 *Presentations/
 *Output/

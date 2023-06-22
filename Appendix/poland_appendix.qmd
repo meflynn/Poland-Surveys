@@ -614,10 +614,7 @@ As in the previous section, we again find results largely consistent with a "NIM
 
 In this section we present a series of figures that build on those in the previous section. Above we explore the contrasts in posterior distributions between the 100km and 5km models. Here we follow a similar procedure, presenting the contrasts in distance effects between those who report. having contact with U.S. military personnel and those who do not report and interpersonal contact with U.S. military personnel. This is essentially a differences-in-differences or a (contrast in contrasts) approach. The @eq-contact-equation shows how we calculate these contrasts. $\mathbb{E}[Y_{k}]$ represents the expected outcome (i.e. predicted probability) at distance $k$ (i.e. 100km or 5km). The superscript takes on a value of $0$ for no reported contact and $1$ for reported contact. The result is a comparison of how large an effect distance has on the expected outcome between the two contact categories.
 
-$$ 
-
-\text{Contact Effect} = (\mathbb{E}[Y^0_{5k}] - \mathbb{E}[Y^0_{100k}]) - (\mathbb{E}[Y^1_{5k}] - \mathbb{E}[Y^1_{100k}]) 
-$$ {#eq-contact-equation}
+$$\text{Contact Effect} = (\mathbb{E}[Y^0_{5k}] - \mathbb{E}[Y^0_{100k}]) - (\mathbb{E}[Y^1_{5k}] - \mathbb{E}[Y^1_{100k}])$$ {#eq-contact-equation}
 
 In general, we find some evidence that those who report personal contact with U.S. military personnel see a kind of "offset" effect, where contact appears to negate the effect of distance to some extent. 
 

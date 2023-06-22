@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.3.361">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -77,7 +77,8 @@ div.csl-indent {
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
@@ -224,7 +225,7 @@ div.csl-indent {
 <p>Second, we generate a set of expected coefficient/effect values for all of the variables in our model. Note that for each effect we allow the expected effect to vary, establishing a mean and standard deviation for the expected effect rather than fixing its value. Where our variables overlap with those included in <span class="citation" data-cites="Allenetal2022">Machain et al. (<a href="#ref-Allenetal2022" role="doc-biblioref">2022</a>)</span>, we use their posterior estimates to generate our expected effect sizes and distributions. Where our variables differ (for example, we include variables that capture respondents’ income sources/occupational fields) we set the expected effects to 0 with a standard deviation of 0.5 to reflect our uncertainty in the parameter values. This does not apply to the treatment variables, which we address more fully below. We also include varying intercepts for the 16 Polish provinces to match our plan to model the actual data using varying intercepts.</p>
 <p>Third, following this procedure we generate 200 hypothetical data sets for a given sample size value.</p>
 <p>Fourth, we chose a set of hypothetical sample size values to evaluate the model’s ability to recover the expected parameter space. Specifically, we choose sample sizes of 1600, 2560, 4800, and 12800. Our actual data are close to 2,500, but we chose the other values to assess the model’s performance across a wider range of hypothetical circumstances.</p>
-<p>In total, we end up with <span class="math inline">\(I \times K\)</span> datasets and models, where <span class="math inline">\(I\)</span> is the number of iterations per sample size (i.e.&nbsp;200) and <span class="math inline">\(K\)</span> is the number of different sample sizes (i.e.&nbsp;4. In our case, we generate 800 sample data sets and run the model a total of 800 times. As in our primary manuscript, we model the hypothetical data using a Bayesian multilevel multinomial logistic regression using <code>{brms}</code> <span class="citation" data-cites="Burker2017 Burkner2018">(<a href="#ref-Burker2017" role="doc-biblioref"><strong>Burker2017?</strong></a>; <a href="#ref-Burkner2018" role="doc-biblioref"><strong>Burkner2018?</strong></a>)</span>.</p>
+<p>In total, we end up with <span class="math inline">\(I \times K\)</span> datasets and models, where <span class="math inline">\(I\)</span> is the number of iterations per sample size (i.e.&nbsp;200) and <span class="math inline">\(K\)</span> is the number of different sample sizes (i.e.&nbsp;4. In our case, we generate 800 sample data sets and run the model a total of 800 times. As in our primary manuscript, we model the hypothetical data using a Bayesian multilevel multinomial logistic regression using <code>{brms}</code> <span class="citation" data-cites="Burker2017 Burkner2018">(<a href="#ref-Burkner2018" role="doc-biblioref">Bürkner 2018</a>; <a href="#ref-Burker2017" role="doc-biblioref"><strong>Burker2017?</strong></a>)</span>.</p>
 <p>For the treatment values, we do not have strong priors as to what constitute accurate effects. Accordingly, we generate parameters with a couple of considerations. First, given that we are estimating a multinomial logistic regression, the plausible parameter space is fairly constrained. Extreme values (e.g.&nbsp;<span class="math inline">\(|\beta| &gt; 4\)</span>) are unlikely (except in cases where observations appear to be rare). Second, we look at the effect sizes on similar variables in <span class="citation" data-cites="Allenetal2020">Allen et al. (<a href="#ref-Allenetal2020" role="doc-biblioref">2020a</a>)</span> and <span class="citation" data-cites="Allenetal2022">Machain et al. (<a href="#ref-Allenetal2022" role="doc-biblioref">2022</a>)</span>. Third, we generally expect that the different treatment prompts will increase support for a U.S. presence and decrease opposition. However, we also expect they will yield different magnitudes, with the combined treatment mentioning security concerns <em>and</em> economic benefits yielding the largest of the three. We also view this as an opportunity to evaluate our ability to recover effects of different sizes, and so we set the parameter distributions to values that we think fall within the plausible range, but also run the range of “small” to “large” effects.</p>
 <p>Given these considerations, the distributions we use in the power analysis are as follows.</p>
 <p>$$ <span class="math display">\[\begin{align}
@@ -582,7 +583,7 @@ Treatment Group
 </section>
 <section id="model-tables" class="level2">
 <h2 class="anchored" data-anchor-id="model-tables">Model Tables</h2>
-<p>This section contains the tables for the models we run in our analysis. All of the models were run using <code>brms</code> package version 2.19.0 [<span class="citation" data-cites="Burkner2017">(<a href="#ref-Burkner2017" role="doc-biblioref"><strong>Burkner2017?</strong></a>)</span>; <span class="citation" data-cites="Burkner2018">(<a href="#ref-Burkner2018" role="doc-biblioref"><strong>Burkner2018?</strong></a>)</span>; Stan2023].</p>
+<p>This section contains the tables for the models we run in our analysis. All of the models were run using <code>brms</code> package version 2.19.0 [<span class="citation" data-cites="Burkner2017">Bürkner (<a href="#ref-Burkner2017" role="doc-biblioref">2017</a>)</span>; <span class="citation" data-cites="Burkner2018">Bürkner (<a href="#ref-Burkner2018" role="doc-biblioref">2018</a>)</span>; Stan2023].</p>
 <ol type="1">
 <li><a href="#tbl-bivariate">Table&nbsp;2</a> shows the results of a multinomial logit model where we regress the outcome variable on the treatment group variable.</li>
 <li><a href="#tbl-base-model">Table&nbsp;3</a> shows the results of our primary multinomial multilevel logit model. This model regresses the outcome response onto the treatment variable and several other predictor variables. Varying intercepts by province.</li>
@@ -5673,7 +5674,7 @@ Distance: 5k
 </section>
 <section id="results-figures" class="level1">
 <h1>Results Figures</h1>
-<p>This section displays several figures derived from the models above. These figures are intended to help communicate the results of our analysis in a more substantively meaningful and accessible way. In general, given our use of multilevel multinomial logit models, we display results on a probability scale rather than discussing results in terms of odds ratios. All of the figures shown here were generated using the <code>{tidybayes}</code> package <span class="citation" data-cites="KayTidyBayes">(<a href="#ref-KayTidyBayes" role="doc-biblioref"><strong>KayTidyBayes?</strong></a>)</span>.</p>
+<p>This section displays several figures derived from the models above. These figures are intended to help communicate the results of our analysis in a more substantively meaningful and accessible way. In general, given our use of multilevel multinomial logit models, we display results on a probability scale rather than discussing results in terms of odds ratios. All of the figures shown here were generated using the <code>{tidybayes}</code> package <span class="citation" data-cites="KayTidyBayes">(<a href="#ref-KayTidyBayes" role="doc-biblioref">Kay n.d.</a>)</span>.</p>
 <section id="effect-of-distance-on-expressed-attitudes" class="level2">
 <h2 class="anchored" data-anchor-id="effect-of-distance-on-expressed-attitudes">Effect of Distance on Expressed Attitudes</h2>
 <p>Here we present a series of figures that contrast the posterior distribution samples from the two models predicting responses to the question regarding support for the construction of a new U.S. military facility in Poland. As we discuss in the manuscript, each survey participant is presented with one of four short vignettes and then asked about their level of support for the construction of a new U.S. military facility—first at a proposed distance of 100km and then a distance of 5km.</p>
@@ -5744,9 +5745,8 @@ Distance: 5k
 </section>
 <section id="moderating-effect-of-contact" class="level2">
 <h2 class="anchored" data-anchor-id="moderating-effect-of-contact">Moderating Effect of Contact</h2>
-<p>In this section we present a series of figures that build on those in the previous section. Above we explore the contrasts in posterior distributions between the 100km and 5km models. Here we follow a similar procedure, presenting the contrasts in distance effects between those who report. having contact with U.S. military personnel and those who do not report and interpersonal contact with U.S. military personnel. This is essentially a differences-in-differences or a (contrast in contrasts) approach. The <strong>?@eq-contact-equation</strong> shows how we calculate these contrasts. <span class="math inline">\(\mathbb{E}[Y_{k}]\)</span> represents the expected outcome (i.e.&nbsp;predicted probability) at distance <span class="math inline">\(k\)</span> (i.e.&nbsp;100km or 5km). The superscript takes on a value of <span class="math inline">\(0\)</span> for no reported contact and <span class="math inline">\(1\)</span> for reported contact. The result is a comparison of how large an effect distance has on the expected outcome between the two contact categories.</p>
-<p>$$</p>
-<p> = ([Y^0_{5k}] - [Y^0_{100k}]) - ([Y^1_{5k}] - [Y^1_{100k}]) $$ {#eq-contact-equation}</p>
+<p>In this section we present a series of figures that build on those in the previous section. Above we explore the contrasts in posterior distributions between the 100km and 5km models. Here we follow a similar procedure, presenting the contrasts in distance effects between those who report. having contact with U.S. military personnel and those who do not report and interpersonal contact with U.S. military personnel. This is essentially a differences-in-differences or a (contrast in contrasts) approach. The <a href="#eq-contact-equation">Equation&nbsp;1</a> shows how we calculate these contrasts. <span class="math inline">\(\mathbb{E}[Y_{k}]\)</span> represents the expected outcome (i.e.&nbsp;predicted probability) at distance <span class="math inline">\(k\)</span> (i.e.&nbsp;100km or 5km). The superscript takes on a value of <span class="math inline">\(0\)</span> for no reported contact and <span class="math inline">\(1\)</span> for reported contact. The result is a comparison of how large an effect distance has on the expected outcome between the two contact categories.</p>
+<p><span id="eq-contact-equation"><span class="math display">\[\text{Contact Effect} = (\mathbb{E}[Y^0_{5k}] - \mathbb{E}[Y^0_{100k}]) - (\mathbb{E}[Y^1_{5k}] - \mathbb{E}[Y^1_{100k}]) \tag{1}\]</span></span></p>
 <p>In general, we find some evidence that those who report personal contact with U.S. military personnel see a kind of “offset” effect, where contact appears to negate the effect of distance to some extent.</p>
 <section id="province-level-contact-models" class="level3">
 <h3 class="anchored" data-anchor-id="province-level-contact-models">Province-Level Contact Models</h3>
@@ -7239,6 +7239,15 @@ Allen, Michael A, Michael E Flynn, Carla Martinez Machain, and Andrew Stravers. 
 </div>
 <div id="ref-Allenetal2020" class="csl-entry" role="listitem">
 ———. 2020a. <span>“Outside the Wire: <span>US</span> Military Deployments and Public Opinion in Host States.”</span> <em>American Political Science Review</em> 114(2): 326–41.
+</div>
+<div id="ref-Burkner2017" class="csl-entry" role="listitem">
+Bürkner, Paul-Christian. 2017. <span>“<a href="https://doi.org/10.18637/jss.v080.i01">Brms: <span>An R Package</span> for <span>Bayesian Multilevel Models Using Stan</span></a>.”</span> <em>Journal of Statistical Software</em> 80: 1–28.
+</div>
+<div id="ref-Burkner2018" class="csl-entry" role="listitem">
+———. 2018. <span>“Advanced <span>Bayesian Multilevel Modeling</span> with the <span>R Package</span> Brms.”</span> <em>The R Journal</em> 10(1): 395–411.
+</div>
+<div id="ref-KayTidyBayes" class="csl-entry" role="listitem">
+Kay, Matthew. <span>“<a href="https://doi.org/10.5281/zenodo.1308151">{{Tidybayes}: }<span>Tidy Data</span> and <span>Geoms</span> for {}<span>Bayesian</span>{} <span>Models</span>{}</a>.”</span>
 </div>
 <div id="ref-kruschkeDoingBayesianData2015" class="csl-entry" role="listitem">
 Kruschke, John K. 2015. <em>Doing <span>Bayesian Data Analysis</span></em>. Second. <span>New York, NY</span>: <span>Academic Press</span>.

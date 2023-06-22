@@ -7,7 +7,7 @@ suppressPackageStartupMessages(library(brms))
 clean_priors_prov_f <- function(priordata, modeldata) {
 
   # Get default model priors from brms
-  default.priors <- brms::get_prior(bf(troops_100k ~ 0 + Intercept + treatment_group +
+  default.priors <- brms::get_prior(bf(troops_100km ~ 0 + Intercept + treatment_group +
                                          gender + age + income + income_source +
                                          minority + education + ideology_z + (1 |ID1| province),
                                        decomp = "QR"),
@@ -72,7 +72,7 @@ clean_priors_prov_f <- function(priordata, modeldata) {
 clean_priors_dist_f <- function(priordata, modeldata) {
 
   # Get default model priors from brms
-  default.priors <- brms::get_prior(bf(troops_100k ~ 0 + Intercept + treatment_group +
+  default.priors <- brms::get_prior(bf(troops_100km ~ 0 + Intercept + treatment_group +
                                          gender + age + income + income_source +
                                          minority + education + ideology_z + (1 |ID1| province) + (1 |ID2| province:district),
                                        decomp = "QR"),
@@ -142,7 +142,7 @@ model_0_bivariate_f <- function(modeldata, priordata) {
 
   # Base model can't use priors from previous work as it only includes
   # treatment variables.
-  PRIORS <- get_prior(bf(troops_100k ~ treatment_group,
+  PRIORS <- get_prior(bf(troops_100km ~ treatment_group,
                           decomp = "QR"),
                           data = modeldata,
                        family = categorical(link = "logit", refcat = "Neutral")) |>
@@ -152,7 +152,7 @@ model_0_bivariate_f <- function(modeldata, priordata) {
     ))
 
   # Set up list of outcome variables
-  outcomes <- list("troops_100k", "troops_5k")
+  outcomes <- list("troops_100km", "troops_5km")
 
   # Set up right hand side predictors
   predictors_formula <- "treatment_group"
@@ -211,7 +211,7 @@ model_1_province_f <- function(modeldata, priordata) {
     bind_rows(priordata)
 
   # Set up list of outcome variables
-  outcomes <- list("troops_100k", "troops_5k")
+  outcomes <- list("troops_100km", "troops_5km")
 
   # set up right hand side predictors
   predictors_formula <- "0 + Intercept + treatment_group + gender + age + income + income_source + minority + education + ideology_z + (1 |ID1| province)"
@@ -271,7 +271,7 @@ model_2_district_f <- function(modeldata, priordata) {
     bind_rows(priordata)
 
   # Set up list of outcome variables
-  outcomes <- list("troops_100k", "troops_5k")
+  outcomes <- list("troops_100km", "troops_5km")
 
   predictors_formula <- "0 + Intercept + treatment_group + gender + age + income + income_source + minority + education + ideology_z + (1 |ID1| province) + (1 |ID2| province:district)"
 
@@ -324,7 +324,7 @@ model_2_district_f <- function(modeldata, priordata) {
 model_3_full_response_f <- function(modeldata, priordata) {
 
   # Creating regularizing priors to deal with new full categorical outcome.
-  PRIORS <- get_prior(bf(troops_100k_full ~ 0 + Intercept + treatment_group+ gender + age + income + income_source + minority + education + ideology_z + (1 |ID1| province),
+  PRIORS <- get_prior(bf(troops_100km_full ~ 0 + Intercept + treatment_group+ gender + age + income + income_source + minority + education + ideology_z + (1 |ID1| province),
                          decomp = "QR"),
                       data = modeldata,
                       family = categorical(link = "logit", refcat = "Neutral")) |>
@@ -339,7 +339,7 @@ model_3_full_response_f <- function(modeldata, priordata) {
     ))
 
   # Set up list of outcome variables
-  outcomes <- list("troops_100k_full", "troops_5k_full")
+  outcomes <- list("troops_100km_full", "troops_5km_full")
 
   predictors_formula <- "0 + Intercept + treatment_group + gender + age + income + income_source + minority + education + ideology_z + (1 |ID1| province)"
 
@@ -397,7 +397,7 @@ model_4_varying_effects_f <- function(modeldata, priordata) {
     bind_rows(priordata)
 
   # Set up list of outcome variables
-  outcomes <- list("troops_100k", "troops_5k")
+  outcomes <- list("troops_100km", "troops_5km")
 
   predictors_formula <- "0 + Intercept + treatment_group + gender + age + income + income_source + minority + education + ideology_z + (1 + treatment_group |ID1| province)"
 
@@ -451,11 +451,11 @@ model_5_ordered_response_f <- function(modeldata, priordata) {
 
   # Prepare model data for
   modeldata.ordered <- modeldata |>
-    filter(troops_100k_full != "DKDA" | troops_5k_full != "DKDA") |>
+    filter(troops_100km_full != "DKDA" | troops_5km_full != "DKDA") |>
     mutate(
       across(
-        .cols = c("troops_100k_full",
-                  "troops_5k_full"),
+        .cols = c("troops_100km_full",
+                  "troops_5km_full"),
         .fns = ~ factor(.x,
                         levels = c("Strongly oppose", "Somewhat oppose", "Neutral", "Somewhat support", "Strongly support"),
                         ordered = TRUE
@@ -464,7 +464,7 @@ model_5_ordered_response_f <- function(modeldata, priordata) {
       )
 
   # Creating regularizing priors to deal with new full ordered outcome.
-  PRIORS <- get_prior(bf(troops_100k_full ~ treatment_group + gender + age + income + income_source + minority + education + ideology_z + (1 |ID1| province),
+  PRIORS <- get_prior(bf(troops_100km_full ~ treatment_group + gender + age + income + income_source + minority + education + ideology_z + (1 |ID1| province),
                          decomp = "QR"),
                       data = modeldata.ordered,
                       family = cumulative(link = "logit",
@@ -475,7 +475,7 @@ model_5_ordered_response_f <- function(modeldata, priordata) {
     ))
 
   # Set up list of outcome variables
-  outcomes <- list("troops_100k_full", "troops_5k_full")
+  outcomes <- list("troops_100km_full", "troops_5km_full")
 
   # Note: Can't remove intercept from ordered model.
   # I.e. can't use 0 + Intercept to treat it as a standard predictor.
@@ -539,7 +539,7 @@ model_6_contact_f <- function(modeldata, priordata) {
 
 
   # Set up list of outcome variables
-  outcomes <- list("troops_100k", "troops_5k")
+  outcomes <- list("troops_100km", "troops_5km")
 
   predictors_formula <- "0 + Intercept + contact_pers + gender + age + income + income_source + minority + education + ideology_z + (1 + contact_pers |ID1| treatment_group)"
 
@@ -598,7 +598,7 @@ model_7_contact_interaction_f <- function(modeldata, priordata) {
 
 
   # Set up list of outcome variables
-  outcomes <- list("troops_100k", "troops_5k")
+  outcomes <- list("troops_100km", "troops_5km")
 
   predictors_formula <- "0 + Intercept + treatment_group + contact_pers + treatment_group:contact_pers + gender + age + income + income_source + minority + education + ideology_z + (1 |ID1| province)"
 
@@ -659,7 +659,7 @@ model_8_contact_interaction_district_f <- function(modeldata, priordata) {
 
 
   # Set up list of outcome variables
-  outcomes <- list("troops_100k", "troops_5k")
+  outcomes <- list("troops_100km", "troops_5km")
 
   predictors_formula <- "0 + Intercept + treatment_group + contact_pers + treatment_group:contact_pers + gender + age + income + income_source + minority + education + ideology_z + (1 |ID1| province) + (1 |ID2| province:district)"
 

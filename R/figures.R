@@ -540,15 +540,15 @@ figure_province_contrasts_map_f <- function(modelobject, group.effects) {
     compare_levels(variable = .epred,
                    by = group_term) |>
     filter(.category %in% c("Support", "Oppose")) |>
-    filter(group_term %in% c("Control: 5k - Control: 100k",
-                             "Economic: 5k - Economic: 100k",
-                             "Security: 5k - Security: 100k",
-                             "Security and Economic: 5k - Security and Economic: 100k")
+    filter(group_term %in% c("Control: 5km - Control: 100km",
+                             "Economic: 5km - Economic: 100km",
+                             "Security: 5km - Security: 100km",
+                             "Security and Economic: 5km - Security and Economic: 100km")
            ) |>
     mutate(group_term = case_when(
       grepl(".*Control.*", group_term) ~ "Control",
-      grepl("^Economic: 5k", group_term) ~ "Economic",
-      grepl("^Security: 5k", group_term) ~ "Security",
+      grepl("^Economic: 5km", group_term) ~ "Economic",
+      grepl("^Security: 5km", group_term) ~ "Security",
       grepl(".*Security and.*", group_term) ~ "Security and Economic"
       )
       ) |>
@@ -657,14 +657,14 @@ figure_district_contrasts_map_f <- function(modelobject, group.effects) {
     compare_levels(variable = .epred,
                    by = group_term) |>
     filter(.category %in% c("Support", "Oppose")) |>
-    filter(group_term %in% c("Control: 5k - Control: 100k",
-                             "Economic: 5k - Economic: 100k",
-                             "Security: 5k - Security: 100k",
-                             "Security and Economic: 5k - Security and Economic: 100k")) |>
+    filter(group_term %in% c("Control: 5km - Control: 100km",
+                             "Economic: 5km - Economic: 100km",
+                             "Security: 5km - Security: 100km",
+                             "Security and Economic: 5km - Security and Economic: 100km")) |>
     mutate(group_term = case_when(
       grepl(".*Control.*", group_term) ~ "Control",
-      grepl("^Economic: 5k", group_term) ~ "Economic",
-      grepl("^Security: 5k", group_term) ~ "Security",
+      grepl("^Economic: 5km", group_term) ~ "Economic",
+      grepl("^Security: 5km", group_term) ~ "Security",
       grepl(".*Security and.*", group_term) ~ "Security and Economic"
     )) |>
     dplyr::group_by(province, district, .category, group_term) |>

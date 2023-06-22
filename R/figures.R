@@ -196,7 +196,7 @@ figure_province_predprob_f <- function(modelobject, outcome.cats, group.effects)
 
         ) |>
           mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"), # create identifier for outcome and model
-                 model = str_extract(model, "\\d+k"))
+                 model = str_extract(model, "\\d+km"))
         ) |> # plot the results of the model objects
         furrr::future_map(.f = ~ ggplot(data = .x |> filter(.category %in% outcome.cats), # Choose which outcome categories to include in plot
                                         aes(x = .epred)) +
@@ -226,7 +226,7 @@ figure_province_predprob_f <- function(modelobject, outcome.cats, group.effects)
                             scale_x_continuous(limits = c(0.0, 1.0, 0.1)) +
                             viridis::scale_fill_viridis(discrete = TRUE,
                                                         option = "turbo",
-                                                        begin = 0.0,
+                                                        begin = 0.01,
                                                         end = 1.0) +
                             guides(fill = guide_legend(reverse = TRUE)) +
                             labs(x = "Predicted Probability",
@@ -316,7 +316,7 @@ figure_province_dist_contrasts_f <- function(modelobject, group.effects) {
                                                       re_formula = re_form
                                                       ) |>
                                  mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                        model = str_extract(model, "\\d+k"))
+                                        model = str_extract(model, "\\d+km"))
                                ) |>
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: {model}"))) |>
@@ -375,7 +375,7 @@ figure_province_dist_contrasts_f <- function(modelobject, group.effects) {
                                       plot.margin = margin(t = 0.10,
                                                            b = 0.10,
                                                            l = 0.10,
-                                                           r = 0.22,
+                                                           r = 0.21,
                                                            unit = "cm"
                                                            )
                                       ) +
@@ -531,7 +531,7 @@ figure_province_contrasts_map_f <- function(modelobject, group.effects) {
                                                       re_formula = re_form
                                                       ) |>
                                  mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                        model = str_extract(model, "\\d+k"))
+                                        model = str_extract(model, "\\d+km"))
                                ) |>
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: {model}"))) |>
@@ -647,7 +647,7 @@ figure_district_contrasts_map_f <- function(modelobject, group.effects) {
                                                       re_formula = re_form
                                                       ) |>
                                  mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                        model = str_extract(model, "\\d+k")
+                                        model = str_extract(model, "\\d+km")
                                         )
                                ) |>
     data.table::rbindlist(idcol = TRUE) |>
@@ -762,7 +762,7 @@ figure_district_dist_contrasts_f <- function(modelobject, group.effects) {
                                                        re_formula = re_form
                                                        ) |>
                                   mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                         model = str_extract(model, "\\d+k"))
+                                         model = str_extract(model, "\\d+km"))
                                 ) |>
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: {model}"))) |>
@@ -871,7 +871,8 @@ figure_province_dist_contact_treatment_effect_f <- function(modelobject, group.e
                               income = names(which.max(table(modelobject[[1]]$data$income))),
                               income_source = names(which.max(table(modelobject[[1]]$data$income_source))),
                               education = names(which.max(table(modelobject[[1]]$data$education))),
-                              ideology_z = mean(modelobject[[1]]$data$ideology_z))
+                              ideology_z = mean(modelobject[[1]]$data$ideology_z)) |>
+    filter(!grepl(".*Don.*", contact_pers))
 
   # Begin list of plots.
   # First start with model objects and then create data frames containing expected
@@ -890,18 +891,15 @@ figure_province_dist_contact_treatment_effect_f <- function(modelobject, group.e
                                                        re_formula = re_form
                                 ) |>
                                   mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                         model = str_extract(model, "\\d+k"))
+                                         model = str_extract(model, "\\d+km"))
   ) |>
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: Contact {contact_pers} at {model}"))) |>
     dplyr::select(.epred, group_term, province, .category, .draw)  |>
-    group_by(province, .category) |>
     filter(.category != "DKDA") |>
+    group_by(province, .category) |>
     compare_levels(variable = .epred,
                    by = group_term) |>
-    #compare_levels(variable = .epred,
-    #               by = contact_pers) |>
-    #filter(contact_pers == "Yes - No") |>
     mutate(.category = factor(.category,
                               levels = c("Neutral", "Support", "Oppose")))
 
@@ -1003,7 +1001,8 @@ figure_province_dist_contact_contrasts_f <- function(modelobject, group.effects)
                               income = names(which.max(table(modelobject[[1]]$data$income))),
                               income_source = names(which.max(table(modelobject[[1]]$data$income_source))),
                               education = names(which.max(table(modelobject[[1]]$data$education))),
-                              ideology_z = mean(modelobject[[1]]$data$ideology_z))
+                              ideology_z = mean(modelobject[[1]]$data$ideology_z)) |>
+    filter(!grepl(".*Don.*", contact_pers))
 
   # Begin list of plots.
   # First start with model objects and then create data frames containing expected
@@ -1022,15 +1021,15 @@ figure_province_dist_contact_contrasts_f <- function(modelobject, group.effects)
                                                       re_formula = re_form
                                                       ) |>
                                  mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                        model = str_extract(model, "\\d+k"))
+                                        model = str_extract(model, "\\d+km"))
                                ) |>
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: Contact {contact_pers} at {model}"))) |>
     dplyr::select(.epred, group_term, province, .category, .draw)  |>
+    filter(.category != "DKDA") |>
     group_by(province, .category) |>
     compare_levels(variable = .epred,
                    by = group_term) |>
-    filter(.category != "DKDA") |>
     mutate(.category = factor(.category,
                               levels = c("Neutral", "Support", "Oppose")))
 
@@ -1156,15 +1155,15 @@ figure_district_dist_contact_contrasts_f <- function(modelobject, group.effects)
                                                        re_formula = re_form
                                 ) |>
                                   mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                         model = str_extract(model, "\\d+k"))
+                                         model = str_extract(model, "\\d+km"))
   ) |>
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: Contact {contact_pers} at {model}"))) |>
     dplyr::select(.epred, group_term, province, district, .category, .draw)  |>
+    filter(.category != "DKDA") |>
     group_by(province, district, .category) |>
     compare_levels(variable = .epred,
                    by = group_term) |>
-    filter(.category != "DKDA") |>
     mutate(.category = factor(.category,
                               levels = c("Neutral", "Support", "Oppose")))
 
@@ -1235,4 +1234,3 @@ figure_district_dist_contact_contrasts_f <- function(modelobject, group.effects)
 
 
 }
-# Test

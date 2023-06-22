@@ -38,7 +38,7 @@ options(clustermq.scheduler = "multicore")
 # #. Memory calculated using 2000*1024^2 = 2097152000 where 2000 is number of
 # MB desired
 # Found here: https://stackoverflow.com/questions/40536067/how-to-adjust-future-global-maxsize
-options(future.globals.maxSize= 2097152000)
+options(future.globals.maxSize= 8097152000)
 
 # Set up future package for multicore processing.
 # This uses a nested multicore setup, so you can have four cores per model and
@@ -137,13 +137,13 @@ list(
 
   # Contrast Maps
   tar_target(model_1_contrast_map, figure_province_contrasts_map_f(model_1_province, group.effects = TRUE)),
-  tar_target(model_2_contrast_map, figure_district_contrasts_map_f(model_2_district, group.effects = TRUE)),
+  tar_target(model_2_contrast_map, figure_district_contrasts_map_f(model_2_district, group.effects = TRUE))
 
   # Build appendix
-  tar_quarto(poland_appendix,
-             path = "Appendix/poland_appendix.qmd",
-             quiet = FALSE),
+#  tar_quarto(poland_appendix,
+#             path = "Appendix/poland_appendix.qmd",
+#             quiet = FALSE),
 
-  tar_quarto(website, path = ".", quiet = FALSE)
+#  tar_quarto(website, path = ".", quiet = FALSE)
 
 )

@@ -1,0 +1,8 @@
+project:
+  title: "Appendix"
+
+  render:
+    - "*.qmd"
+
+profile:
+  default: nice

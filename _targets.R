@@ -87,6 +87,7 @@ list(
   tar_target(figure_us_troops_time, figure_us_troops_compare_f(survey_clean, minerva_clean)),
   tar_target(figure_russia_relations, figure_russia_views_f(survey_clean)),
   tar_target(figure_contact_type, figure_contact_type_f(survey_clean)),
+  tar_target(figure_response_distribution, figure_observation_distribution_f(survey_clean)),
 
   #Balance Table
   tar_target(table_balance, table_balance_f(survey_clean)),

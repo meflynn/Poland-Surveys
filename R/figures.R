@@ -76,7 +76,7 @@ figure_us_troops_f <- function(data) {
          y = "Percent",
          title = "Views of U.S. Military Personnel Stationed in Poland, 2023")
 
-  ggsave(here("Figures/views-us-troops.png"), dpi = 300, width = 5, height = 3)
+  ggsave(here("Figures/views-us-troops.png"), dpi = 300, width = 8, height = 5)
 
 }
 
@@ -96,7 +96,7 @@ figure_russia_views_f <- function(data) {
          y = "Percent",
          title = "Views of Polish-Russian Relations, 2023")
 
-  ggsave(here("Figures/views-russian-relations.png"), dpi = 300, width = 5, height = 3)
+  ggsave(here("Figures/views-russian-relations.png"), dpi = 300, width = 8, height = 5)
 
 }
 
@@ -151,6 +151,57 @@ figure_us_troops_compare_f <- function(data1, data2) {
 
 }
 
+
+# Distribution of observations across provinces and districts
+
+figure_observation_distribution_f <- function(data) {
+
+  # Set color for bar fill
+  barcolor <- viridis::turbo(1, begin = 0.10)
+
+temp.prov <- data |>
+  dplyr::group_by(province) |>
+  dplyr::summarise(obs = n())
+
+ggplot(data = temp.prov,
+       aes(x = obs)) +
+  geom_histogram(bins = 50,
+                 fill = barcolor) +
+  scale_x_continuous(limits = c(0, 350)) +
+  scale_y_continuous(breaks = seq(0, 3, 1)) +
+  theme_flynn() +
+  labs(x = "Respondents Per Province",
+       y = "Number of Provinces",
+       title = "Distribution of respondent count per province")
+
+ggsave(here::here("Figures/distribution-responses-province.png"),
+       dpi = 300,
+       height = 5,
+       width = 8,
+       units = "in")
+
+temp.dist <- data |>
+  dplyr::group_by(province, district) |>
+  dplyr::summarise(obs = n())
+
+ggplot(data = temp.dist,
+       aes(x = obs)) +
+  geom_histogram(bins = 50,
+                 fill = barcolor) +
+  scale_x_continuous(limits = c(0, 160)) +
+  scale_y_continuous(breaks = seq(0, 200, 20)) +
+  theme_flynn() +
+  labs(x = "Respondents Per District",
+       y = "Number of Districts",
+       title = "Distribution of respondent count per district")
+
+ggsave(here::here("Figures/distribution-responses-district.png"),
+       dpi = 300,
+       height = 5,
+       width = 8,
+       units = "in")
+
+}
 
 
 # Post estimation figures

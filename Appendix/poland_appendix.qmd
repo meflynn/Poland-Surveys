@@ -151,6 +151,33 @@ However, our expectations regarding the effects of the treatments prove to be qu
 
 
 
+# Descrioptive Figures
+
+This section includes additional descriptive figures not included in the primary manuscript. 
+
+## Views of Major Powers
+
+@fig-views-us-troops shows the distribution of views of U.S. military personnel deployed to Poland in March of 2023 at the time of our survey. This is a different representation of the 2023 data we show in Figure 1 of the primary manuscript.
+
+![Views of U.S. military personnel in Poland among Polish adults](../Figures/views-us-troops){#fig-views-us-troops}
+
+
+@fig-views-russia shows the distribution of Polish adults' views of Poland's relations with Russia in March of 2023 at the time of our survey.Overwhelmingly respondents indicate that relations between Poland and Russia are "Somewhat hostile" or "Very hostile."
+
+![Views of Russia among Polish adults](../Figures/views-russian-relations){#fig-views-russia}
+
+
+## Distribution of respondents
+
+@fig-respondents-province shows the number of respondents per province In general, most of the group sizes fall between 100 and 200 respondents per province. The lowest number of respondents per group is 52 (Opolskie) and the highest is 339 (Mazowieckie).
+
+![The number of survey respondents per province.](../Figures/distribution-responses-province.png){#fig-respondents-province}
+
+@fig-respondents-district shows the number of respondents per district—the lower level administrative unit below the province. Here we can see substantial skew in the number of respondents per unit. 47 districts produce only one respondent. 64 districts only produce 2 respondents. At the other end of the distribution we have a few districts that produce a vastly disproportionate share of our respondents. 51 respondents come from Łódź, 54 from Poznań, and 150 come from Warszawa. Though we run supplemental analyses using districts as a grouping unit, we do not rely on these estimates to discuss variation in attitudes as a function of geography. 
+
+![The number of survey respondents per district.](../Figures/distribution-responses-district.png){#fig-respondents-district}
+
+
 
 # Tables
 

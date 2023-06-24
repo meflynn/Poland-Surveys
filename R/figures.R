@@ -247,7 +247,8 @@ figure_province_predprob_f <- function(modelobject, outcome.cats, group.effects)
 
         ) |>
           mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"), # create identifier for outcome and model
-                 model = str_extract(model, "\\d+km"))
+                 model = str_extract(model, "\\d+km"),
+                 model = gsub("(\\d)(km)", "\\1 \\2", model))
         ) |> # plot the results of the model objects
         furrr::future_map(.f = ~ ggplot(data = .x |> filter(.category %in% outcome.cats), # Choose which outcome categories to include in plot
                                         aes(x = .epred)) +
@@ -367,7 +368,8 @@ figure_province_dist_contrasts_f <- function(modelobject, group.effects) {
                                                       re_formula = re_form
                                                       ) |>
                                  mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                        model = str_extract(model, "\\d+km"))
+                                        model = str_extract(model, "\\d+km"),
+                                        model = gsub("(\\d)(km)", "\\1 \\2", model))
                                ) |>
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: {model}"))) |>
@@ -582,7 +584,8 @@ figure_province_contrasts_map_f <- function(modelobject, group.effects) {
                                                       re_formula = re_form
                                                       ) |>
                                  mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                        model = str_extract(model, "\\d+km"))
+                                        model = str_extract(model, "\\d+km"),
+                                        model = gsub("(\\d)(km)", "\\1 \\2", model))
                                ) |>
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: {model}"))) |>
@@ -591,15 +594,15 @@ figure_province_contrasts_map_f <- function(modelobject, group.effects) {
     compare_levels(variable = .epred,
                    by = group_term) |>
     filter(.category %in% c("Support", "Oppose")) |>
-    filter(group_term %in% c("Control: 5km - Control: 100km",
-                             "Economic: 5km - Economic: 100km",
-                             "Security: 5km - Security: 100km",
-                             "Security and Economic: 5km - Security and Economic: 100km")
+    filter(group_term %in% c("Control: 5 km - Control: 100 km",
+                             "Economic: 5 km - Economic: 100 km",
+                             "Security: 5 km - Security: 100 km",
+                             "Security and Economic: 5 km - Security and Economic: 100 km")
            ) |>
     mutate(group_term = case_when(
       grepl(".*Control.*", group_term) ~ "Control",
-      grepl("^Economic: 5km", group_term) ~ "Economic",
-      grepl("^Security: 5km", group_term) ~ "Security",
+      grepl("^Economic: 5 km", group_term) ~ "Economic",
+      grepl("^Security: 5 km", group_term) ~ "Security",
       grepl(".*Security and.*", group_term) ~ "Security and Economic"
       )
       ) |>
@@ -698,7 +701,8 @@ figure_district_contrasts_map_f <- function(modelobject, group.effects) {
                                                       re_formula = re_form
                                                       ) |>
                                  mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                        model = str_extract(model, "\\d+km")
+                                        model = str_extract(model, "\\d+km"),
+                                        model = gsub("(\\d)(km)", "\\1 \\2", model)
                                         )
                                ) |>
     data.table::rbindlist(idcol = TRUE) |>
@@ -708,14 +712,14 @@ figure_district_contrasts_map_f <- function(modelobject, group.effects) {
     compare_levels(variable = .epred,
                    by = group_term) |>
     filter(.category %in% c("Support", "Oppose")) |>
-    filter(group_term %in% c("Control: 5km - Control: 100km",
-                             "Economic: 5km - Economic: 100km",
-                             "Security: 5km - Security: 100km",
-                             "Security and Economic: 5km - Security and Economic: 100km")) |>
+    filter(group_term %in% c("Control: 5 km - Control: 100 km",
+                             "Economic: 5 km - Economic: 100 km",
+                             "Security: 5 km - Security: 100 km",
+                             "Security and Economic: 5 km - Security and Economic: 100 km")) |>
     mutate(group_term = case_when(
       grepl(".*Control.*", group_term) ~ "Control",
-      grepl("^Economic: 5km", group_term) ~ "Economic",
-      grepl("^Security: 5km", group_term) ~ "Security",
+      grepl("^Economic: 5 km", group_term) ~ "Economic",
+      grepl("^Security: 5 km", group_term) ~ "Security",
       grepl(".*Security and.*", group_term) ~ "Security and Economic"
     )) |>
     dplyr::group_by(province, district, .category, group_term) |>
@@ -813,7 +817,8 @@ figure_district_dist_contrasts_f <- function(modelobject, group.effects) {
                                                        re_formula = re_form
                                                        ) |>
                                   mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                         model = str_extract(model, "\\d+km"))
+                                         model = str_extract(model, "\\d+km"),
+                                         model = gsub("(\\d)(km)", "\\1 \\2", model))
                                 ) |>
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: {model}"))) |>
@@ -942,7 +947,8 @@ figure_province_dist_contact_treatment_effect_f <- function(modelobject, group.e
                                                        re_formula = re_form
                                 ) |>
                                   mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                         model = str_extract(model, "\\d+km"))
+                                         model = str_extract(model, "\\d+km"),
+                                         model = gsub("(\\d)(km)", "\\1 \\2", model))
   ) |>
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: Contact {contact_pers} at {model}"))) |>
@@ -1072,7 +1078,8 @@ figure_province_dist_contact_contrasts_f <- function(modelobject, group.effects)
                                                       re_formula = re_form
                                                       ) |>
                                  mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                        model = str_extract(model, "\\d+km"))
+                                        model = str_extract(model, "\\d+km"),
+                                        model = gsub("(\\d)(km)", "\\1 \\2", model))
                                ) |>
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: Contact {contact_pers} at {model}"))) |>
@@ -1206,7 +1213,8 @@ figure_district_dist_contact_contrasts_f <- function(modelobject, group.effects)
                                                        re_formula = re_form
                                 ) |>
                                   mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
-                                         model = str_extract(model, "\\d+km"))
+                                         model = str_extract(model, "\\d+km"),
+                                         model = gsub("(\\d)(km)", "\\1 \\2", model))
   ) |>
     data.table::rbindlist(idcol = TRUE) |>
     mutate(group_term = factor(glue::glue("{treatment_group}: Contact {contact_pers} at {model}"))) |>

@@ -224,18 +224,6 @@ This section contains the tables for the models we run in our analysis. All of t
 ```{r model-tables-setup}
 #| include: false
 
-# Load various model objects
-#tar_load(priors_clean)
-#tar_load(model_0_bivariate)
-#tar_load(model_1_province)
-#tar_load(model_2_district)
-#tar_load(model_3_full_response)
-#tar_load(model_4_varying_effects)
-#tar_load(model_5_ordered_response)
-#tar_load(model_6_contact)
-#tar_load(model_7_contact_int)
-#tar_load(model_8_contact_int_districts)
-
 
 # Set up custom tidy and glance functions
 # add custom functions to extract estimates (tidy) and goodness-of-fit (glance) information
@@ -246,9 +234,9 @@ tidy.brmsfit <- function(x, ...) {
       estimate  = s$fixed$Estimate,
       conf.low  = s$fixed$`l-95% CI`,
       conf.high = s$fixed$`u-95% CI`,
-      group     = str_extract(row.names(s$fixed), "(?<=mu).*?(?=_)")
+      group     = str_extract(row.names(s$fixed), "(?<=mu).*?(?=_)") # Extract grouping term (equation name)
     ) |> 
-      mutate(term = str_remove(row.names(s$fixed), "(?<=mu).*?(?=_)"))
+      mutate(term = str_remove(row.names(s$fixed), "(?<=mu).*?(?=_)")) # Change term to just variable name so it doesn't contain grouping term.
     
       ret
 }
@@ -578,6 +566,142 @@ tables.out.grouped[[7]]
 tables.out.grouped[[7]]
 
 ```
+
+
+
+```{r ordered-table-setup}
+#| include: false
+
+
+# Custom glance function for already-supported brmsfit model
+# This just pulls out the relevant information I want in the table footer.
+glance_custom.brmsfit <- function(x, ...) {
+
+      temp <- data.frame("N" = nrow(x[["data"]]),
+                         "N Groups" = length(unique(x[["data"]][["province"]])),
+                         "Groups" = do.call(paste, c(as.list(unique(x[["ranef"]][["group"]])), sep = ", ")),  # Hopefully condenses cells so this part doesn't get spread out across several rows.
+                           "sd(Province)" = round(summary(x)[["random"]][[1]][[1]], 3)
+                         )
+
+  temp
+    
+}
+
+
+
+coef.names.ord <- c("b_treatment_groupEconomic" = "Economic",
+                "b_treatment_groupSecurity" = "Security",
+                "b_treatment_groupSecurityandEconomic" = "Security and Economic",
+                "b_contact_persYes" = "Personal Contact: Yes",
+                "b_contact_persDon’tknowDDeclinetoanswer" = "Personal Contact: Don't know/Decline",
+                "b_age25to34years" = "25-34",
+                "b_age35to44years" = "35-44",
+                "b_age45to54years" = "45-54",
+                "b_age55to64years" = "55-64",
+                "b_ageAge65orolder" = "65+",
+                "b_income43340–57187" = "Second Quantile",
+                "b_income57188–74062" = "Third Quantile",
+                "b_income74063–93937" = "Fourth Quantile",
+                "b_income93938P" = "Fifth Quantile",
+                "b_incomeDeclinetoanswer" = "Income Decline",
+                "b_income_sourceFullMtimeorcontractworkinthegovernmentorpublicsector" = "Public sector contract work",
+                "b_income_sourceFullMtimeorcontractworkintheprivatesector" = "Private sector contract work",
+                "b_income_sourcePensionorretirement" = "Pension or Retirement",
+                "b_income_sourceSelfMemployednonMagricultural" = "Self-employed (non-agricultural)",
+                "b_income_sourceOthersources" = "Other sources",
+                "b_educationHigherEducationBachelorDEngineer" = "Bachelor's degree or Engineer",
+                "b_educationHigherEducationMaster’sdegreeorhigher" = "Master's degree or higher",
+                "b_educationPrimaryEducation" = "Primary Education",
+                "b_educationSecondaryEducation" = "Secondary Education",
+                "b_educationVocationalSchool" = "Vocational School",
+                "b_ideology_z" = "Ideology",
+                "b_minorityYes" = "Minority: Yes",
+                "b_minorityDeclinetoanswer" = "Minority: Decline",
+                "b_genderFemale" = "Female",
+                "b_genderNoneoftheabove" = "None of the Above",
+                "Intercept[1]" = "Intercept 1",
+                "Intercept[2]" = "Intercept 2",
+                "Intercept[3]" = "Intercept 3",
+                "Intercept[4]" = "Intercept 4")
+
+coef.groups.2 <- tibble::tribble(~var, ~group,
+                              "b_treatment_groupEconomic", "Treatment",
+                              "b_treatment_groupSecurity", "Treatment",
+                              "b_treatment_groupSecurityandEconomic", "Treatment",
+                              "b_age25to34years", "Age",
+                              "b_age35to44years", "Age",
+                              "b_age45to54years", "Age",
+                              "b_age55to64years", "Age",
+                              "b_ageAge65orolder", "Age",
+                              "b_income43340–57187", "Income",
+                              "b_income57188–74062", "Income",
+                              "b_income74063–93937", "Income",
+                              "b_income93938P", "Income",
+                              "b_incomeDeclinetoanswer", "Income",
+                              "b_income_sourceFullMtimeorcontractworkinthegovernmentorpublicsector ", "Income Source",
+                              "b_income_sourceFullMtimeorcontractworkintheprivatesector", "Income Source",
+                              "b_income_sourcePensionorretirement", "Income Source",
+                              "b_income_sourceSelfMemployednonMagricultural", "Income Source",
+                              "b_income_sourceOthersources", "Income Source",
+                              "b_educationHigherEducationBachelorDEngineer", "Education",
+                              "b_educationHigherEducationMaster’sdegreeorhigher", "Education",
+                              "b_educationPrimaryEducation", "Education",
+                              "b_educationSecondaryEducation", "Education",
+                              "b_educationVocationalSchool", "Education",
+                              "b_ideology_z", "Ideology",
+                              "b_minorityYes", "Minority",
+                              "b_minorityDeclinetoanswer", "Minority",
+                              "b_genderFemale", "Gender",
+                              "b_genderNoneoftheabove", "Gender",
+                              "Intercept[1]", "Intercept",
+                              "Intercept[2]", "Intercept",
+                              "Intercept[3]", "Intercept",
+                              "Intercept[4]", "Intercept")
+
+
+```
+
+
+```{r ordered-table-output}
+#| echo: false
+
+# Add names to the ordered response model list
+names(model_5_ordered_response) <- c("100 km", "5 km")
+
+
+# Create modelsummary tables of all models in custom list.
+# Export this as a kableExtra object so I can apply grouping labels
+tables.out.ordered <- modelsummary::modelsummary(model_5_ordered_response,
+                                   estimate = "estimate",
+                                   statistic = "[{conf.low}, {conf.high}]",
+                                   conf_level = 0.89,
+                                   shape = term ~ model,
+                                   coef_map = coef.names.ord,
+                                   title = "Ordered multilevel logit models",
+                                   fmt = fmt_decimal(digits = 3),
+                                   output = "kableExtra") |>
+    kableExtra::kable_styling(bootstrap_options = "striped",
+                              font_size = 8) |> 
+  kableExtra::group_rows(index = setNames(rle(coef.groups.2$group)[[1]]*2, 
+                                          rle(coef.groups.2$group)[[2]]),
+                         background = "deepskyblue")
+  
+
+
+
+```
+
+
+```{r ordered-models-table}
+#| tbl-cap: Multilevel ordered logistic regressions with respondents grouped by province These model the response as a function of the treatment variables and several predictor variables, with varying intercepts by province.
+#| label: tbl-ordered
+
+tables.out.ordered
+
+```
+
+
+
 
 # Results Figures
 

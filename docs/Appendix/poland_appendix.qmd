@@ -258,7 +258,7 @@ glance.brmsfit <- function(x, ...) {
     if (length(x[["ranef"]][["group"]]) > 0) {
       temp <- data.frame("N" = nrow(x[["data"]]),
                          "N Groups" = length(unique(x[["data"]][["province"]])),
-                         "Groups" = unique(x[["ranef"]][["group"]])
+                         "Groups" = do.call(paste, c(as.list(unique(x[["ranef"]][["group"]])), sep = ", ")) # Hopefully condenses cells so this part doesn't get spread out across several rows.
                          )
       
 

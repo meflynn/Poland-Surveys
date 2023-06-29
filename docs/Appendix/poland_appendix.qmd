@@ -63,7 +63,7 @@ knitr::opts_chunk$set(fig.align = "center",
 tar_config_set(store = here::here('_targets'),
                script = here::here('_targets.R'))
 
-# Need to decalre target source because I call the table function for the balance
+# Need to declare target source because I call the table function for the balance
 # table below.
 targets::tar_source()
 
@@ -105,8 +105,7 @@ For the treatment values, we do not have strong priors as to what constitute acc
 
 Given these considerations, the distributions we use in the power analysis are as follows.
 
-$$
-\begin{align}
+$$ \begin{align}
 
 \text{Support}
 \begin{cases}
@@ -132,8 +131,7 @@ Treatment_{Economic} &\sim N(-0.1, 0.08) \\
 \end{cases}
 
 
-\end{align}
-$$
+\end{align}$$
 
 The following figures show the results of our power analysis. The first figure shows the average $Pr(Direction)$ score for the treatment variables. The $Pr(Direction)$ statistic tells us the proportion of the posterior distribution that falls above/below 0 on the same side as the median value. If we had a median coefficient estimate where the median $\beta = 0.5$ and $Pr(Direction) = 0.97$, this tells us that there is a 97% chance of a positive effect. An average $Pr(Direction)$ of 0.90, for example, would therefore tell us that, on average, there is a 90% chance of a positive effect.  
 
@@ -151,7 +149,7 @@ However, our expectations regarding the effects of the treatments prove to be qu
 
 
 
-# Descrioptive Figures
+# Descriptive Figures
 
 This section includes additional descriptive figures not included in the primary manuscript. 
 
@@ -220,6 +218,7 @@ This section contains the tables for the models we run in our analysis. All of t
 6.  @tbl-treat-group changes the basic model specification slightly and uses the treatment group as the grouping term for the varying intercepts. We also include a variable indicating whether the respondent reported having personal contact with a U.S. service member, and we allow this effect to vary across treatment groups.
 7.  @tbl-contact-int builds upon our primary model in @tbl-base-model by adding a variable indicating whether the respondent reported having personal contact with a U.S. service member, and an interaction term between the contact variable and the treatment. We also include varying intercepts on province.
 8.  @tbl-contact-int-district replicates the models from @tbl-contact-int but includes varying intercepts on both province and district.
+9. @tbl-ordered shows the results of a multilevel ordered logit model. Here we take the original six category response variable, drop the "Don't know/Decline" Responses, and treat the remaining responses as ordered from "Strongly Oppose" to "Strongly Support".
 
 ```{r model-tables-setup}
 #| include: false
@@ -319,7 +318,7 @@ coef.names <- c("mu_treatment_groupEconomic" = "Economic",
 
 
 # Index for variable groupings in output tables
-# Create multple groupings so I can use map() to apply them each to 
+# Create multiple groupings so I can use map() to apply them each to 
 # tables of different lengths / model specifications.
 coef.groups.1 <- tibble::tribble(~var, ~group,
                               "mu_treatment_groupEconomic", "Treatment",
@@ -711,7 +710,12 @@ This section displays several figures derived from the models above. These figur
 
 Here we present a series of figures that contrast the posterior distribution samples from the two models predicting responses to the question regarding support for the construction of a new U.S. military facility in Poland. As we discuss in the manuscript, each survey participant is presented with one of four short vignettes and then asked about their level of support for the construction of a new U.S. military facility---first at a proposed distance of 100km and then a distance of 5km.
 
-For each model we draw 500 sample values from the posterior distribution to generate a set of predicted probability values for the four possible outcomes responses/choices (i.e. Neutral, Oppose, Support, and Don't know/Decline). To generate these values we set all of the predictor variables to their modal or mean values. We allow the treatment variables and grouping categories to take on the values observed in the data---for example, the first set of models includes four treatment categories and varying intercepts on the province grouping term, and so we end up with 64 (4 treatment groups $\times$ 16 provinces) groups of predicted probabilities corresponding to the 16 provinces in the data.  When we calculate the contrasts we calculate the within-group (e.g. province) differences in the predicted probability values.
+For each model we draw 500 sample values from the posterior distribution to generate a set of predicted probability values for the four possible outcomes responses/choices (i.e. Neutral, Oppose, Support, and Don't know/Decline). To generate these values we set all of the predictor variables to their modal or mean values. We allow the treatment variables and grouping categories to take on the values observed in the data---for example, the first set of models includes four treatment categories and varying intercepts on the province grouping term, and so we end up with 64 (4 treatment groups $\times$ 16 provinces) groups of predicted probabilities corresponding to the 16 provinces in the data. For each individual distance-treatment grouping, we allow the province to vary when generating our predicted probabilities, meaning our posterior samples are actually vectors with 8,000 rows (500 samples $\times$ 16 provinces).  When we calculate the contrasts we calculate the within-group (e.g. province) differences in the predicted probability values.
+
+@eq_distance-equation shows how we calcualte the distance effect. $\mathbb{E}[Y_{t,r,p,i,5km}]$ is the expected value of $Y$ for treatment group $t$, for response $r$, in province $p$, for draw/row $i$ for the 5 km model. Similarly, $\mathbb{E}[Y_{t,r,p,i,100km}]$ is the expected value of $Y$ for treatment group $t$, for response$r$, in province $p$, for draw/row $i$ for the 100 km model. 
+
+$$\text{Distance Effect} = (\mathbb{E}[Y_{t,r,p,i,5km}] - \mathbb{E}[Y_{t,r,p,i,100km}])$$ {#eq-distance-equation}
+
 
 Once we have these predicted values for each of the two models, we then compare the posterior samples by subtracting the 100k posterior values from the 5k posterior values. Accordingly, positive values indicate that support is higher when the proposed distance is smaller, while smaller values indicate that support is stronger where the proposed distance is greater. For example, if the median posterior value for the "Support" outcome response is 0.80 for the 5km model and 0.60 for the 100k model, the resulting contrast value would be 0.20, which would tell us that the median predicted level for the support response is 20 percentage points higher for the 5k model. 
 
@@ -729,7 +733,7 @@ Though neutrality is also important, the remaining panels for Support and Opposi
 
 Similarly, we observe fairly strong evidence that respondents are more likely to **oppose** a new U.S. military facility when the proposed distance is closer. We find $Pr(Direction)$ statistics of approximately 0.98 or greater across all four groups, with median contrasts between approximately 0.10 and 0.12 in all groups. 
 
-These results are broadly consistent with a "NIMBYism" theme---people in Poland generally like U.S. military personnel and appear supportive of the security ties between the U.S. and Poland, but are less likely to support a new U.S. militay facility if that facility is going to be located close by. 
+These results are broadly consistent with a "NIMBYism" theme---people in Poland generally like U.S. military personnel and appear supportive of the security ties between the U.S. and Poland, but are less likely to support a new U.S. military facility if that facility is going to be located close by. 
 
 
 
@@ -763,9 +767,15 @@ As in the previous section, we again find results largely consistent with a "NIM
 
 ## Moderating Effect of Contact
 
-In this section we present a series of figures that build on those in the previous section. Above we explore the contrasts in posterior distributions between the 100km and 5km models. Here we follow a similar procedure, presenting the contrasts in distance effects between those who report. having contact with U.S. military personnel and those who do not report and interpersonal contact with U.S. military personnel. This is essentially a differences-in-differences or a (contrast in contrasts) approach. The @eq-contact-equation shows how we calculate these contrasts. $\mathbb{E}[Y_{k}]$ represents the expected outcome (i.e. predicted probability) at distance $k$ (i.e. 100km or 5km). The superscript takes on a value of $0$ for no reported contact and $1$ for reported contact. The result is a comparison of how large an effect distance has on the expected outcome between the two contact categories.
+In this section we present a series of figures that build on those in the previous section. Above we explore the contrasts in posterior distributions between the 100km and 5km models. Here we follow a similar procedure, presenting the contrasts in distance effects between those who report. having contact with U.S. military personnel and those who do not report and interpersonal contact with U.S. military personnel. @eq-contact-equation shows how we calculate these contrasts. In general, this is similar to what we do above to generate the contrasts for distance, but here we are actually generating contrasts between two contrasts. This is essentially a differences-in-differences.
 
-$$\text{Contact Effect} = (\mathbb{E}[Y^0_{5k}] - \mathbb{E}[Y^0_{100k}]) - (\mathbb{E}[Y^1_{5k}] - \mathbb{E}[Y^1_{100k}])$$ {#eq-contact-equation}
+As we describe above, we first take 500 draws/samples from the posterior distribution for each comparison grouping. For example, we obtain 500 draws for one "group" when we take draws from the 100 km distance model and set contact to "Yes", response = "Support", treatment group to "Control", and province to "Śląskie". We would generate another sample by changing contact to "No" and keeping the rest of the settings the same. Because we take posterior draws for every province, we actually end up with 8,000 posterior draws (500 draws $\times$ 16 provinces). 
+
+Second, after generating the posterior samples for each grouping we then calculate the contrast values. Each grouping thus leaves us with a vector of posterior draws with 8,000 rows. We then subtract these rows from one another to obtain our contrasts.
+
+$\mathbb{E}[Y_{t,r,p,i,5km}]$ is the expected value of $Y$ for treatment group $t$, for response $r$, in province $p$, for draw/row $i$ for the 5 km model. Similarly, $\mathbb{E}[Y_{t,r,p,i,100km}]$ is the expected value of $Y$ for treatment group $t$, for response$r$, in province $p$, for draw/row $i$ for the 100 km model. The superscript takes on a value of $0$ for no reported contact and $1$ for reported contact. The result is a comparison of how large an effect distance has on the expected outcome between the two contact categories.
+
+$$\text{Contact Effect} = (\mathbb{E}[Y^0_{t,r,p,i,5km}] - \mathbb{E}[Y^0_{t,r,p,i,100km}]) - (\mathbb{E}[Y^1_{t,r,p,i,5km}] - \mathbb{E}[Y^1_{t,r,p,i,100km}])$$ {#eq-contact-equation}
 
 In general, we find some evidence that those who report personal contact with U.S. military personnel see a kind of "offset" effect, where contact appears to negate the effect of distance to some extent. 
 
@@ -815,6 +825,230 @@ kableExtra::kbl(priors_clean,
 # Model Diagnostics
 
 The following section contains model diagnostic plots for all of the models included in our analysis, as well as supplementary analyses.
+
+
+## Posterior Predictive Checks
+
+```{r bivar-ppcheck-100k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for bivariate models, outcome question: 100k distance."
+
+brms::pp_check(model_0_bivariate[[1]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Bivariate Models, 100k")
+```
+
+```{r bivar-ppcheck-5k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for bivariate models, outcome question: 5k distance."
+
+brms::pp_check(model_0_bivariate[[2]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Bivariate Models, 5k")
+```
+
+```{r province-ppcheck-100k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for province models, outcome question: 100k distance."
+
+brms::pp_check(model_1_province[[1]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Province Models, 100k")
+```
+
+```{r province-ppcheck-5k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for province models, outcome question: 5k distance."
+
+brms::pp_check(model_1_province[[2]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Province Models, 5k")
+```
+
+```{r district-ppcheck-100k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for district models, outcome question: 100k distance."
+
+brms::pp_check(model_2_district[[1]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "District Models, 100k")
+```
+
+```{r district-ppcheck-5k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for district models, outcome question: 5k distance."
+
+brms::pp_check(model_2_district[[2]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "District Models, 5k")
+```
+
+```{r full-ppcheck-100k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for full response models, outcome question: 100k distance."
+
+brms::pp_check(model_3_full_response[[1]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Full Response Models, 100k")
+```
+
+```{r full-ppcheck-5k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for full response models, outcome question: 5k distance."
+
+brms::pp_check(model_3_full_response[[2]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Full Response Models, 5k")
+```
+
+```{r ve-ppcheck-100k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for varying effects models, outcome question: 100k distance."
+
+brms::pp_check(model_4_varying_effects[[1]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Varying effects Models, 100k")
+```
+
+```{r ve-ppcheck-5k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for varying effects models, outcome question: 5k distance."
+
+brms::pp_check(model_4_varying_effects[[2]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Varying Effects Models, 5k")
+```
+
+```{r ordered-ppcheck-100k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for ordered models, outcome question: 100k distance."
+
+brms::pp_check(model_5_ordered_response[[1]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Ordered Models, 100k")
+```
+
+```{r ordered-ppcheck-5k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for ordered models, outcome question: 5k distance."
+
+brms::pp_check(model_5_ordered_response[[2]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Ordered Models, 5k")
+```
+
+```{r contact-ppcheck-100k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for contact models, outcome question: 100k distance."
+
+brms::pp_check(model_6_contact[[1]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Contact Models, 100k")
+```
+
+```{r contact-ppcheck-5k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for contact models, outcome question: 5k distance."
+
+brms::pp_check(model_6_contact[[2]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Contact Models, 5k")
+```
+
+```{r contact-interaction-ppcheck-100k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for contact and treatment interaction models, outcome question: 100k distance."
+
+brms::pp_check(model_7_contact_int[[1]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Contact and Treatment Interaction Models, 100k")
+```
+
+```{r contact-interaction-ppcheck-5k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for contact and treatment interaction models, outcome question: 5k distance."
+
+brms::pp_check(model_7_contact_int[[2]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Contact and Treatment Interaction Models, 5k")
+```
+
+```{r contact-interaction-districts-ppcheck-100k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for contact models, outcome question: 100k distance."
+
+brms::pp_check(model_8_contact_int_districts[[1]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Contact and Treatment Interaction District Models, 100k")
+```
+
+```{r contact-interaction-districts-ppcheck-5k}
+#| message: false
+#| warning: false
+#| echo: false
+#| fig-cap: "Posterior predictive check for contact models, outcome question: 5k distance."
+
+brms::pp_check(model_8_contact_int_districts[[2]],
+               ndraws = 100,
+               type = "bars") +
+  labs(title = "Contact and Treatment Interaction District Models, 5k")
+```
+
+
+
+
+
 
 ## Traceplots
 
@@ -1015,6 +1249,8 @@ bayesplot::mcmc_trace(model_8_contact_int_districts[[2]],
                       regex_pars = c(".*treatment.*")) +
   labs(title = "Contact and Treatment Interaction District Models, 5k")
 ```
+
+
 
 ## Rhat Statistics
 

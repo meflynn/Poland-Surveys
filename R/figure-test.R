@@ -1,5 +1,5 @@
 # Contrasts based on distance for province level models
-figure_contrast_test_f <- function(modelobject, group.effects) {
+figure_contrast_test_f <- function(modelobject, group.effects, response.cat) {
 
   # Decide whether or not to include varying intercept term when generating predictions
   # This just pulls the varying effects/intercepts term from the model formula.
@@ -35,12 +35,15 @@ figure_contrast_test_f <- function(modelobject, group.effects) {
   # add_predicted_draws() produces random draws from the posterior distribution
   # that take on the factor levels of the outcome variable from the original
   # model (i.e. Support, Oppose, etc.)
+
+
   plotlist <- furrr::future_map(.x = seq_along(modelobject),
                                 .f = ~ add_epred_draws(modelobject[[.x]],
                                                        newdata = newdataframe,
-                                                       ndraws = 20,
+                                                       ndraws = 100,
                                                        value = ".epred",
-                                                       re_formula = re_form
+                                                       re_formula = re_form,
+                                                       .category = response.cat
                                 ) |>
                                   mutate(model = glue::glue("{modelobject[[.x]]$formula[[5]]}"),
                                          model = str_extract(model, "\\d+km"),
@@ -50,12 +53,12 @@ figure_contrast_test_f <- function(modelobject, group.effects) {
     mutate(group_term = factor(glue::glue("{treatment_group}: {model}"))) |>
     dplyr::select(.epred, group_term, province, minority, gender, age, income, income_source, education, .category, .draw)  |>
     group_by(province, .category, minority, gender, age, income, income_source, education) |>
-    compare_levels(variable = .epred,
-                   by = group_term) |>
     filter(.category != "DKDA") |>
+    compare_levels(variable = .epred,
+                   by = group_term,
+                   ignore_groups = ".row") |>
     mutate(.category = factor(.category,
-                              levels = c("Neutral", "Support", "Oppose")),
-           ignore_groups = ".row")
+                              levels = c(response.cat)))
 
   # Write a list of the various group pairings/contrasts
   plotgroups <- as.list(unique(plotlist$group_term))

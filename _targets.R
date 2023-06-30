@@ -141,7 +141,7 @@ list(
   tar_target(model_2_contrast_map, figure_district_contrasts_map_f(model_2_district, group.effects = TRUE)),
 
   # Test contrast
-  #tar_target(contrast_test, figure_contrast_test_f(model_1_province, group.effects = TRUE))
+  #tar_target(contrast_test, figure_contrast_test_f(model_1_province, group.effects = TRUE, response.cat = "Support")),
 
   # Build appendix
   tar_quarto(poland_appendix,

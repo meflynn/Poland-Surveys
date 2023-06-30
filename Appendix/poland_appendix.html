@@ -2,14 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.361">
+<meta name="generator" content="quarto-1.3.353">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Michael A. Allen">
-<meta name="author" content="Michael E. Flynn">
-<meta name="author" content="Carla Martinez Machain">
-<meta name="author" content="Grzegorz Smulek">
 
 <title>Supplementary Appendix for Outside Threats and Public Perceptions of the U.S. Military in Poland</title>
 <style>
@@ -89,6 +85,7 @@ div.csl-indent {
   <ul class="collapse">
   <li><a href="#effect-of-distance-on-expressed-attitudes" id="toc-effect-of-distance-on-expressed-attitudes" class="nav-link" data-scroll-target="#effect-of-distance-on-expressed-attitudes">Effect of Distance on Expressed Attitudes</a>
   <ul class="collapse">
+  <li><a href="#a-note-on-treatment-effects" id="toc-a-note-on-treatment-effects" class="nav-link" data-scroll-target="#a-note-on-treatment-effects">A Note on Treatment Effects</a></li>
   <li><a href="#province-level-models" id="toc-province-level-models" class="nav-link" data-scroll-target="#province-level-models">Province-Level Models</a></li>
   </ul></li>
   <li><a href="#district-level-models" id="toc-district-level-models" class="nav-link" data-scroll-target="#district-level-models">District-Level Models</a></li>
@@ -117,47 +114,10 @@ div.csl-indent {
 </div>
 
 
-<div class="quarto-title-meta-author">
-  <div class="quarto-title-meta-heading">Authors</div>
-  <div class="quarto-title-meta-heading">Affiliations</div>
-  
-    <div class="quarto-title-meta-contents">
-    <p class="author">Michael A. Allen </p>
-  </div>
-    <div class="quarto-title-meta-contents">
-        <p class="affiliation">
-            Boise State University
-          </p>
-      </div>
-      <div class="quarto-title-meta-contents">
-    <p class="author">Michael E. Flynn </p>
-  </div>
-    <div class="quarto-title-meta-contents">
-        <p class="affiliation">
-            Kansas State University
-          </p>
-      </div>
-      <div class="quarto-title-meta-contents">
-    <p class="author">Carla Martinez Machain </p>
-  </div>
-    <div class="quarto-title-meta-contents">
-        <p class="affiliation">
-            University at Buffalo (SUNY)
-          </p>
-      </div>
-      <div class="quarto-title-meta-contents">
-    <p class="author">Grzegorz Smulek </p>
-  </div>
-    <div class="quarto-title-meta-contents">
-        <p class="affiliation">
-            Jagiellonian University
-          </p>
-      </div>
-    </div>
 
 <div class="quarto-title-meta">
 
-      
+    
   
     
   </div>
@@ -171,9 +131,9 @@ div.csl-indent {
 </section>
 <section id="power-analysis" class="level1">
 <h1>Power Analysis</h1>
-<p>Before analyzing the data we developed a Bayesian power analysis in an effort to evaluate the probability of correcting identifying true effects versus false positives. We follow <span class="citation" data-cites="kruschkeDoingBayesianData2015">Kruschke (<a href="#ref-kruschkeDoingBayesianData2015" role="doc-biblioref">2015</a>)</span> in carrying out this test and implement it in the following steps.</p>
+<p>Before analyzing the data we developed a Bayesian power analysis in an effort to evaluate the probability of correctly identifying true effects versus false positives for the experimental treatment effects. We follow <span class="citation" data-cites="kruschkeDoingBayesianData2015">Kruschke (<a href="#ref-kruschkeDoingBayesianData2015" role="doc-biblioref">2015</a>)</span> in carrying out this test and implement it in the following steps.</p>
 <p>First, we wrote a function that would simulate data that look like the expected sample data. In addition to our survey plan, we used data from <span class="citation" data-cites="Allenetal2020">Michael A. Allen et al. (<a href="#ref-Allenetal2020" role="doc-biblioref">2020a</a>)</span> and <span class="citation" data-cites="Allenetal2022">Michael A. Allen et al. (<a href="#ref-Allenetal2022" role="doc-biblioref">2022</a>)</span> to establish a baseline expectation for what the distribution of the variables should look like.</p>
-<p>Second, we generate a set of expected coefficient/effect values for all of the variables in our model. Note that for each effect we allow the expected effect to vary, establishing a mean and standard deviation for the expected effect rather than fixing its value. Where our variables overlap with those included in <span class="citation" data-cites="Allenetal2022">Michael A. Allen et al. (<a href="#ref-Allenetal2022" role="doc-biblioref">2022</a>)</span>, we use their posterior estimates to generate our expected effect sizes and distributions. Where our variables differ (for example, we include variables that capture respondents’ income sources/occupational fields) we set the expected effects to 0 with a standard deviation of 0.5 to reflect our uncertainty in the parameter values. This does not apply to the treatment variables, which we address more fully below. We also include varying intercepts for the 16 Polish provinces to match our plan to model the actual data using varying intercepts.</p>
+<p>Second, we generate a set of expected coefficient/effect values for all of the variables in our model. Note that for each variable we allow the expected effect to vary, establishing a mean and standard deviation for the expected effect rather than fixing its value. Where our variables overlap with those included in <span class="citation" data-cites="Allenetal2022">Michael A. Allen et al. (<a href="#ref-Allenetal2022" role="doc-biblioref">2022</a>)</span>, we use their posterior estimates to generate our expected effect sizes and distributions. Where our variables differ (for example, we include variables that capture respondents’ income sources/occupational fields) we set the expected effects to 0 with a standard deviation of 0.5 to reflect our uncertainty in the parameter values. This does not apply to the treatment variables, which we address more fully below. We also include varying intercepts for the 16 Polish provinces to match our plan to model the actual data using varying intercepts. In general, where we expect an effect we set the standard deviation so it is less than half of the mean beta value.</p>
 <p>Third, following this procedure we generate 200 hypothetical data sets for a given sample size value.</p>
 <p>Fourth, we chose a set of hypothetical sample size values to evaluate the model’s ability to recover the expected parameter space. Specifically, we choose sample sizes of 1600, 2560, 4800, and 12800. Our actual data are close to 2,500, but we chose the other values to assess the model’s performance across a wider range of hypothetical circumstances.</p>
 <p>In total, we end up with <span class="math inline">\(I \times K\)</span> datasets and models, where <span class="math inline">\(I\)</span> is the number of iterations per sample size (i.e.&nbsp;200) and <span class="math inline">\(K\)</span> is the number of different sample sizes (i.e.&nbsp;4. In our case, we generate 800 sample data sets and run the model a total of 800 times. As in our primary manuscript, we model the hypothetical data using a Bayesian multilevel multinomial logistic regression using <code>{brms}</code> <span class="citation" data-cites="Burkner2017 Burkner2018">(<a href="#ref-Burkner2017" role="doc-biblioref">Bürkner 2017</a>, <a href="#ref-Burkner2018" role="doc-biblioref">2018</a>)</span>.</p>
@@ -211,8 +171,9 @@ Treatment_{Economic} &amp;\sim N(-0.1, 0.08) \\
 <p><img src="../Figures/fig-sim-threshold.jpg" id="fig-threshold-plot" class="img-fluid"></p>
 <p>The second figure shows spaghetti plots whereby the posterior distributions for the treatment effects from the 200 different models are overlaid on top of one another. While this figure does not provide us with a specific statistic as in the case of the previous figure, it does give us a visual check on the distribution of the recovered coefficients and the accompanying uncertainty.</p>
 <p><img src="../Figures/fig-sim-spaghetti.jpg" id="fig-spaghetti-plot" class="img-fluid"></p>
-<p>In general, the models do a good job of recovering the parameter values we set in our simulation. The average <span class="math inline">\(Pr(Direction)\)</span> score is typically above 80%. This indicates that for the largest effect sizes we have a fairly strong chance of recovering the parameter of interest. However, for the smaller effect sizes we are looking at only a 50-60% chance of recovering the parameter of interest. Accordingly, we should be cautious in treating small effects as definitive given our relatively small sample size.</p>
-<p>However, our expectations regarding the effects of the treatments prove to be quite wrong. As we show in the tables below, the treatment effects do not generally correlate strongly with the outcome response.</p>
+<p>In general, the models do a fairly good job of recovering the parameter values we set in our simulation. The average <span class="math inline">\(Pr(Direction)\)</span> score is above 80% for the first and second treatment variables in the Positive and Negative response categories. The mean expected effect in these cases is approximately 1.0, 0.5, and 0.1 f or the Positive response equation and <span class="math inline">\(-0.8\)</span>, <span class="math inline">\(-0.5\)</span>, and <span class="math inline">\(-0.1\)</span> for the negative response model. For the Don’t know/Decline response equation we set the expected values to <span class="math inline">\(-0.5\)</span>, <span class="math inline">\(-0.2\)</span>, and <span class="math inline">\(-0.1\)</span>, but we set the standard deviation to a higher value given the relatively low incidence of these responses in existing data and the high level of uncertainty accompanying these responses.</p>
+<p>These results indicate that for the largest effect sizes we have a fairly strong chance of recovering the parameter of interest. However, for the smaller effect sizes we are looking at only a 70-75% chance of recovering the parameter of interest. Though this figure may seem high, the smallest value that the <span class="math inline">\(Pr(Direction)\)</span> statistic can take on is (roughly speaking) 0.50 as it is necessarily tied to the median posterior sample value. Since we do not set any of the Don’t know/Decline coefficients to values close to 0, it makes sense that the posterior samples often have a “larger” portion of their distributions falling below 0. Accordingly, we should be cautious in treating small effects as definitive given our relatively small sample size.</p>
+<p>However, our expectations regarding the effects of the treatments prove to be quite wrong. As we discuss in the manuscript, and as we show in the tables below, the treatment effects do not generally correlate strongly with the outcome response. Overall, our expectations regarding the effects of the informational prompts were wide of the mark.</p>
 </section>
 <section id="descriptive-figures" class="level1">
 <h1>Descriptive Figures</h1>
@@ -5970,20 +5931,24 @@ Distance: 5k
 </section>
 <section id="results-figures" class="level1">
 <h1>Results Figures</h1>
-<p>This section displays several figures derived from the models above. These figures are intended to help communicate the results of our analysis in a more substantively meaningful and accessible way. In general, given our use of multilevel multinomial logit models, we display results on a probability scale rather than discussing results in terms of odds ratios. All of the figures shown here were generated using the <code>{tidybayes}</code> package <span class="citation" data-cites="KayTidyBayes">(<a href="#ref-KayTidyBayes" role="doc-biblioref">Kay n.d.</a>)</span>.</p>
+<p>This section displays several figures derived from the models above. These figures are intended to help communicate the results of our analysis in a more substantively meaningful and accessible way. In general, given our use of multilevel multinomial logit models, we display results on a probability scale rather than discussing results in terms of odds ratios. Some of this content may be redundant to content in the primary manuscript. All of the figures shown here were generated using the <code>{tidybayes}</code> package <span class="citation" data-cites="KayTidyBayes">(<a href="#ref-KayTidyBayes" role="doc-biblioref">Kay n.d.</a>)</span>.</p>
 <section id="effect-of-distance-on-expressed-attitudes" class="level2">
 <h2 class="anchored" data-anchor-id="effect-of-distance-on-expressed-attitudes">Effect of Distance on Expressed Attitudes</h2>
 <p>Here we present a series of figures that contrast the posterior distribution samples from the two models predicting responses to the question regarding support for the construction of a new U.S. military facility in Poland. As we discuss in the manuscript, each survey participant is presented with one of four short vignettes and then asked about their level of support for the construction of a new U.S. military facility—first at a proposed distance of 100km and then a distance of 5km.</p>
 <p>For each model we draw 500 sample values from the posterior distribution to generate a set of predicted probability values for the four possible outcomes responses/choices (i.e.&nbsp;Neutral, Oppose, Support, and Don’t know/Decline). To generate these values we set all of the predictor variables to their modal or mean values. We allow the treatment variables and grouping categories to take on the values observed in the data—for example, the first set of models includes four treatment categories and varying intercepts on the province grouping term, and so we end up with 64 (4 treatment groups <span class="math inline">\(\times\)</span> 16 provinces) groups of predicted probabilities corresponding to the 16 provinces in the data. For each individual distance-treatment grouping, we allow the province to vary when generating our predicted probabilities, meaning our posterior samples are actually vectors with 8,000 rows (500 samples <span class="math inline">\(\times\)</span> 16 provinces). When we calculate the contrasts we calculate the within-group (e.g.&nbsp;province) differences in the predicted probability values.</p>
-<p><span class="citation" data-cites="eq_distance-equation">(<a href="#ref-eq_distance-equation" role="doc-biblioref"><strong>eq_distance-equation?</strong></a>)</span> shows how we calcualte the distance effect. <span class="math inline">\(\mathbb{E}[Y_{t,r,p,i,5km}]\)</span> is the expected value of <span class="math inline">\(Y\)</span> for treatment group <span class="math inline">\(t\)</span>, for response <span class="math inline">\(r\)</span>, in province <span class="math inline">\(p\)</span>, for draw/row <span class="math inline">\(i\)</span> for the 5 km model. Similarly, <span class="math inline">\(\mathbb{E}[Y_{t,r,p,i,100km}]\)</span> is the expected value of <span class="math inline">\(Y\)</span> for treatment group <span class="math inline">\(t\)</span>, for response<span class="math inline">\(r\)</span>, in province <span class="math inline">\(p\)</span>, for draw/row <span class="math inline">\(i\)</span> for the 100 km model.</p>
+<p><a href="#eq-distance-equation">Equation&nbsp;1</a> shows how we calculate the distance effect. <span class="math inline">\(\mathbb{E}[Y_{t,r,p,i,5km}]\)</span> is the expected value of <span class="math inline">\(Y\)</span> for treatment group <span class="math inline">\(t\)</span>, for response <span class="math inline">\(r\)</span>, in province <span class="math inline">\(p\)</span>, for draw/row <span class="math inline">\(i\)</span> for the 5 km model. Similarly, <span class="math inline">\(\mathbb{E}[Y_{t,r,p,i,100km}]\)</span> is the expected value of <span class="math inline">\(Y\)</span> for treatment group <span class="math inline">\(t\)</span>, for response<span class="math inline">\(r\)</span>, in province <span class="math inline">\(p\)</span>, for draw/row <span class="math inline">\(i\)</span> for the 100 km model.</p>
 <p><span id="eq-distance-equation"><span class="math display">\[\text{Distance Effect} = (\mathbb{E}[Y_{t,r,p,i,5km}] - \mathbb{E}[Y_{t,r,p,i,100km}]) \tag{1}\]</span></span></p>
 <p>Once we have these predicted values for each of the two models, we then compare the posterior samples by subtracting the 100k posterior values from the 5k posterior values. Accordingly, positive values indicate that support is higher when the proposed distance is smaller, while smaller values indicate that support is stronger where the proposed distance is greater. For example, if the median posterior value for the “Support” outcome response is 0.80 for the 5km model and 0.60 for the 100k model, the resulting contrast value would be 0.20, which would tell us that the median predicted level for the support response is 20 percentage points higher for the 5k model.</p>
 <p>We present a series of figures depicting these contrasts below. The dotplots depict the distribution of the posterior contrasts, with blue indicating observed values fall above 0 and red indicating that the observed values fall below 0. We also plot point intervals showing the median posterior contrast value, surrounded by 50% and 89% credible intervals. The dashed line represents 0. Finally, in each panel we also show the <span class="math inline">\(Pr(Direction)\)</span> statistic—the probability that the median value falls above/below 0. This takes on a value in the range of <span class="math inline">\([0.5, 1.0]\)</span>.</p>
+<section id="a-note-on-treatment-effects" class="level3">
+<h3 class="anchored" data-anchor-id="a-note-on-treatment-effects">A Note on Treatment Effects</h3>
+<p>In the manuscript we focus primarily on generating contrasts based around average and modal. observations, though we do allow the grouping terms to vary to incorporate regional and geographic uncertainty and variation. We do not display the average treatment effect (ATE) contrasts here. Given our use of a multilevel categorical model containing several factor/categorical predictor variables we quickly run up against computing and memory constraints. Even subsetting the posterior draws to isolate particular response categories and treatment combinations (or distance combinations) can still generate massive vectors and requires over 100GB of memory. When we increase the grouping terms to the 300<span class="math inline">\(+\)</span> districts and 16 provinces this becomes impossible to compute. Accordingly, we stick with presenting contrasts based on groupings that are very common in the data.</p>
+</section>
 <section id="province-level-models" class="level3">
 <h3 class="anchored" data-anchor-id="province-level-models">Province-Level Models</h3>
-<p>In this section we present a series of figures plotting the posterior contrasts for each of the treatment group categories. Higher/more positive values indicate a higher probability of the given response in the 5km model and lower/more negative probability values indicate a higher probability of a given response in the 100km model.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>In this section we present a series of figures plotting the posterior contrasts for each of the treatment group categories. Higher/more positive values indicate a higher probability of the given response in the 5 km model and lower/more negative probability values indicate a higher probability of a given response in the 100 km model.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <p>In general we observe similar patterns across all four panels, so rather than repeat ourselves we provide a general summary of the findings. Across all four panels we see that there is a slightly higher probability of a respondent responding with “Neutral” when the proposed distance is closer as compared to farther away. The posterior sample median generally ranges from approximately 0.02 to 0.09. Similarly, the <span class="math inline">\(Pr(Direction)\)</span> statistic ranges from approximately 0.72 to 0.94, indicating fairly strong probabilities of observing a positive effect here.</p>
-<p>Though neutrality is also important, the remaining panels for Support and Opposition to the proposed U.S. military facility are perhaps more intuitively impactful. We see that across all four treatment groupings, respondents are less likely to support a new U.S. military facility when the proposed distance is closer (i.e.&nbsp;5km) than further away (i.e.&nbsp;100km). The probability of the observed difference is high, with all four groupings seeing 98–99% of the posterior contrasts falling below 0. Furthermore, the magnitude of the median contrast is fairly large, with differences in the predicted probability values falling between approximately 0.12 and 0.15 across the treatment groups.</p>
+<p>Though neutrality is also important, the remaining panels for Support and Opposition to the proposed U.S. military facility are perhaps more intuitively impactful. We see that across all four treatment groupings, respondents are less likely to support a new U.S. military facility when the proposed distance is closer (i.e.&nbsp;5 km) than further away (i.e.&nbsp;100 km). The probability of the observed difference is high, with all four groupings seeing 98–99% of the posterior contrasts falling below 0. Furthermore, the magnitude of the median contrast is fairly large, with differences in the predicted probability values falling between approximately 0.12 and 0.15 across the treatment groups.</p>
 <p>Similarly, we observe fairly strong evidence that respondents are more likely to <strong>oppose</strong> a new U.S. military facility when the proposed distance is closer. We find <span class="math inline">\(Pr(Direction)\)</span> statistics of approximately 0.98 or greater across all four groups, with median contrasts between approximately 0.10 and 0.12 in all groups.</p>
 <p>These results are broadly consistent with a “NIMBYism” theme—people in Poland generally like U.S. military personnel and appear supportive of the security ties between the U.S. and Poland, but are less likely to support a new U.S. military facility if that facility is going to be located close by.</p>
 <div id="fig-distance-control" class="quarto-figure quarto-figure-center anchored">
@@ -6014,8 +5979,8 @@ Distance: 5k
 </section>
 <section id="district-level-models" class="level2">
 <h2 class="anchored" data-anchor-id="district-level-models">District-Level Models</h2>
-<p>The following figures show the contrasts in predicted probabilities for the 5k and 100k distance questions, within treatment groups. The results presented in this section are from models that treat respondents as nested within districts, which are themselves nested within provinces. Accordingly, the models generating these figures include varying intercept terms for both province and district.</p>
-<p>As in the previous section, we again find results largely consistent with a “NIMBY” framework. Respondents are generally less supportive of a U.S. military facility when the proposed distance for the facility’s location is 5km away as compared to 100km away. This pattern holds across all four treatment groups, with <span class="math inline">\(Pr(Direction)\)</span> values around 0.98 or higher and median posterior contrasts in the 0.10 to 0.15 range in the “Support” and “Oppose” response groupings.</p>
+<p>The following figures show the contrasts in predicted probabilities for the 5 km and 100 km distance questions, within treatment groups. The results presented in this section are from models that treat respondents as nested within districts, which are themselves nested within provinces. Accordingly, the models generating these figures include varying intercept terms for both province and district.</p>
+<p>As in the previous section, we again find results largely consistent with a “NIMBY” framework. Respondents are generally less supportive of a U.S. military facility when the proposed distance for the facility’s location is 5km away as compared to 100 km away. This pattern holds across all four treatment groups, with <span class="math inline">\(Pr(Direction)\)</span> values around 0.98 or higher and median posterior contrasts in the 0.10 to 0.15 range in the “Support” and “Oppose” response groupings.</p>
 <div id="fig-distance-district-control" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="../Figures/contrasts-district-control:5km-control:100km.png" class="img-fluid figure-img"></p>
@@ -6043,7 +6008,7 @@ Distance: 5k
 </section>
 <section id="moderating-effect-of-contact" class="level2">
 <h2 class="anchored" data-anchor-id="moderating-effect-of-contact">Moderating Effect of Contact</h2>
-<p>In this section we present a series of figures that build on those in the previous section. Above we explore the contrasts in posterior distributions between the 100km and 5km models. Here we follow a similar procedure, presenting the contrasts in distance effects between those who report. having contact with U.S. military personnel and those who do not report and interpersonal contact with U.S. military personnel. <a href="#eq-contact-equation">Equation&nbsp;2</a> shows how we calculate these contrasts. In general, this is similar to what we do above to generate the contrasts for distance, but here we are actually generating contrasts between two contrasts. This is essentially a differences-in-differences.</p>
+<p>In this section we present a series of figures that build on those in the previous section. Above we explore the contrasts in posterior distributions between the 100km and 5 km models. Here we follow a similar procedure, presenting the contrasts in distance effects between those who report. having contact with U.S. military personnel and those who do not report and interpersonal contact with U.S. military personnel. <a href="#eq-contact-equation">Equation&nbsp;2</a> shows how we calculate these contrasts. In general, this is similar to what we do above to generate the contrasts for distance, but here we are actually generating contrasts between two contrasts. This is essentially a differences-in-differences.</p>
 <p>As we describe above, we first take 500 draws/samples from the posterior distribution for each comparison grouping. For example, we obtain 500 draws for one “group” when we take draws from the 100 km distance model and set contact to “Yes”, response = “Support”, treatment group to “Control”, and province to “Śląskie”. We would generate another sample by changing contact to “No” and keeping the rest of the settings the same. Because we take posterior draws for every province, we actually end up with 8,000 posterior draws (500 draws <span class="math inline">\(\times\)</span> 16 provinces).</p>
 <p>Second, after generating the posterior samples for each grouping we then calculate the contrast values. Each grouping thus leaves us with a vector of posterior draws with 8,000 rows. We then subtract these rows from one another to obtain our contrasts.</p>
 <p><span class="math inline">\(\mathbb{E}[Y_{t,r,p,i,5km}]\)</span> is the expected value of <span class="math inline">\(Y\)</span> for treatment group <span class="math inline">\(t\)</span>, for response <span class="math inline">\(r\)</span>, in province <span class="math inline">\(p\)</span>, for draw/row <span class="math inline">\(i\)</span> for the 5 km model. Similarly, <span class="math inline">\(\mathbb{E}[Y_{t,r,p,i,100km}]\)</span> is the expected value of <span class="math inline">\(Y\)</span> for treatment group <span class="math inline">\(t\)</span>, for response<span class="math inline">\(r\)</span>, in province <span class="math inline">\(p\)</span>, for draw/row <span class="math inline">\(i\)</span> for the 100 km model. The superscript takes on a value of <span class="math inline">\(0\)</span> for no reported contact and <span class="math inline">\(1\)</span> for reported contact. The result is a comparison of how large an effect distance has on the expected outcome between the two contact categories.</p>
@@ -7260,8 +7225,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/bivar-ppcheck-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for bivariate models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/bivar-ppcheck-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for bivariate models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7270,8 +7235,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/bivar-ppcheck-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for bivariate models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/bivar-ppcheck-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for bivariate models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7280,8 +7245,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/province-ppcheck-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for province models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/province-ppcheck-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for province models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7290,8 +7255,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/province-ppcheck-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for province models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/province-ppcheck-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for province models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7300,8 +7265,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/district-ppcheck-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for district models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/district-ppcheck-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for district models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7310,8 +7275,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/district-ppcheck-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for district models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/district-ppcheck-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for district models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7320,8 +7285,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/full-ppcheck-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for full response models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/full-ppcheck-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for full response models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7330,8 +7295,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/full-ppcheck-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for full response models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/full-ppcheck-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for full response models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7340,8 +7305,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/ve-ppcheck-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for varying effects models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/ve-ppcheck-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for varying effects models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7350,8 +7315,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/ve-ppcheck-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for varying effects models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/ve-ppcheck-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for varying effects models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7360,8 +7325,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/ordered-ppcheck-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for ordered models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/ordered-ppcheck-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for ordered models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7370,8 +7335,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/ordered-ppcheck-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for ordered models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/ordered-ppcheck-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for ordered models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7380,8 +7345,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/contact-ppcheck-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for contact models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/contact-ppcheck-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for contact models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7390,8 +7355,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/contact-ppcheck-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for contact models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/contact-ppcheck-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for contact models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7400,8 +7365,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/contact-interaction-ppcheck-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for contact and treatment interaction models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/contact-interaction-ppcheck-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for contact and treatment interaction models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7410,8 +7375,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/contact-interaction-ppcheck-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for contact and treatment interaction models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/contact-interaction-ppcheck-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for contact and treatment interaction models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7420,8 +7385,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/contact-interaction-districts-ppcheck-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for contact models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/contact-interaction-districts-ppcheck-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for contact models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7430,8 +7395,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/contact-interaction-districts-ppcheck-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Posterior predictive check for contact models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/contact-interaction-districts-ppcheck-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Posterior predictive check for contact models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7443,8 +7408,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/bivar-traceplots-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from bivariate models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/bivar-traceplots-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from bivariate models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7453,8 +7418,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/bivar-traceplots-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from bivariate models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/bivar-traceplots-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from bivariate models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7463,8 +7428,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/province-traceplots-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from province models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/province-traceplots-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from province models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7473,8 +7438,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/province-traceplots-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from province models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/province-traceplots-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from province models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7483,8 +7448,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/district-traceplots-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from district models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/district-traceplots-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from district models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7493,8 +7458,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/district-traceplots-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from district models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/district-traceplots-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from district models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7503,8 +7468,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/full-traceplots-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from full response models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/full-traceplots-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from full response models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7513,8 +7478,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/full-traceplots-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from full response models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/full-traceplots-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from full response models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7523,8 +7488,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/ve-traceplots-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from varying effects models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/ve-traceplots-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from varying effects models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7533,8 +7498,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/ve-traceplots-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from varying effects models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/ve-traceplots-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from varying effects models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7543,8 +7508,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/ordered-traceplots-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from ordered models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/ordered-traceplots-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from ordered models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7553,8 +7518,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/ordered-traceplots-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from ordered models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/ordered-traceplots-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from ordered models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7563,8 +7528,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/contact-traceplots-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from contact models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/contact-traceplots-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from contact models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7573,8 +7538,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/contact-traceplots-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from contact models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/contact-traceplots-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from contact models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7583,8 +7548,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/contact-interaction-traceplots-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from contact and treatment interaction models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/contact-interaction-traceplots-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from contact and treatment interaction models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7593,8 +7558,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/contact-interaction-traceplots-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from contact and treatment interaction models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/contact-interaction-traceplots-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from contact and treatment interaction models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7603,8 +7568,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/contact-interaction-districts-traceplots-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from contact models, outcome question: 100k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/contact-interaction-districts-traceplots-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from contact models, outcome question: 100 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7613,8 +7578,8 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/contact-interaction-districts-traceplots-5k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Traceplots for treatment variables from contact models, outcome question: 5k distance.</figcaption>
+<p><img src="poland_appendix_files/figure-html/contact-interaction-districts-traceplots-5km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Traceplots for treatment variables from contact models, outcome question: 5 km distance.</figcaption>
 </figure>
 </div>
 </div>
@@ -7626,7 +7591,7 @@ Distance: 5k
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="poland_appendix_files/figure-html/bivar-rhat-100k-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><img src="poland_appendix_files/figure-html/bivar-rhat-100km-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 <figcaption class="figure-caption">Rhat statistics for parameters from bivariate models.</figcaption>
 </figure>
 </div>
@@ -7746,7 +7711,7 @@ Kruschke, John K. 2015. <em>Doing <span>Bayesian Data Analysis</span></em>. Seco
 <div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1"><p>Note that we omit the Don’t know/Decline category because there are generally very few observations for this response group. For both the 100km and 5km questions we see only about 3% of respondents answer “Don’t know/Decline to answer”.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>Note that we omit the Don’t know/Decline category because there are generally very few observations for this response group. For both the 100 km and 5 km questions we see only about 3% of respondents answer “Don’t know/Decline to answer”.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main>
 <!-- /main column -->

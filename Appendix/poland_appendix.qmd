@@ -51,6 +51,10 @@ bayesplot::bayesplot_theme_update(text = element_text(family = "oswald", size = 
                                   strip.text.x = element_text(family = "oswald", size = 5),
                                   plot.title = element_text(face = "bold"))
 
+# Set bayesplot color theme.
+color_scheme_set("viridis")
+
+
 # Figure parameters
 knitr::opts_chunk$set(fig.align = "center", 
                       fig.retina = 3,
@@ -97,7 +101,7 @@ Second, we generate a set of expected coefficient/effect values for all of the v
 
 Third, following this procedure we generate 200 hypothetical data sets for a given sample size value.  
 
-Fourth, we chose a set of hypothetical sample size values to evaluate the model's ability to recover the expected parameter space. Specifically, we choose sample sizes of 1600, 2560, 4800, and 12800. Our actual data are close to 2,500, but we chose the other values to assess the model's performance across a wider range of hypothetical circumstances. 
+Fourth, we chose a set of hypothetical sample size values to evaluate the model's ability to recover the expected parameter space. Specifically, we choose sample sizes of 1600, 2560, 4800, and 12800. Our actual data are close to 2500, but we chose the other values to assess the model's performance across a wider range of hypothetical circumstances. 
 
 In total, we end up with $I \times K$ datasets and models, where $I$ is the number of iterations per sample size (i.e. 200) and $K$ is the number of different sample sizes (i.e. 4. In our case, we generate 800 sample data sets and run the model a total of 800 times. As in our primary manuscript, we model the hypothetical data using a Bayesian multilevel multinomial logistic regression using `{brms}` [@Burkner2017; @Burkner2018]. 
 
@@ -1155,6 +1159,8 @@ bayesplot::mcmc_trace(model_3_full_response[[2]],
 #| message: false
 #| warning: false
 #| echo: false
+#| out-height: 14in
+#| fig-height: 14
 #| fig-cap: "Traceplots for treatment variables from varying effects models, outcome question: 100 km distance."
 
 
@@ -1163,12 +1169,15 @@ bayesplot::mcmc_trace(model_4_varying_effects[[1]],
                       facet_args = list(ncol = 3)) +
   labs(title = "Varying effects Models, 100 km")
 
+
 ```
 
 ```{r ve-traceplots-5km}
 #| message: false
 #| warning: false
 #| echo: false
+#| #| out-height: 14in
+#| fig-height: 14
 #| fig-cap: "Traceplots for treatment variables from varying effects models, outcome question: 5 km distance."
 
 bayesplot::mcmc_trace(model_4_varying_effects[[1]],

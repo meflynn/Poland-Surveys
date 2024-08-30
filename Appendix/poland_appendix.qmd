@@ -1258,10 +1258,12 @@ bayesplot::mcmc_trace(model_7_contact_int[[2]],
 #| message: false
 #| warning: false
 #| echo: false
+#| fig-height: 30
 #| fig-cap: "Traceplots for treatment variables from contact models, outcome question: 100 km distance."
 
 bayesplot::mcmc_trace(model_8_contact_int_districts[[1]],
-                      regex_pars = c(".*treatment.*")) +
+                      regex_pars = c(".*treatment.*"),
+                      facet_args = list(ncol = 4)) +
   labs(title = "Contact and Treatment Interaction District Models, 100 km")
 ```
 
@@ -1269,10 +1271,12 @@ bayesplot::mcmc_trace(model_8_contact_int_districts[[1]],
 #| message: false
 #| warning: false
 #| echo: false
+#| fig-height: 30
 #| fig-cap: "Traceplots for treatment variables from contact models, outcome question: 5 km distance."
 
 bayesplot::mcmc_trace(model_8_contact_int_districts[[2]],
-                      regex_pars = c(".*treatment.*")) +
+                      regex_pars = c(".*treatment.*"),
+                      facet_args = list(ncol = 4)) +
   labs(title = "Contact and Treatment Interaction District Models, 5 km")
 ```
 

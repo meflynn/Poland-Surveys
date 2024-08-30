@@ -1214,7 +1214,8 @@ bayesplot::mcmc_trace(model_5_ordered_response[[2]],
 #| fig-cap: "Traceplots for treatment variables from contact models, outcome question: 100 km distance."
 
 bayesplot::mcmc_trace(model_6_contact[[1]],
-                      regex_pars = c(".*treatment.*")) +
+                      regex_pars = c(".*treatment.*"),
+                      facet_args = list(ncol = 4)) +
   labs(title = "Contact Models, 100 km")
 ```
 
@@ -1226,7 +1227,8 @@ bayesplot::mcmc_trace(model_6_contact[[1]],
 #| fig-cap: "Traceplots for treatment variables from contact models, outcome question: 5 km distance."
 
 bayesplot::mcmc_trace(model_6_contact[[2]],
-                      regex_pars = c(".*treatment.*")) +
+                      regex_pars = c(".*treatment.*"),
+                      facet_args = list(ncol = 4)) +
   labs(title = "Contact Models, 5 km")
 ```
 

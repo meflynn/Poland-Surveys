@@ -154,9 +154,9 @@ list(
 #  #tar_target(contrast_test, figure_contrast_test_f(model_1_province, group.effects = TRUE, #response.cat = "Support")),
 #
 #  # Build appendix
-#  tar_quarto(poland_appendix,
-#             path = "Appendix/poland_appendix.qmd",
-#             quiet = FALSE),
+  tar_quarto(poland_appendix,
+             path = "Appendix/poland_appendix.qmd",
+             quiet = FALSE),
 
 #  # Build short PDF appendix for review process
 #  tar_quarto(poland_appendix_short,

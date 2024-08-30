@@ -1,0 +1,815 @@
+---
+title: "Supplementary Appendix for At the Edge of War: Frontline Ally Support for the U.S. Military"
+#author:
+#  - name: Michael A. Allen
+#    affiliation: Boise State University
+#  - name: Michael E. Flynn
+#    affiliation: Kansas State University
+#  - name: Carla Martinez Machain
+#    affiliation: University at Buffalo (SUNY)
+#  - name: Grzegorz Smulek
+#    affiliation: Jagiellonian University
+format:
+#  pdf:
+#    toc: true
+#    cite-method: natbib
+#    include-in-header: 
+#      text: |
+#        \usepackage{booktabs}
+#        \usepackage{siunitx}
+#        \newcolumntype{d}{S[
+#          input-open-uncertainty=,
+#          input-close-uncertainty=,
+#          parse-numbers = false,
+#          table-align-text-pre=false,
+#          table-align-text-post=false
+#        ]}
+  html:
+    toc: true
+    toc-location: body
+    self-contained: true
+fontsize: "10"
+bibliography: ../References/references.bib
+csl: ../References/apsa.csl
+link-citations: true
+execute: 
+  eval: true
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+#| warning: false
+#| message: false
+#| error: false
+#| echo: false
+
+library(bayesplot) # Need for postestimation plots
+library(tidyverse)
+library(targets) # Need to load model objects
+library(tarchetypes)
+library(flynnprojects) # Use for theme
+library(furrr)
+library(modelsummary)
+library(kableExtra)
+library(here)
+
+# Turn off number wrapper in tables
+options("modelsummary_format_numeric_latex" = "plain")
+
+# Custom fonts
+# # Enable custom fonts
+sysfonts::font_add_google("Oswald", family = "oswald")
+showtext::showtext_auto()
+
+# Bayesplot theme adjustment.
+# Bring it into line with theme_flynn()
+bayesplot::bayesplot_theme_update(text = element_text(family = "oswald", size = 8),
+                                  strip.text.x = element_text(family = "oswald", size = 5),
+                                  plot.title = element_text(face = "bold"))
+
+# Set bayesplot color theme.
+color_scheme_set("viridis")
+
+
+# Figure parameters
+knitr::opts_chunk$set(fig.align = "center", 
+                      fig.retina = 3,
+                      fig.width = 6, 
+                      fig.height = (6 * 0.618),
+                      out.width = "100%",
+                      showtext = TRUE)
+
+# set targets configuration
+tar_config_set(store = here::here('_targets'),
+               script = here::here('_targets.R'))
+
+# Need to declare target source because I call the table function for the balance
+# table below.
+#targets::tar_source()
+
+# Load various model objects
+tar_load(survey_clean)
+tar_load(priors_clean)
+#tar_load(table_balance)
+tar_load(model_0_bivariate)
+tar_load(model_1_province)
+tar_load(model_2_district)
+tar_load(model_3_full_response)
+tar_load(model_4_varying_effects)
+tar_load(model_5_ordered_response)
+tar_load(model_6_contact)
+tar_load(model_7_contact_int)
+tar_load(model_8_contact_int_districts)
+
+table_balance_f <- function(data) {
+
+  varlist <- list("gender", "minority", "education", "age", "income", "income_source", "ideology_z")
+
+  tempdata <- lapply(varlist, function(x) {
+
+    if(x != "ideology_z") {
+
+    tempout <- data |>
+      tidyr::drop_na(treatment_group, gender, minority, education, age, income, income_source, ideology_z) |>
+      dplyr::select(treatment_group, !!!rlang::syms(x)) |>
+      group_by(treatment_group, !!!rlang::syms(x)) |>
+      dplyr::summarise(count = n())
+
+    }
+
+    else {
+
+      tempout2 <- data |>
+        tidyr::drop_na(treatment_group, gender, minority, education, age, income, income_source, ideology_z) |>
+        dplyr::select(treatment_group, ideology_z) |>
+        group_by(treatment_group) |>
+        dplyr::summarise(count = mean(ideology_z))
+
+    }
+  }
+  )
+
+  # Create total mean and SD for ideology variable
+  ideology_me <- round(mean(data$ideology_z), 3)
+  ideology_sd <- round(sd(data$ideology_z), 3)
+
+
+  # names_from: The columns to use as column names
+  # values_from: column to use as cell values (in this case the count)
+  # Also need to use paste0. across() can't evaluate glue's .x variable
+  # Note: have to use cur_column() below because referring to .x specifically refers to the cell value, NOT the column name!
+  out <- data.table::rbindlist(tempdata, fill = TRUE) |>
+    mutate(ideology_z = ifelse(count < 1, "ideology_z", NA)) |>
+    pivot_longer(cols = c(2, 4, 5, 6, 7, 8, 9)) |>
+    filter(!is.na(value)) |>
+    pivot_wider(names_from = treatment_group,
+                values_from = count) |>
+    mutate(across(c("Control", "Security and Economic", "Economic", "Security"),
+                  ~ ifelse(is.na(.x), 0, .x))) |>
+    rowwise() |>
+    mutate(total = sum(`Control`, `Security and Economic`, `Economic`, `Security`),
+           across(c("Control", "Security and Economic", "Economic", "Security"),
+                  ~ case_when(
+                    name != "ideology_z" ~ paste0(.x, " (", round((.x/total)*100, 1),"%)"),
+                    name == "ideology_z" ~ paste0(round(.x, 3)," (",
+                                                  round(sd(data$ideology_z[data$treatment_group== cur_column()], na.rm = TRUE), 3),")"))),
+           name = case_when(
+             name == "income_source" ~ "Income Source",
+             name == "ideology_z" ~ "Ideology",
+             TRUE ~ name
+           ),
+           name = str_to_title(name),
+           value = case_when(
+             value == "ideology_z" ~ "Ideology",
+             TRUE ~ value
+           ),
+           total = ifelse(value == "Ideology", paste0(ideology_me, " (", ideology_sd, ")"), as.character(total))) |>
+    dplyr::rename("All Groups" = "total",
+                  "Predictor Level" = "value")
+
+  # rle looks at a vector and lists the values in that vector and how many times they appear.
+  # Super handy!
+  # setNames line converts the list into a value object. This is basically a data frame
+  # with named rows and a single column containing the row numbers.
+  idx <- rle(out$name)
+  idx <- setNames(idx$lengths, idx$values)
+
+  last.line <- length(out$name)
+
+  out <- out |>
+    dplyr::select(`Predictor Level`, `Control`, `Security`, `Economic`, `Security and Economic`, `All Groups`) |>
+    kableExtra::kbl(format = "html", align = "lrrrrr") |>
+    kableExtra::kable_styling(latex_options = c("center", "striped", "scale_down"), font_size = 10, position = "c") |>
+    kableExtra::add_header_above(c(" ", "Treatment Group" = 4, " "),
+                                   align = c("l")) |>
+    kableExtra::group_rows(index = idx, bold = TRUE, background = "#3498DB", color = "white") |>
+    kableExtra::row_spec(2, hline_after = TRUE) |>
+    kableExtra::column_spec(2:5, width = "3.5cm") |>
+    kableExtra::row_spec(last.line, hline_after = TRUE) 
+
+  return(out)
+
+}
+```
+
+# Contents
+
+1. Overview - 1
+2. Power Analysis - 1
+3. Descriptive Figures - 3
+4. Tables - 5
+
+# Overview
+
+These appendices contain supplementary information for the paper Supplementary Appendix for Outside Threats and Public Perceptions of the U.S. Military in Poland. Herein we provide a number of additional resources related to the project. First, we provide basic information about the survey and data collection procedures. Second, we provide some basic descriptive statistics and information to help readers better understand the data and the distribution of key variables and responses. Third, to save space in the primary manuscript we include all of the model tables for the project here. Fourth, we also include a number of additional figures to help communicate the results of our analysis. Finally, we include a number of diagnostic plots generated from the models we run. In general, we focus on a few specific types of plots and, where necessary, on key variables. For example, traceplots for multilevel multinomial logit models can quickly become both numerous and unwieldy in the confines of a PDF or printed document.
+
+
+# Power Analysis
+
+Before analyzing the data we developed a Bayesian power analysis in an effort to evaluate the probability of correctly identifying true effects versus false positives for the experimental treatment effects. We follow @kruschkeDoingBayesianData2015 in carrying out this test and implement it in the following steps. 
+
+First, we wrote a function that would simulate data that look like the expected sample data. In addition to our survey plan, we used data from @Allenetal2020 and @Allenetal2022 to establish a baseline expectation for what the distribution of the variables should look like. 
+
+Second, we generate a set of expected coefficient/effect values for all of the variables in our model. Note that for each variable we allow the expected effect to vary, establishing a mean and standard deviation for the expected effect rather than fixing its value. Where our variables overlap with those included in @Allenetal2022, we use their posterior estimates to generate our expected effect sizes and distributions. Where our variables differ (for example, we include variables that capture respondents' income sources/occupational fields) we set the expected effects to 0 with a standard deviation of 0.5 to reflect our uncertainty in the parameter values. This does not apply to the treatment variables, which we address more fully below. We also include varying intercepts for the 16 Polish provinces to match our plan to model the actual data using varying intercepts. In general, where we expect an effect we set the standard deviation so it is less than half of the mean beta value.
+
+Third, following this procedure we generate 200 hypothetical data sets for a given sample size value.  
+
+Fourth, we chose a set of hypothetical sample size values to evaluate the model's ability to recover the expected parameter space. Specifically, we choose sample sizes of 1600, 2560, 4800, and 12800. Our actual data are close to 2500, but we chose the other values to assess the model's performance across a wider range of hypothetical circumstances. 
+
+In total, we end up with $I \times K$ datasets and models, where $I$ is the number of iterations per sample size (i.e. 200) and $K$ is the number of different sample sizes (i.e. 4. In our case, we generate 800 sample data sets and run the model a total of 800 times. As in our primary manuscript, we model the hypothetical data using a Bayesian multilevel multinomial logistic regression using `{brms}` [@Burkner2017; @Burkner2018]. 
+
+For the treatment values, we do not have strong priors as to what constitute accurate effects. Accordingly, we generate parameters with a couple of considerations. First, given that we are estimating a multinomial logistic regression, the plausible parameter space is fairly constrained. Extreme values (e.g. $|\beta| > 4$) are unlikely (except in cases where observations appear to be rare). Second, we look at the effect sizes on similar variables in @Allenetal2020 and @Allenetal2022. Third, we generally expect that the different treatment prompts will increase support for a U.S. presence and decrease opposition. However, we also expect they will yield different magnitudes, with the combined treatment mentioning security concerns *and* economic benefits yielding the largest of the three. We also view this as an opportunity to evaluate our ability to recover effects of different sizes, and so we set the parameter distributions to values that we think fall within the plausible range, but also run the range of "small" to "large" effects. 
+
+Given these considerations, the distributions we use in the power analysis are as follows.
+
+$$
+\begin{align}
+\text{Support} &
+\begin{cases}
+Treatment_{SecurtyandEconomic} &\sim N(1.0, 0.3) \\
+Treatment_{Security} &\sim N(0.5, 0.1) \\
+Treatment_{Economic} &\sim N(0.1, 0.02) 
+\end{cases} 
+\\
+\text{Oppose} &
+\begin{cases}
+Treatment_{SecurtyandEconomic} &\sim N(-0.8, 0.3) \\
+Treatment_{Security} &\sim N(-0.5, 0.2) \\
+Treatment_{Economic} &\sim N(-0.1, 0.05) 
+\end{cases} 
+\\
+\text{Don't know/Decline to answer} &
+\begin{cases}
+Treatment_{SecurtyandEconomic} &\sim N(-0.5, 0.25) \\
+Treatment_{Security} &\sim N(-0.2, 0.1) \\
+Treatment_{Economic} &\sim N(-0.1, 0.08) 
+\end{cases}
+\end{align}
+$$
+
+The following figures show the results of our power analysis. The first figure shows the average $Pr(Direction)$ score for the treatment variables. The $Pr(Direction)$ statistic tells us the proportion of the posterior distribution that falls above/below 0 on the same side as the median value. If we had a median coefficient estimate where the median $\beta = 0.5$ and $Pr(Direction) = 0.97$, this tells us that there is a 97% chance of a positive effect. An average $Pr(Direction)$ of 0.90, for example, would therefore tell us that, on average, there is a 90% chance of a positive effect.  
+
+It is common to see power analyses presented in terms of what proportion of models' 95% confidence intervals exclude 0 and demonstrate an effect. We adopt this alternative approach because it allows us to more directly incorporate information about the posterior distribution into our assessment than the conventional frequentist approach.
+
+![The average probability of an effect across different treatment and response outcomes.](../Figures/fig-sim-threshold.jpg){#fig-threshold-plot}
+
+The second figure shows spaghetti plots whereby the posterior distributions for the treatment effects from the 200 different models are overlaid on top of one another. While this figure does not provide us with a specific statistic as in the case of the previous figure, it does give us a visual check on the distribution of the recovered coefficients and the accompanying uncertainty. 
+
+![Spaghetti plots dispalying the posterior distributions for treatment coefficients and response outcomes.](../Figures/fig-sim-spaghetti.jpg){#fig-spaghetti-plot}
+
+In general, the models do a fairly good job of recovering the parameter values we set in our simulation. The average $Pr(Direction)$ score is above 80% for the first and second treatment variables in the Positive and Negative response categories. The mean expected effect in these cases is approximately 1.0, 0.5, and 0.1 f or the Positive response equation and $-0.8$, $-0.5$, and $-0.1$ for the negative response model. For the Don't know/Decline response equation we set the expected values to $-0.5$, $-0.2$, and $-0.1$, but we set the standard deviation to a higher value given the relatively low incidence of these responses in existing data and the high level of uncertainty accompanying these responses. 
+
+These results indicate that for the largest effect sizes we have a fairly strong chance of recovering the parameter of interest. However, for the smaller effect sizes we are looking at only a 70-75% chance of recovering the parameter of interest. Though this figure may seem high, the smallest value that the $Pr(Direction)$ statistic can take on is (roughly speaking) 0.50 as it is necessarily tied to the median posterior sample value. Since we do not set any of the Don't know/Decline coefficients to values close to 0, it makes sense that the posterior samples often have a "larger" portion of their distributions falling below 0.   Accordingly, we should be cautious in treating small effects as definitive given our relatively small sample size.
+
+However, our expectations regarding the effects of the treatments prove to be quite wrong. As we discuss in the manuscript, and as we show in the tables below, the treatment effects do not generally correlate strongly with the outcome response. Overall, our expectations regarding the effects of the informational prompts were wide of the mark.
+
+
+
+# Descriptive Figures
+
+This section includes additional descriptive figures not included in the primary manuscript. 
+
+## Views of Major Powers
+
+@fig-views-us-troops shows the distribution of views of U.S. military personnel deployed to Poland in March of 2023 at the time of our survey. This is a different representation of the 2023 data we show in Figure 1 of the primary manuscript.
+
+![Views of U.S. military personnel in Poland among Polish adults](../Figures/views-us-troops.png){#fig-views-us-troops}
+
+
+@fig-views-russia shows the distribution of Polish adults' views of Poland's relations with Russia in March of 2023 at the time of our survey.Overwhelmingly respondents indicate that relations between Poland and Russia are "Somewhat hostile" or "Very hostile."
+
+![Views of Russia among Polish adults](../Figures/views-russian-relations.png){#fig-views-russia}
+
+
+## Distribution of respondents
+
+@fig-respondents-province shows the number of respondents per province In general, most of the group sizes fall between 100 and 200 respondents per province. The lowest number of respondents per group is 52 (Opolskie) and the highest is 339 (Mazowieckie).
+
+![The number of survey respondents per province.](../Figures/distribution-responses-province.png){#fig-respondents-province}
+
+@fig-respondents-district shows the number of respondents per district—the lower level administrative unit below the province. Here we can see substantial skew in the number of respondents per unit. 47 districts produce only one respondent. 64 districts only produce 2 respondents. At the other end of the distribution we have a few districts that produce a vastly disproportionate share of our respondents. 51 respondents come from Łódź, 54 from Poznań, and 150 come from Warszawa. Though we run supplemental analyses using districts as a grouping unit, we do not rely on these estimates to discuss variation in attitudes as a function of geography. 
+
+![The number of survey respondents per district.](../Figures/distribution-responses-district.png){#fig-respondents-district}
+
+
+
+# Tables
+
+This section contains a number of tables that provide descriptive insights into the data, and information on the models we run for our analysis.
+
+
+## Balance Tables
+
+@tbl-balance-table shows the balance of the predictor variables across the four treatment groups in the experiment. Most of the variables in our models are indicator variables, and so the numbers shown in the columns correspond to the number of respondents who chose a particular response for a particular question. For example, the number of people who respond that they identify as either Male or Female.
+
+The value in the parentheses indicates the percentage of responses that fall into each of the four treatment categories. In general, we expect this value to fall close to 25% for each row.
+
+Last, the final column shows the total number of responses for each category/row.
+
+We do not conduct a formal balance test, but this table helps us to ensure that the randomization procedure worked as intended. In general, we see most response-treatment groups falling at around the 25% mark, which is what we should expect if individuals were randomly assigned to one of the four treatment categories. We see more substantial deviations where the total number of observations for a given response is low. For example, with only 40 total respondents indicating that their primary income source was in the agricultural sector, small differences in the number of people who fall into each treatment group have a larger effect on the percentage value.
+
+The final row shows the mean value and standard deviation (in parentheses) for the ideology score, which is the only ordered integer response variable we included in the survey. Since we mean-center this measure, each category should have a mean of approximately 0 and a standard deviation of 0.5.
+
+```{r balance-table-chunk}
+#| tbl-cap: Balance table for predictors used in primary models.
+#| label: tbl-balance-table
+# Need to reference the source file/folder for the function I'm calling
+#source("../R/tables.R")
+#tar_source()
+tar_load(survey_clean)
+tab <- table_balance_f(survey_clean)
+tab
+```
+
+## Model Tables
+
+This section contains the tables for the models we run in our analysis. All of the models were run using `brms` package version `r utils::packageVersion("brms")` [@Burkner2017; @Burkner2018; Stan2023].
+
+1.  @tbl-bivariate shows the results of a multinomial logit model where we regress the outcome variable on the treatment group variable.
+2.  @tbl-base-model shows the results of our primary multinomial multilevel logit model. This model regresses the outcome response onto the treatment variable and several other predictor variables. Varying intercepts by province.
+3.  @tbl-district-model shows the results of our a multinomial multilevel logit model that regresses the outcome response onto the treatment variable and several other predictor variables. Varying intercepts by province and district.
+4.  @tbl-full-response shows the results of a model where we use the full six category response variable rather than the four category response used in our primary models.
+5.  @tbl-varying shows the results of a model that replicates our primary multilevel model, but allows the effects of the treatment variable to vary across province.
+6.  @tbl-treat-group changes the basic model specification slightly and uses the treatment group as the grouping term for the varying intercepts. We also include a variable indicating whether the respondent reported having personal contact with a U.S. service member, and we allow this effect to vary across treatment groups.
+7.  @tbl-contact-int builds upon our primary model in @tbl-base-model by adding a variable indicating whether the respondent reported having personal contact with a U.S. service member, and an interaction term between the contact variable and the treatment. We also include varying intercepts on province.
+8.  @tbl-contact-int-district replicates the models from @tbl-contact-int but includes varying intercepts on both province and district.
+9. @tbl-ordered shows the results of a multilevel ordered logit model. Here we take the original six category response variable, drop the "Don't know/Decline" Responses, and treat the remaining responses as ordered from "Strongly Oppose" to "Strongly Support".
+
+
+```{r model-tables-setup}
+#| include: false
+
+
+# Set up custom tidy and glance functions
+# add custom functions to extract estimates (tidy) and goodness-of-fit (glance) information
+tidy.brmsfit <- function(x, ...) {
+    s <- summary(x, ...)
+    ret <- data.frame(
+      term      = row.names(s$fixed),
+      estimate  = s$fixed$Estimate,
+      conf.low  = s$fixed$`l-95% CI`,
+      conf.high = s$fixed$`u-95% CI`,
+      group     = str_extract(row.names(s$fixed), "(?<=mu).*?(?=_)") # Extract grouping term (equation name)
+    ) |> 
+      mutate(term = str_remove(row.names(s$fixed), "(?<=mu).*?(?=_)")) # Change term to just variable name so it doesn't contain grouping term.
+    
+      ret
+}
+
+glance.brmsfit <- function(x, ...) {
+
+    if (length(x[["ranef"]][["group"]]) > 0) {
+      temp <- data.frame("N" = nrow(x[["data"]]),
+                         "N Groups" = length(unique(x[["data"]][["province"]])),
+                         "Groups" = do.call(paste, c(as.list(unique(x[["ranef"]][["group"]])), sep = ", ")) # Hopefully condenses cells so this part doesn't get spread out across several rows.
+                         )
+      
+
+    } else {
+      temp <- data.frame("N" = nrow(x[["data"]]),
+                         "N Groups" = length(x[["ranef"]][["group"]])
+                         )
+      
+    }
+  
+  temp
+    
+}
+
+
+# Write a function to apply both custom tidy and glance functions to a brms model
+custom.modelsummary.function <- function(x){
+  
+ templist <- list(
+   
+   "tidy" = tidy.brmsfit(x),
+   "glance" = glance.brmsfit(x)
+ 
+   )
+ 
+ class(templist) <- "modelsummary_list"
+ 
+ return(templist)
+  
+}
+
+
+coef.names <- c("mu_treatment_groupEconomic" = "Economic",
+                "mu_treatment_groupSecurity" = "Security",
+                "mu_treatment_groupSecurityandEconomic" = "Security and Economic",
+                "mu_contact_persYes" = "Personal Contact: Yes",
+                "mu_contact_persDon’tknowDDeclinetoanswer" = "Personal Contact: Don't know/Decline",
+                "mu_treatment_groupSecurity:contact_persYes" = "Security X Personal Contact",
+                "mu_treatment_groupEconomic:contact_persYes" = "Economic X Personal Contact",
+                "mu_treatment_groupSecurityandEconomic:contact_persYes" = "Security and Economic X Personal Contact",
+                "mu_treatment_groupSecurity:contact_persDon’tknowDDeclinetoanswer" = "Security X Personal Contact: Don't know/Decline",
+                "mu_treatment_groupEconomic:contact_persDon’tknowDDeclinetoanswer" = "Economic X Personal Contact: Don't know/Decline",
+                "mu_treatment_groupSecurityandEconomic:contact_persDon’tknowDDeclinetoanswer" = "Security and Economic X Personal Contact: Don't know/Decline",
+                "mu_age25to34years" = "25-34",
+                "mu_age35to44years" = "35-44",
+                "mu_age45to54years" = "45-54",
+                "mu_age55to64years" = "55-64",
+                "mu_ageAge65orolder" = "65+",
+                "mu_income43340–57187" = "Second Quantile",
+                "mu_income57188–74062" = "Third Quantile",
+                "mu_income74063–93937" = "Fourth Quantile",
+                "mu_income93938P" = "Fifth Quantile",
+                "mu_incomeDeclinetoanswer" = "Income Decline",
+                "mu_income_sourceFullMtimeorcontractworkinthegovernmentorpublicsector" = "Public sector contract work",
+                "mu_income_sourceFullMtimeorcontractworkintheprivatesector" = "Private sector contract work",
+                "mu_income_sourcePensionorretirement" = "Pension or Retirement",
+                "mu_income_sourceSelfMemployednonMagricultural" = "Self-employed (non-agricultural)",
+                "mu_income_sourceOthersources" = "Other sources",
+                "mu_educationHigherEducationBachelorDEngineer" = "Bachelor's degree or Engineer",
+                "mu_educationHigherEducationMaster’sdegreeorhigher" = "Master's degree or higher",
+                "mu_educationPrimaryEducation" = "Primary Education",
+                "mu_educationSecondaryEducation" = "Secondary Education",
+                "mu_educationVocationalSchool" = "Vocational School",
+                "mu_ideology_z" = "Ideology",
+                "mu_minorityYes" = "Minority: Yes",
+                "mu_minorityDeclinetoanswer" = "Minority: Decline",
+                "mu_genderFemale" = "Female",
+                "mu_genderNoneoftheabove" = "None of the Above",
+                "mu_Intercept" = "Intercept")
+
+
+# Index for variable groupings in output tables
+# Create multiple groupings so I can use map() to apply them each to 
+# tables of different lengths / model specifications.
+coef.groups.1 <- tibble::tribble(~var, ~group,
+                              "mu_treatment_groupEconomic", "Treatment",
+                              "mu_treatment_groupSecurity", "Treatment",
+                              "mu_treatment_groupSecurityandEconomic", "Treatment")
+
+coef.groups.2 <- tibble::tribble(~var, ~group,
+                              "mu_treatment_groupEconomic", "Treatment",
+                              "mu_treatment_groupSecurity", "Treatment",
+                              "mu_treatment_groupSecurityandEconomic", "Treatment",
+                              "mu_age25to34years", "Age",
+                              "mu_age35to44years", "Age",
+                              "mu_age45to54years", "Age",
+                              "mu_age55to64years", "Age",
+                              "mu_ageAge65orolder", "Age",
+                              "mu_income43340–57187", "Income",
+                              "mu_income57188–74062", "Income",
+                              "mu_income74063–93937", "Income",
+                              "mu_income93938P", "Income",
+                              "mu_incomeDeclinetoanswer", "Income",
+                              "mu_income_sourceFullMtimeorcontractworkinthegovernmentorpublicsector ", "Income Source",
+                              "mu_income_sourceFullMtimeorcontractworkintheprivatesector", "Income Source",
+                              "mu_income_sourcePensionorretirement", "Income Source",
+                              "mu_income_sourceSelfMemployednonMagricultural", "Income Source",
+                              "mu_income_sourceOthersources", "Income Source",
+                              "mu_educationHigherEducationBachelorDEngineer", "Education",
+                              "mu_educationHigherEducationMaster’sdegreeorhigher", "Education",
+                              "mu_educationPrimaryEducation", "Education",
+                              "mu_educationSecondaryEducation", "Education",
+                              "mu_educationVocationalSchool", "Education",
+                              "mu_ideology_z", "Ideology",
+                              "mu_minorityYes", "Minority",
+                              "mu_minorityDeclinetoanswer", "Minority",
+                              "mu_genderFemale", "Gender",
+                              "mu_genderNoneoftheabove", "Gender",
+                              "mu_Intercept", "Intercept")
+
+coef.groups.3 <- tibble::tribble(~var, ~group,
+                              "mu_contact_persYes", "Contact",
+                              "mu_contact_persDon’tknowDDeclinetoanswer", "Contact",
+                              "mu_age25to34years", "Age",
+                              "mu_age35to44years", "Age",
+                              "mu_age45to54years", "Age",
+                              "mu_age55to64years", "Age",
+                              "mu_ageAge65orolder", "Age",
+                              "mu_income43340–57187", "Income",
+                              "mu_income57188–74062", "Income",
+                              "mu_income74063–93937", "Income",
+                              "mu_income93938P", "Income",
+                              "mu_incomeDeclinetoanswer", "Income",
+                              "mu_income_sourceFullMtimeorcontractworkinthegovernmentorpublicsector ", "Income Source",
+                              "mu_income_sourceFullMtimeorcontractworkintheprivatesector", "Income Source",
+                              "mu_income_sourcePensionorretirement", "Income Source",
+                              "mu_income_sourceSelfMemployednonMagricultural", "Income Source",
+                              "mu_income_sourceOthersources", "Income Source",
+                              "mu_educationHigherEducationBachelorDEngineer", "Education",
+                              "mu_educationHigherEducationMaster’sdegreeorhigher", "Education",
+                              "mu_educationPrimaryEducation", "Education",
+                              "mu_educationSecondaryEducation", "Education",
+                              "mu_educationVocationalSchool", "Education",
+                              "mu_ideology_z", "Ideology",
+                              "mu_minorityYes", "Minority",
+                              "mu_minorityDeclinetoanswer", "Minority",
+                              "mu_genderFemale", "Gender",
+                              "mu_genderNoneoftheabove", "Gender",
+                              "mu_Intercept", "Intercept")
+
+coef.groups.4 <- tibble::tribble(~var, ~group,
+                              "mu_treatment_groupEconomic", "Treatment",
+                              "mu_treatment_groupSecurity", "Treatment",
+                              "mu_treatment_groupSecurityandEconomic", "Treatment",
+                              "mu_contact_persYes", "Contact",
+                              "mu_contact_persDon’tknowDDeclinetoanswer", "Contact",
+                              "mu_treatment_groupSecurity:contact_persYes", "Interactions",
+                              "mu_treatment_groupEconomic:contact_persYes", "Interactions",
+                              "mu_treatment_groupSecurityandEconomic:contact_persYes", "Interactions",
+                              "mu_treatment_groupSecurity:contact_persDon’tknowDDeclinetoanswer", "Interactions",
+                              "mu_treatment_groupEconomic:contact_persDon’tknowDDeclinetoanswer", "Interactions",
+                              "mu_treatment_groupSecurityandEconomic:contact_persDon’tknowDDeclinetoanswer", "Interactions",
+                              "mu_age25to34years", "Age",
+                              "mu_age35to44years", "Age",
+                              "mu_age45to54years", "Age",
+                              "mu_age55to64years", "Age",
+                              "mu_ageAge65orolder", "Age",
+                              "mu_income43340–57187", "Income",
+                              "mu_income57188–74062", "Income",
+                              "mu_income74063–93937", "Income",
+                              "mu_income93938P", "Income",
+                              "mu_incomeDeclinetoanswer", "Income",
+                              "mu_income_sourceFullMtimeorcontractworkinthegovernmentorpublicsector ", "Income Source",
+                              "mu_income_sourceFullMtimeorcontractworkintheprivatesector", "Income Source",
+                              "mu_income_sourcePensionorretirement", "Income Source",
+                              "mu_income_sourceSelfMemployednonMagricultural", "Income Source",
+                              "mu_income_sourceOthersources", "Income Source",
+                              "mu_educationHigherEducationBachelorDEngineer", "Education",
+                              "mu_educationHigherEducationMaster’sdegreeorhigher", "Education",
+                              "mu_educationPrimaryEducation", "Education",
+                              "mu_educationSecondaryEducation", "Education",
+                              "mu_educationVocationalSchool", "Education",
+                              "mu_ideology_z", "Ideology",
+                              "mu_minorityYes", "Minority",
+                              "mu_minorityDeclinetoanswer", "Minority",
+                              "mu_genderFemale", "Gender",
+                              "mu_genderNoneoftheabove", "Gender",
+                              "mu_Intercept", "Intercept")
+
+# Combine coefficient labels into a single list.
+# One list entry for each table. 
+# Note that some tables share the same coefficient list so 
+# a given list may appear repeatedly.
+
+group.list <- list(coef.groups.1,
+                   coef.groups.2,
+                   coef.groups.2,
+                   coef.groups.2,
+                   coef.groups.2,
+                   coef.groups.3,
+                   coef.groups.4,
+                   coef.groups.4
+                   )
+
+
+```
+
+```{r table-output}
+#| include: false
+
+
+# Create list of model groups
+modlist <- list(
+  "Bivariate" = model_0_bivariate,
+  "Base Model" = model_1_province,
+  "District Model" = model_2_district,
+  "Full Response Variable" = model_3_full_response,
+  "Group Effects" = model_4_varying_effects,
+  #"Ordered Response" = model_5_ordered_response,
+  "Personal Contact with Treatment Groupings" = model_6_contact,
+  "Contact and Treatment Interaction" = model_7_contact_int,
+  "Contact and Treatment Interaction (Districts)" = model_8_contact_int_districts
+)
+
+# Name each nested model according to outcome variable distance.
+named.mod.list <- future_map(
+  .x = modlist,
+  .f = ~ set_names(.x, c("Distance: 100k", "Distance: 5k"))
+)
+
+# Create nested map function to apply custom tidy and glance function 
+# to all brms models and convert lists to modelsummary_list.
+named.mod.list.custom <- future_map(
+  .x = seq_along(named.mod.list),
+  .f = ~ map(
+    .x = named.mod.list[[.x]],
+    .f = \(x) custom.modelsummary.function(x)
+  )
+)
+
+# Create modelsummary tables of all models in custom list.
+# Export this as a kableExtra object so I can apply grouping labels
+tables.out <- future_map2(
+  .x = seq_along(named.mod.list.custom),
+  .y = seq_along(named.mod.list),
+  .f = ~modelsummary::modelsummary(named.mod.list.custom[[.x]],
+                                   estimate = "estimate",
+                                   statistic = "[{conf.low}, {conf.high}]",
+                                   conf_level = 0.89,
+                                   shape = term ~ model + group,
+                                   coef_map = coef.names,
+                                   title = glue::glue("{names(named.mod.list[.y])}"),
+                                   fmt = fmt_decimal(digits = 3),
+                                   output = "kableExtra") |> 
+    kableExtra::kable_styling(bootstrap_options = "striped",
+                              font_size = 8,
+                              protect_latex = TRUE) 
+) 
+
+
+# use map2() to apply the group labels/lists (.y) to the list of tables (.x)
+tables.out.grouped <- future_map2(
+  .x = seq_along(tables.out),
+  .y = seq_along(group.list),
+  .f = ~ tables.out[[.x]] |> kableExtra::group_rows(index = setNames(rle(group.list[[.y]]$group)[[1]]*2, rle(group.list[[.y]]$group)[[2]]),
+                                                    background = "#3498DB")
+)
+
+```
+
+```{r bivariate-model-table}
+#| tbl-cap: Multinomial logistic regressions with treatment effects and outcome response. Models only include the treatment received by the respondent and their response.
+#| label: tbl-bivariate
+tables.out.grouped[[1]]
+
+```
+
+```{r base-model-table}
+#| tbl-cap: Multilevel multinomial logistic regressions with respondents grouped by province. These model the response as a function of the treatment variables and several predictor variables, with varying intercepts by province.
+#| label: tbl-base-model
+
+tables.out.grouped[[2]]
+
+```
+
+```{r district-model-table}
+#| tbl-cap: Multilevel multinomial logistic regressions with respondents grouped by province and district. These model the response as a function of the treatment variables and several predictor variables, with varying intercepts by province and by district.
+#| label: tbl-district-model
+#| 
+tables.out.grouped[[3]]
+
+```
+
+```{r full-response-model-table}
+#| tbl-cap: Multilevel multinomial logistic regressions with respondents grouped by province. These model the response as a function of the treatment variables and several predictor variables, with varying intercepts by province. Here we use the original six response categories rather than the four aggregated categories from the main model.
+#| label: tbl-full-response
+
+tables.out.grouped[[4]]
+
+```
+
+```{r varying-effects-model-table}
+#| tbl-cap: Multilevel multinomial logistic regressions with respondents grouped by province. These model the response as a function of the treatment variables and several predictor variables, with varying intercepts by province. We also allow the effect of the treatment variables to vary by province.
+#| label: tbl-varying
+tables.out.grouped[[5]]
+
+```
+
+```{r treatment-group-contact-table}
+#| tbl-cap: Multilevel multinomial logistic regressions with respondents grouped by treatment groups These model the response as a function of several predictor variables, with varying intercepts by province. We also allow the effect of contact to vary by treatment group.
+#| label: tbl-treat-group
+tables.out.grouped[[6]]
+
+```
+
+```{r contact-int-model-table}
+#| tbl-cap: Multilevel multinomial logistic regressions with respondents grouped by province. These model the response as a function of the treatment variables and several predictor variables, with varying intercepts by province. Here we interact the contact variable with the treatment variable to see if the effect of the treatment is conditioned by reported personal contact.
+#| label: tbl-contact-int
+#| 
+tables.out.grouped[[7]]
+
+```
+
+```{r contact-int-district-model-table}
+#| tbl-cap: Multilevel multinomial logistic regressions with respondents grouped by province and district. These model the response as a function of the treatment variables and several predictor variables, with varying intercepts by province and by district. Here we interact the contact variable with the treatment variable to see if the effect of the treatment is conditioned by reported personal contact.
+#| label: tbl-contact-int-district
+
+tables.out.grouped[[7]]
+
+```
+
+
+
+```{r ordered-table-setup}
+#| include: false
+
+
+# Custom glance function for already-supported brmsfit model
+# This just pulls out the relevant information I want in the table footer.
+glance_custom.brmsfit <- function(x, ...) {
+
+      temp <- data.frame("N" = nrow(x[["data"]]),
+                         "N Groups" = length(unique(x[["data"]][["province"]])),
+                         "Groups" = do.call(paste, c(as.list(unique(x[["ranef"]][["group"]])), sep = ", ")),  # Hopefully condenses cells so this part doesn't get spread out across several rows.
+                           "sd(Province)" = round(summary(x)[["random"]][[1]][[1]], 3)
+                         )
+
+  temp
+    
+}
+
+
+
+coef.names.ord <- c("b_treatment_groupEconomic" = "Economic",
+                "b_treatment_groupSecurity" = "Security",
+                "b_treatment_groupSecurityandEconomic" = "Security and Economic",
+                "b_contact_persYes" = "Personal Contact: Yes",
+                "b_contact_persDon’tknowDDeclinetoanswer" = "Personal Contact: Don't know/Decline",
+                "b_age25to34years" = "25-34",
+                "b_age35to44years" = "35-44",
+                "b_age45to54years" = "45-54",
+                "b_age55to64years" = "55-64",
+                "b_ageAge65orolder" = "65+",
+                "b_income43340–57187" = "Second Quantile",
+                "b_income57188–74062" = "Third Quantile",
+                "b_income74063–93937" = "Fourth Quantile",
+                "b_income93938P" = "Fifth Quantile",
+                "b_incomeDeclinetoanswer" = "Income Decline",
+                "b_income_sourceFullMtimeorcontractworkinthegovernmentorpublicsector" = "Public sector contract work",
+                "b_income_sourceFullMtimeorcontractworkintheprivatesector" = "Private sector contract work",
+                "b_income_sourcePensionorretirement" = "Pension or Retirement",
+                "b_income_sourceSelfMemployednonMagricultural" = "Self-employed (non-agricultural)",
+                "b_income_sourceOthersources" = "Other sources",
+                "b_educationHigherEducationBachelorDEngineer" = "Bachelor's degree or Engineer",
+                "b_educationHigherEducationMaster’sdegreeorhigher" = "Master's degree or higher",
+                "b_educationPrimaryEducation" = "Primary Education",
+                "b_educationSecondaryEducation" = "Secondary Education",
+                "b_educationVocationalSchool" = "Vocational School",
+                "b_ideology_z" = "Ideology",
+                "b_minorityYes" = "Minority: Yes",
+                "b_minorityDeclinetoanswer" = "Minority: Decline",
+                "b_genderFemale" = "Female",
+                "b_genderNoneoftheabove" = "None of the Above",
+                "Intercept[1]" = "Intercept 1",
+                "Intercept[2]" = "Intercept 2",
+                "Intercept[3]" = "Intercept 3",
+                "Intercept[4]" = "Intercept 4")
+
+coef.groups.2 <- tibble::tribble(~var, ~group,
+                              "b_treatment_groupEconomic", "Treatment",
+                              "b_treatment_groupSecurity", "Treatment",
+                              "b_treatment_groupSecurityandEconomic", "Treatment",
+                              "b_age25to34years", "Age",
+                              "b_age35to44years", "Age",
+                              "b_age45to54years", "Age",
+                              "b_age55to64years", "Age",
+                              "b_ageAge65orolder", "Age",
+                              "b_income43340–57187", "Income",
+                              "b_income57188–74062", "Income",
+                              "b_income74063–93937", "Income",
+                              "b_income93938P", "Income",
+                              "b_incomeDeclinetoanswer", "Income",
+                              "b_income_sourceFullMtimeorcontractworkinthegovernmentorpublicsector ", "Income Source",
+                              "b_income_sourceFullMtimeorcontractworkintheprivatesector", "Income Source",
+                              "b_income_sourcePensionorretirement", "Income Source",
+                              "b_income_sourceSelfMemployednonMagricultural", "Income Source",
+                              "b_income_sourceOthersources", "Income Source",
+                              "b_educationHigherEducationBachelorDEngineer", "Education",
+                              "b_educationHigherEducationMaster’sdegreeorhigher", "Education",
+                              "b_educationPrimaryEducation", "Education",
+                              "b_educationSecondaryEducation", "Education",
+                              "b_educationVocationalSchool", "Education",
+                              "b_ideology_z", "Ideology",
+                              "b_minorityYes", "Minority",
+                              "b_minorityDeclinetoanswer", "Minority",
+                              "b_genderFemale", "Gender",
+                              "b_genderNoneoftheabove", "Gender",
+                              "Intercept[1]", "Intercept",
+                              "Intercept[2]", "Intercept",
+                              "Intercept[3]", "Intercept",
+                              "Intercept[4]", "Intercept")
+
+
+```
+
+
+```{r ordered-table-output}
+#| echo: false
+
+# Add names to the ordered response model list
+names(model_5_ordered_response) <- c("100 km", "5 km")
+
+
+# Create modelsummary tables of all models in custom list.
+# Export this as a kableExtra object so I can apply grouping labels
+tables.out.ordered <- modelsummary::modelsummary(model_5_ordered_response,
+                                   estimate = "estimate",
+                                   statistic = "[{conf.low}, {conf.high}]",
+                                   conf_level = 0.89,
+                                   shape = term ~ model,
+                                   coef_map = coef.names.ord,
+                                   title = "{Ordered multilevel logit models}",
+                                   fmt = fmt_decimal(digits = 3),
+                                   output = "kableExtra") |>
+    kableExtra::kable_styling(bootstrap_options = "striped",
+                              font_size = 8,
+                              protect_latex = TRUE) |> 
+  kableExtra::group_rows(index = setNames(rle(coef.groups.2$group)[[1]]*2, 
+                                          rle(coef.groups.2$group)[[2]]),
+                         background = "#3498DB")
+```
+
+
+```{r ordered-models-table}
+#| tbl-cap: Multilevel ordered logistic regressions with respondents grouped by province These model the response as a function of the treatment variables and several predictor variables, with varying intercepts by province.
+#| label: tbl-ordered
+tables.out.ordered
+```
+

@@ -1,9 +1,9 @@
 
 
 sysfonts::font_add_google("Oswald", family = "oswald")
+sysfonts::font_add_google("EB Garamond", family = "ebgaramond")
 showtext::showtext_auto()
 showtext::showtext_opts(dpi = 300)
-
 
 # Types of contact
 figure_contact_type_f <- function(data) {
@@ -28,6 +28,9 @@ figure_contact_type_f <- function(data) {
       dplyr::select(contact_pers_type) |>
       tidyr::separate_longer_delim(contact_pers_type,
                                    delim = stringr::regex("\\.\\,|\\,(?=[A-Z])")) |>  # This regex identifies a comma followed by a period, or a comma immediately followed by a capital letter, but uses the lookahead question mark thing to ignore the capital letter so it doesn't include it as a delimiter.
+      dplyr::mutate(contact_pers_type = trimws(contact_pers_type),
+                    contact_pers_type = gsub("\\b$", "\\.", contact_pers_type),
+                    contact_pers_type = gsub("\\.\\.", "\\.", contact_pers_type)) |>
       dplyr::group_by(contact_pers_type) |>
       dplyr::summarise(total = n()) |>
       filter(!is.na(contact_pers_type))
@@ -38,11 +41,13 @@ figure_contact_type_f <- function(data) {
       geom_bar(fill = barcolor,
                stat = "identity") +
       scale_x_continuous(expand = c(0, 1)) +
-      scale_y_discrete(labels = function(x) str_wrap(x, width = 55)) +
+      scale_y_discrete(labels = function(x) str_wrap(x,
+                                                     width = 55,
+                                                     exdent = 3)) +
       labs(x = "Count",
            y = "Contact Type") +
     theme_flynn() +
-    theme(axis.text.y.left = element_text(size = 7.5,
+    theme(axis.text.y.left = element_text(size = 10.0,
                                           hjust = 0,
                                           vjust = 0,
                                           margin = margin(r = -5.0, b = 0.5, unit = "cm")),
@@ -51,10 +56,12 @@ figure_contact_type_f <- function(data) {
                                            linewidth = 0.3))
 
   patchwork::wrap_plots(p1, p2) +
-    patchwork::plot_layout(ncol = 2) &
-    theme(text = element_text(family = "Oswald"))
+    patchwork::plot_layout(ncol = 1,
+                           heights = c(1,3)) +
+    plot_annotation(tag_levels = 'A') &
+    theme(text = element_text(family = "Oswald", size = 14))
 
-  ggsave(here("Figures/contact-type-us-troops.png"), dpi = 300, width = 10, height = 7)
+  ggsave(here("Figures/contact-type-us-troops.png"), dpi = 300, width = 6, height = 10)
 
 }
 
@@ -100,6 +107,31 @@ figure_russia_views_f <- function(data) {
 
 }
 
+
+# Views of Russia
+figure_russia_views_chapter_f <- function(data) {
+
+  ggplot(data = data, aes(x = relations_russia, y = after_stat(count/sum(count)))) +
+    geom_bar(color = "black",
+             fill = viridis::magma(1),
+             linewidth = 0.1) +
+    theme_flynn() +
+    theme(text = element_text(family = "ebgaramond"),
+          axis.ticks.x.bottom = element_blank()) +
+    scale_y_continuous(labels = scales::percent_format(),
+                       breaks = seq(0, 0.5, 0.1),
+                       limits = c(0, 0.5),
+                       expand = c(0, 0)) +
+    labs(x = "",
+         y = "Percent",
+         title = "")
+
+  ggsave(here("Figures/views-russian-relations_chapter_version.png"),
+         dpi = 300,
+         width = 8,
+         height = 5)
+
+}
 
 # Views of US over time
 figure_us_troops_compare_f <- function(data1, data2) {
@@ -150,6 +182,526 @@ figure_us_troops_compare_f <- function(data1, data2) {
   ggsave(here("Figures/views-us-troops-time.png"), dpi = 300, width = 7, height = 3)
 
 }
+
+
+
+# Views of US over time
+figure_us_troops_compare_chapter_version_f <- function(data1, data2) {
+
+  data1 <- data1 |>
+    dplyr::select(american_troops, american_gov, chinese_gov) |>
+    mutate(year = 2023)
+
+  data2 <- data2 |>
+    filter(country == "Poland") |>
+    dplyr::select(year, troops_1, american_gov, chinese_gov) |>
+    dplyr::rename(american_troops = troops_1)
+
+  data.combined <- bind_rows(data1, data2) |>
+    pivot_longer(cols = c("american_gov", "american_troops", "chinese_gov")) |>
+    mutate(value = case_when(
+      grepl(".*know.*", value) ~ "Don't know/decline to answer",
+      TRUE ~ value
+    )) |>
+    group_by(year, name, value) |>
+    dplyr::summarise(obs = n()) |>
+    mutate(year = factor(year,
+                         levels = c("2023", "2020", "2019", "2018")),
+           value = factor(value,
+                                    levels = c("Don't know/decline to answer", "Very unfavorable", "Somewhat unfavorable", "Neutral", "Somewhat favorable", "Very favorable")),
+           name = factor(name,
+                         levels = c("american_troops", "american_gov", "chinese_gov"),
+                         labels = c("U.S. Presence", "U.S. Government", "Chinese Government")))
+
+  ggplot(data.combined, aes(y = year,
+                            fill = value,
+                            x = obs)) +
+    geom_bar(stat = "identity",
+             position = "fill",
+             linewidth = 0.15,
+             color = "white") +
+    facet_wrap(. ~ name) +
+    theme_flynn() +
+    theme(text = element_text(family = "ebgaramond"),
+          plot.title.position = "plot",
+          legend.position = "bottom",
+          legend.text = element_text(family = "ebgaramond"),
+          plot.margin = margin(l = 0.1,
+                               r = 0.4,
+                               b = -0.4,
+                               t = 0.1,
+                               unit = "cm"),
+          legend.box.margin = margin(l = 0.2,
+                                     r = 0.9,
+                                     b = 0.5,
+                                     t = -1.3,
+                                     unit = "cm"),
+          legend.background = element_rect(fill = "white"),
+          axis.text.y.left = element_text(face = "bold", size = 12),
+          strip.text.x.top = element_text(face = "bold", hjust = 0),
+          strip.background = element_blank(),
+          panel.spacing.x = unit(0.75, units = "cm"),
+          axis.ticks.length.y.left = unit(0, units = "in"),
+          plot.background = element_rect(fill = "white"),
+          panel.background = element_rect(fill = "white"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.y = element_blank(),
+          panel.border = element_blank(),
+          axis.line.y = element_blank(),
+          line = element_blank()) +
+    guides(fill = guide_legend(reverse = TRUE)) +
+    scale_x_continuous(labels = scales::percent_format(), expand = c(0, 0)) +
+    scale_y_discrete(expand = c(0, 0)) +
+    viridis::scale_fill_viridis(option = "magma",
+                                discrete = TRUE,
+                                begin = 0.15, # Darker colors
+                                end = 0.95) +  # Lighter colors
+    labs(x = "",
+         y = "",
+         fill = "Response",
+         title = "")
+
+  ggsave(here::here("Figures/views-us-troops-time-chapter-version.png"),
+         dpi = 300,
+         width = 7,
+         height = 4)
+
+}
+
+
+
+figure_europe_views_us_f <- function(data){
+
+  # vector of european countries
+  europe.sample <- c("Spain", "Portugal", "Poland", "Italy", "Belgium", "Netherlands", "Germany", "United Kingdom", "Turkey")
+
+  temp <- data |>
+    filter(country %in% europe.sample) |>
+    dplyr::select(country, troops_1, american_people, american_gov) |>
+    pivot_longer(cols = troops_1:american_gov) |>
+    group_by(country, name, value) |>
+    dplyr::summarise(obs.count = n()) |>
+    ungroup() |>
+    mutate(name = factor(name, levels = c("troops_1", "american_gov", "american_people"),
+                         labels = c("U.S. Presence", "U.S. Government", "U.S. People")))
+
+  ggplot(data = temp,
+         aes(x = obs.count,
+             y = country,
+             fill = value)) +
+    geom_bar(position = "fill",
+             stat = "identity",
+             color = "white",
+             linewidth = 0.3) +
+    facet_wrap(. ~ name) +
+    viridis::scale_fill_viridis(option = "magma",
+                                discrete = TRUE,
+                                begin = 0.15, # Darker colors
+                                end = 0.95) +  # Lighter colors
+    scale_x_continuous(expand = c(0,0),
+                       labels = scales::percent_format()) +
+    scale_y_discrete(expand = c(0,0)) +
+    guides(fill = guide_legend(reverse = TRUE)) +
+    theme_flynn() +
+    theme(text = element_text(family = "ebgaramond"),
+          plot.title.position = "plot",
+          legend.position = "bottom",
+          plot.margin = margin(l = 0.1,
+                               r = 0.4,
+                               b = -0.4,
+                               t = 0.1,
+                               unit = "cm"),
+          legend.box.margin = margin(l = 0.2,
+                                     r = 0.2,
+                                     b = 0.5,
+                                     t = -1.3,
+                                     unit = "cm"),
+          axis.text.y.left = element_text(face = "bold", size = 12),
+          strip.text.x.top = element_text(face = "bold", hjust = 0),
+          strip.background = element_blank(),
+          panel.spacing.x = unit(0.75, units = "cm"),
+          axis.ticks.length.y.left = unit(0, units = "in"),
+          plot.background = element_blank(),
+          panel.background = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.y = element_blank(),
+          panel.border = element_blank(),
+          axis.line.y = element_blank(),
+          line = element_blank()) +
+    labs(x = "",
+         y = "",
+         fill = "Response",
+         title = "")
+
+  ggsave(here::here("Figures/fig-europe-views-us.png"),
+         dpi = 300,
+         width = 9,
+         height = 4.5,
+         units = "in"
+         )
+}
+
+
+
+# Views of China among European adults
+figure_europe_views_china_f <- function(data){
+
+    # vector of european countries
+  europe.sample <- c("Spain", "Portugal", "Poland", "Italy", "Belgium", "Netherlands", "Germany", "United Kingdom", "Turkey")
+
+  temp <- data |>
+    filter(country %in% europe.sample) |>
+    dplyr::select(country, chinese_people, chinese_gov) |>
+    mutate(across(.cols = c("chinese_people", "chinese_gov"),
+           ~ factor(.x,
+                        levels = c("Don't know/decline to answer", "Very unfavorable", "Somewhat unfavorable", "Neutral", "Somewhat favorable", "Very favorable")))) |>
+    pivot_longer(cols = chinese_people:chinese_gov) |>
+    group_by(country, name, value) |>
+    dplyr::summarise(obs.count = n()) |>
+    ungroup() |>
+    mutate(name = factor(name, levels = c("chinese_gov", "chinese_people"),
+                         labels = c("Chinese Government", "Chinese People")))
+
+  ggplot(data = temp,
+         aes(x = obs.count,
+             y = country,
+             fill = value)) +
+    geom_bar(position = "fill",
+             stat = "identity",
+             color = "white",
+             linewidth = 0.3) +
+    facet_wrap(. ~ name) +
+    viridis::scale_fill_viridis(option = "magma",
+                                discrete = TRUE,
+                                begin = 0.15, # Darker colors
+                                end = 0.95) +  # Lighter colors
+    scale_x_continuous(expand = c(0,0),
+                       labels = scales::percent_format()) +
+    scale_y_discrete(expand = c(0,0)) +
+    guides(fill = guide_legend(reverse = TRUE)) +
+    theme_flynn() +
+    theme(text = element_text(family = "ebgaramond"),
+          plot.title.position = "plot",
+          legend.position = "bottom",
+          plot.margin = margin(l = 0.1,
+                               r = 0.4,
+                               b = -0.4,
+                               t = 0.1,
+                               unit = "cm"),
+          legend.box.margin = margin(l = 0.2,
+                                     r = 0.2,
+                                     b = 0.5,
+                                     t = -1.3,
+                                     unit = "cm"),
+          axis.text.y.left = element_text(face = "bold", size = 12),
+          strip.text.x.top = element_text(face = "bold", hjust = 0),
+          strip.background = element_blank(),
+          panel.spacing.x = unit(0.75, units = "cm"),
+          axis.ticks.length.y.left = unit(0, units = "in"),
+          plot.background = element_blank(),
+          panel.background = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.y = element_blank(),
+          panel.border = element_blank(),
+          axis.line.y = element_blank(),
+          line = element_blank()) +
+    labs(x = "",
+         y = "",
+         fill = "Response",
+         title = "")
+
+  ggsave(here::here("Figures/fig-europe-views-china.png"),
+         dpi = 300,
+         width = 9,
+         height = 4.5,
+         units = "in"
+  )
+}
+
+
+
+# Views of Chinese influence
+# Views of China among European adults
+figure_europe_views_china_influence_f <- function(data){
+
+
+  # vector of european countries
+  europe.sample <- c("Spain", "Portugal", "Poland", "Italy", "Belgium", "Netherlands", "Germany", "United Kingdom", "Turkey")
+
+  temp <- data |>
+    filter(country %in% europe.sample) |>
+    dplyr::select(country, chinese_inf_1, chinese_inf_2) |>
+    mutate(chinese_inf_1 = factor(chinese_inf_1,
+                                  levels = c("Don't know/decline to answer", "None", "A little", "Some", "A lot")),
+           chinese_inf_2 = factor(chinese_inf_2,
+                                  levels = c("Don't know/decline to answer", "Very negative", "Somewhat negative", "Neither positive nor negative", "Somewhat positive", "Very positive"))) |>
+    pivot_longer(cols = chinese_inf_1:chinese_inf_2) |>
+    group_by(country, name, value) |>
+    dplyr::summarise(obs.count = n()) |>
+    ungroup() |>
+    mutate(name = factor(name, levels = c("chinese_inf_1", "chinese_inf_2"),
+                         labels = c("Amount of Chinese Influence", "Quality of Chinese Influence")))
+
+  p1 <- ggplot(data = temp |> filter(name == "Amount of Chinese Influence"),
+         aes(x = obs.count,
+             y = country,
+             fill = value)) +
+    geom_bar(position = "fill",
+             stat = "identity",
+             color = "white",
+             linewidth = 0.3) +
+    viridis::scale_fill_viridis(option = "magma",
+                                discrete = TRUE,
+                                begin = 0.15, # Darker colors
+                                end = 0.95) +  # Lighter colors
+    scale_x_continuous(expand = c(0,0),
+                       labels = scales::percent_format()) +
+    scale_y_discrete(expand = c(0,0)) +
+    guides(fill = guide_legend(reverse = TRUE)) +
+    theme_flynn() +
+    theme(text = element_text(family = "ebgaramond"),
+          plot.title.position = "plot",
+          legend.position = "bottom",
+          legend.box = "vertical",
+          plot.margin = margin(l = 0.1,
+                               r = 0.4,
+                               b = -0.4,
+                               t = 0.1,
+                               unit = "cm"),
+          legend.box.margin = margin(l = 0.2,
+                                     r = 0.2,
+                                     b = 0.5,
+                                     t = -1.3,
+                                     unit = "cm"),
+          axis.text.y.left = element_text(face = "bold", size = 12),
+          strip.text.x.top = element_text(face = "bold", hjust = 0),
+          strip.background = element_blank(),
+          panel.spacing.x = unit(0.75, units = "cm"),
+          axis.ticks.length.y.left = unit(0, units = "in"),
+          plot.background = element_blank(),
+          panel.background = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.y = element_blank(),
+          panel.border = element_blank(),
+          axis.line.y = element_blank(),
+          line = element_blank()) +
+    labs(x = "",
+         y = "",
+         fill = "Amount Response",
+         title = "Amount of Chinese Influence")
+
+
+  p2 <- ggplot(data = temp |> filter(name == "Quality of Chinese Influence"),
+               aes(x = obs.count,
+                   y = country,
+                   fill = value)) +
+    geom_bar(position = "fill",
+             stat = "identity",
+             color = "white",
+             linewidth = 0.3) +
+    viridis::scale_fill_viridis(option = "magma",
+                                discrete = TRUE,
+                                begin = 0.15, # Darker colors
+                                end = 0.95) +  # Lighter colors
+    scale_x_continuous(expand = c(0,0),
+                       labels = scales::percent_format()) +
+    scale_y_discrete(expand = c(0,0)) +
+    guides(fill = guide_legend(reverse = TRUE)) +
+    theme_flynn() +
+    theme(text = element_text(family = "ebgaramond"),
+          plot.title.position = "plot",
+          legend.position = "bottom",
+          legend.box = "vertical",
+          plot.margin = margin(l = 0.1,
+                               r = 0.4,
+                               b = -0.4,
+                               t = 0.1,
+                               unit = "cm"),
+          legend.box.margin = margin(l = 0.2,
+                                     r = 0.2,
+                                     b = 0.5,
+                                     t = -1.3,
+                                     unit = "cm"),
+          axis.text.y.left = element_text(face = "bold", size = 12),
+          strip.text.x.top = element_text(face = "bold", hjust = 0),
+          strip.background = element_blank(),
+          panel.spacing.x = unit(0.75, units = "cm"),
+          axis.ticks.length.y.left = unit(0, units = "in"),
+          plot.background = element_blank(),
+          panel.background = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.y = element_blank(),
+          panel.border = element_blank(),
+          axis.line.y = element_blank(),
+          line = element_blank()) +
+    labs(x = "",
+         y = "",
+         fill = "Quality Response",
+         title = "Quality of Chinese Influence")
+
+  patchwork::wrap_plots(p1, p2) +
+    patchwork::plot_annotation(
+      title = "",
+      theme = theme(plot.title = element_text(family = "ebgaramond",
+                                              face = "bold",
+                                              size = 16)
+    )) &
+    theme(legend.direction = "vertical",
+          legend.key.height = unit(0.45, units = "cm"),
+          legend.justification = "top")
+
+  ggsave(here::here("Figures/fig-europe-views-china-influence.png"),
+         dpi = 300,
+         width = 8,
+         height = 5.5,
+         units = "in"
+  )
+}
+
+
+
+# Views of Chinese influence
+# Views of China among European adults
+figure_poland_views_china_influence_f <- function(data){
+
+  temp <- data |>
+    dplyr::select(chinese_inf_amount, chinese_inf_qual) |>
+    mutate(chinese_inf_amount = factor(chinese_inf_amount,
+                                  levels = c("Don’t know/Decline to answer", "None", "A little", "Some", "A lot")),
+           chinese_inf_qual = factor(chinese_inf_qual,
+                                  levels = c("Don’t know/Decline to answer", "Very Negative", "Negative", "Neither Positive nor Negative", "Positive", "Very positive"),
+                                  labels = c("Don’t know/Decline to answer", "Very negative", "Somewhat negative", "Neither positive nor negative", "Somewhat positive", "Very positive"))) |>
+    pivot_longer(cols = chinese_inf_amount:chinese_inf_qual) |>
+    group_by(name, value) |>
+    dplyr::summarise(obs.count = n()) |>
+    ungroup() |>
+    mutate(name = factor(name, levels = c("chinese_inf_amount", "chinese_inf_qual"),
+                         labels = c("Amount of Chinese Influence", "Quality of Chinese Influence")))
+
+  p1 <- ggplot(data = temp |> filter(name == "Amount of Chinese Influence"),
+               aes(x = obs.count,
+                   y = name,
+                   fill = value)) +
+    geom_bar(position = "fill",
+             stat = "identity",
+             color = "white",
+             linewidth = 0.3) +
+    viridis::scale_fill_viridis(option = "magma",
+                                discrete = TRUE,
+                                begin = 0.15, # Darker colors
+                                end = 0.95) +  # Lighter colors
+    scale_x_continuous(expand = c(0,0),
+                       labels = scales::percent_format()) +
+    scale_y_discrete(expand = c(0,0)) +
+    guides(fill = guide_legend(reverse = TRUE)) +
+    theme_flynn() +
+    theme(text = element_text(family = "ebgaramond"),
+          plot.title.position = "plot",
+          legend.position = "bottom",
+          legend.box = "vertical",
+          plot.margin = margin(l = 0.1,
+                               r = 0.4,
+                               b = -0.4,
+                               t = 0.1,
+                               unit = "cm"),
+          legend.box.margin = margin(l = 0.2,
+                                     r = 0.2,
+                                     b = 0.5,
+                                     t = -1.3,
+                                     unit = "cm"),
+          axis.text.y.left = element_blank(),
+          strip.text.x.top = element_text(face = "bold", hjust = 0),
+          strip.background = element_blank(),
+          panel.spacing.x = unit(0.75, units = "cm"),
+          axis.ticks.length.y.left = unit(0, units = "in"),
+          plot.background = element_blank(),
+          panel.background = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.y = element_blank(),
+          panel.border = element_blank(),
+          axis.line.y = element_blank(),
+          line = element_blank()) +
+    labs(x = "",
+         y = "",
+         fill = "Amount Response",
+         title = "Amount of Chinese Influence")
+
+
+  p2 <- ggplot(data = temp |> filter(name == "Quality of Chinese Influence"),
+               aes(x = obs.count,
+                   y = name,
+                   fill = value)) +
+    geom_bar(position = "fill",
+             stat = "identity",
+             color = "white",
+             linewidth = 0.3) +
+    viridis::scale_fill_viridis(option = "magma",
+                                discrete = TRUE,
+                                begin = 0.15, # Darker colors
+                                end = 0.95) +  # Lighter colors
+    scale_x_continuous(expand = c(0,0),
+                       labels = scales::percent_format()) +
+    scale_y_discrete(expand = c(0,0)) +
+    guides(fill = guide_legend(reverse = TRUE)) +
+    theme_flynn() +
+    theme(text = element_text(family = "ebgaramond"),
+          plot.title.position = "plot",
+          legend.position = "bottom",
+          legend.box = "vertical",
+          plot.margin = margin(l = 0.1,
+                               r = 0.4,
+                               b = -0.4,
+                               t = 0.1,
+                               unit = "cm"),
+          legend.box.margin = margin(l = 0.2,
+                                     r = 0.2,
+                                     b = 0.5,
+                                     t = -1.3,
+                                     unit = "cm"),
+          axis.text.y.left = element_blank(),
+          strip.text.x.top = element_text(face = "bold", hjust = 0),
+          strip.background = element_blank(),
+          panel.spacing.x = unit(0.75, units = "cm"),
+          axis.ticks.length.y.left = unit(0, units = "in"),
+          plot.background = element_blank(),
+          panel.background = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.y = element_blank(),
+          panel.border = element_blank(),
+          axis.line.y = element_blank(),
+          line = element_blank()) +
+    labs(x = "",
+         y = "",
+         fill = "Quality Response",
+         title = "Quality of Chinese Influence")
+
+  patchwork::wrap_plots(p1, p2) +
+    patchwork::plot_annotation(
+      title = "",
+      theme = theme(plot.title = element_text(family = "ebgaramond",
+                                              face = "bold",
+                                              size = 16)
+      )) &
+    theme(legend.direction = "vertical",
+          legend.key.height = unit(0.45, units = "cm"),
+          legend.justification = "top")
+
+  ggsave(here::here("Figures/fig-poland-views-china-influence.png"),
+         dpi = 300,
+         width = 8,
+         height = 3.25,
+         units = "in"
+  )
+}
+
+
 
 
 # Distribution of observations across provinces and districts

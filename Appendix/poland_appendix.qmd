@@ -820,7 +820,7 @@ In general, we find some evidence that those who report personal contact with U.
 
 # Model Prior Information
 
-The table below shows a table containing the priors used in our primary models. These prior values are based on the results of @Allen2020 and @Allenetal2022.
+The table below shows a table containing the priors used in our primary models. These prior values are based on the results of @Allenetal2020 and @Allenetal2022.
 
 ```{r prior-table}
 
@@ -1159,14 +1159,13 @@ bayesplot::mcmc_trace(model_3_full_response[[2]],
 #| message: false
 #| warning: false
 #| echo: false
-#| out-height: 14in
-#| fig-height: 14
+#| fig-height: 50
 #| fig-cap: "Traceplots for treatment variables from varying effects models, outcome question: 100 km distance."
 
 
 bayesplot::mcmc_trace(model_4_varying_effects[[1]],
                       regex_pars = c(".*treatment.*"),
-                      facet_args = list(ncol = 3)) +
+                      facet_args = list(ncol = 4)) +
   labs(title = "Varying effects Models, 100 km")
 
 
@@ -1176,13 +1175,12 @@ bayesplot::mcmc_trace(model_4_varying_effects[[1]],
 #| message: false
 #| warning: false
 #| echo: false
-#| #| out-height: 14in
-#| fig-height: 14
+#| fig-height: 50
 #| fig-cap: "Traceplots for treatment variables from varying effects models, outcome question: 5 km distance."
 
 bayesplot::mcmc_trace(model_4_varying_effects[[1]],
                       regex_pars = c(".*treatment.*"),
-                      facet_args = list(ncol = 3)) +
+                      facet_args = list(ncol = 4)) +
   labs(title = "Varying effects Models, 5 km")
 ```
 
@@ -1212,6 +1210,7 @@ bayesplot::mcmc_trace(model_5_ordered_response[[2]],
 #| message: false
 #| warning: false
 #| echo: false
+#| fig-height: 30
 #| fig-cap: "Traceplots for treatment variables from contact models, outcome question: 100 km distance."
 
 bayesplot::mcmc_trace(model_6_contact[[1]],
@@ -1223,6 +1222,7 @@ bayesplot::mcmc_trace(model_6_contact[[1]],
 #| message: false
 #| warning: false
 #| echo: false
+#| fig-height: 30
 #| fig-cap: "Traceplots for treatment variables from contact models, outcome question: 5 km distance."
 
 bayesplot::mcmc_trace(model_6_contact[[2]],

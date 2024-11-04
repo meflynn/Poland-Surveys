@@ -26,7 +26,7 @@ set.seed(66502)
 tar_option_set(
   packages = c("tibble", "data.table", "brms", "sf", "tidybayes", "modelsummary", "cmdstanr",
                "marginaleffects", "flynnprojects", "viridis", "glue", "here", "kableExtra",
-               "purrr", "svglite", "tarchetypes", "quarto", "future", "ggdist", "tinytex",
+               "purrr", "furrr", "svglite", "tarchetypes", "quarto", "future", "ggdist", "tinytex",
                "bayesplot", "patchwork"), # packages that your targets need to run
   format = "rds" # default storage format
   # Set other options as needed.
@@ -90,62 +90,62 @@ list(
   tar_target(figure_russia_relations, figure_russia_views_f(survey_clean)),
   tar_target(figure_contact_type, figure_contact_type_f(survey_clean)),
   tar_target(figure_response_distribution, figure_observation_distribution_f(survey_clean)),
-  tar_target(figure_europe_views_us, figure_europe_views_us_f(minerva_clean)),
-  tar_target(figure_europe_views_china, figure_europe_views_china_f(minerva_clean)),
-  tar_target(figure_europe_views_china_influence, figure_europe_views_china_influence_f(minerva_clean)),
-  tar_target(figure_russia_views_chapter, figure_russia_views_chapter_f(survey_clean)),
-  tar_target(figure_us_troops_compare_chapter_version, figure_us_troops_compare_chapter_version_f(survey_clean, minerva_clean)),
-  tar_target(figure_poland_views_china_influence, figure_poland_views_china_influence_f(survey_clean)),
+#  tar_target(figure_europe_views_us, figure_europe_views_us_f(minerva_clean)),
+#  tar_target(figure_europe_views_china, figure_europe_views_china_f(minerva_clean)),
+#  tar_target(figure_europe_views_china_influence, figure_europe_views_china_influence_f(minerva_clean)),
+#  tar_target(figure_russia_views_chapter, figure_russia_views_chapter_f(survey_clean)),
+#  tar_target(figure_us_troops_compare_chapter_version, figure_us_troops_compare_chapter_version_f(survey_clean, minerva_clean)),
+#  tar_target(figure_poland_views_china_influence, figure_poland_views_china_influence_f(survey_clean)),
 
 
 
 #  #Balance Table
-#  tar_target(table_balance, table_balance_f(survey_clean)),
-#
+  tar_target(table_balance, table_balance_f(survey_clean)),
+
 #  # Run analysis
-#  tar_target(model_0_bivariate,
-#             model_0_bivariate_f(survey_clean, priors_prov_clean)),
-#  tar_target(model_1_province,
-#             model_1_province_f(survey_clean, priors_prov_clean)),
-#  tar_target(model_2_district,
-#             model_2_district_f(survey_clean, priors_dist_clean)),
-#  tar_target(model_3_full_response,
-#             model_3_full_response_f(survey_clean, priors_prov_clean)),
-#  tar_target(model_4_varying_effects,
-#             model_4_varying_effects_f(survey_clean, priors_prov_clean)),
-#  tar_target(model_5_ordered_response,
-#             model_5_ordered_response_f(survey_clean, priors_clean)),
-#  tar_target(model_6_contact,
-#             model_6_contact_f(survey_clean, priors_prov_clean)),
-#  tar_target(model_7_contact_int,
-#             model_7_contact_interaction_f(survey_clean, priors_prov_clean)),
-#  tar_target(model_8_contact_int_districts,
-#             model_8_contact_interaction_district_f(survey_clean, priors_dist_clean)),
+  tar_target(model_0_bivariate,
+             model_0_bivariate_f(survey_clean, priors_prov_clean)),
+  tar_target(model_1_province,
+             model_1_province_f(survey_clean, priors_prov_clean)),
+  tar_target(model_2_district,
+             model_2_district_f(survey_clean, priors_dist_clean)),
+  tar_target(model_3_full_response,
+             model_3_full_response_f(survey_clean, priors_prov_clean)),
+  tar_target(model_4_varying_effects,
+             model_4_varying_effects_f(survey_clean, priors_prov_clean)),
+  tar_target(model_5_ordered_response,
+             model_5_ordered_response_f(survey_clean, priors_clean)),
+  tar_target(model_6_contact,
+             model_6_contact_f(survey_clean, priors_prov_clean)),
+  tar_target(model_7_contact_int,
+             model_7_contact_interaction_f(survey_clean, priors_prov_clean)),
+  tar_target(model_8_contact_int_districts,
+             model_8_contact_interaction_district_f(survey_clean, priors_dist_clean)),
 #
 #  # Postestimation plots
-#  tar_target(model_1_figures,
-#             figure_province_predprob_f(modelobject = model_1_province,
-#                                        outcome.cats = c("Oppose",
-#                                                         "Support",
-#                                                         "Neutral"
-#                                                         ),
-#                                        group.effects = TRUE)),
-#  tar_target(model_1_contrasts,
-#             figure_province_dist_contrasts_f(model_1_province,
-#                                              group.effects = TRUE)),
-#  tar_target(model_2_contrasts,
-#             figure_district_dist_contrasts_f(model_2_district,
-#                                              group.effects = TRUE)),
-#  tar_target(model_7_contrasts,
-#             figure_province_dist_contact_contrasts_f(model_7_contact_int,
-#                                                      group.effects = TRUE)),
-#  tar_target(model_7_contact_treatment_effect,
-#             figure_province_dist_contact_treatment_effect_f(model_7_contact_int,
-#                                                             group.effects = TRUE)),
-#  tar_target(model_8_contrasts,
-#             figure_district_dist_contact_contrasts_f(model_8_contact_int_districts,
-#                                                      group.effects = TRUE)),
-#
+  tar_target(model_1_figures,
+             figure_province_predprob_f(modelobject = model_1_province,
+                                        outcome.cats = c("Oppose",
+                                                         "Support",
+                                                         "Neutral"
+                                                         ),
+                                        group.effects = TRUE)),
+  tar_target(model_1_contrasts,
+             figure_province_dist_contrasts_f(model_1_province,
+                                              group.effects = TRUE)),
+  tar_target(model_2_contrasts,
+             figure_district_dist_contrasts_f(model_2_district,
+                                              group.effects = TRUE)),
+  tar_target(model_7_contrasts,
+             figure_province_dist_contact_contrasts_f(model_7_contact_int,
+                                                      group.effects = TRUE)),
+  tar_target(model_7_contact_treatment_effect,
+             figure_province_dist_contact_treatment_effect_f(model_7_contact_int,
+                                                             group.effects = TRUE)),
+  tar_target(model_8_contrasts,
+             figure_district_dist_contact_contrasts_f(model_8_contact_int_districts,
+                                                      group.effects = TRUE)),
+
 #  # Contrast Maps
 #  tar_target(model_1_contrast_map, figure_province_contrasts_map_f(model_1_province, group#.effects = TRUE)),
 #  tar_target(model_2_contrast_map, figure_district_contrasts_map_f(model_2_district, group#.effects = TRUE)),
@@ -154,15 +154,15 @@ list(
 #  #tar_target(contrast_test, figure_contrast_test_f(model_1_province, group.effects = TRUE, #response.cat = "Support")),
 #
 #  # Build appendix
-#  tar_quarto(poland_appendix,
-#             path = "Appendix/poland_appendix.qmd",
-#             quiet = FALSE),
+  tar_quarto(poland_appendix,
+             path = "Appendix/poland_appendix.qmd",
+             quiet = FALSE)
 
 #  # Build short PDF appendix for review process
 #  tar_quarto(poland_appendix_short,
 #             path = "Appendix/poland_appendix_short.qmd",
 #             quiet = FALSE),
 
-  tar_quarto(website, path = ".", quiet = FALSE)
+#  tar_quarto(website, path = ".", quiet = FALSE)
 
 )

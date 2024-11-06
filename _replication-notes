@@ -2,8 +2,23 @@
 
 Replication Notes for MS# 240112436.R1 "At the Edge of War: Frontline Ally  Support for the U.S. Military"
 
-1. The easiest way to replicate the project is to clone the GitHub repository so that the necessary files and directories are copied locally. This will help to ensure continuity with relative file paths.
+1. The easiest way to replicate the project is to clone the GitHub repository so that the necessary files and directories are copied locally. This will help to ensure continuity with relative file paths. The repo url is https://github.com/meflynn/Poland-Surveys
 
 2. The project relies primarily on the {targets} package and accompanying script files to manage the workflow. The {targets} package is available on CRAN. The script files are available in the `R` folder of the replication package.
 
 3. Once the {targets} library is loaded, the project can be replicated by running the `tar_make()` function in the console.
+
+4. We have a separate book chapter that drew on these data and analyses. There are several lines of code that apply to the book chapter that are not necessary for the replication of the paper. These lines of code are commented out in the _targets file.
+
+5. There are *lots* of figures in the figures folder. Below are the correct relative paths and names for the figures in the paper, corresponding to each figure number.
+
+  - Figure 1: Figures/views-us-troops-time.png
+  - Figure 2: Figures/predicted-prob-combined.png
+  - Figure 3: Figures/contrasts-treatment-province-combined.png
+  - Figure 4: Figures/contrasts-treatment-comparison-combined.png
+  - Figure 5: Figures/contact-type-us-troops.png
+  - Figure 6: Figures/contact-conditioning-contrasts-treatment-security:contactyesat5km-security:contactnoat5km.png
+  - Figure 7: Figures/contact-conditioning-contrasts-treatment-security:contactyesat5km-security:contactnoat100km.png
+
+
+6. I'd recommend running this on a machine with a decent amount of memory—maybe 32GB or more. The data visualization parts of the post-estimation stage can be memory intensive.

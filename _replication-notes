@@ -6,11 +6,13 @@ Replication Notes for MS# 240112436.R1 "At the Edge of War: Frontline Ally  Supp
 
 2. The project relies primarily on the {targets} package and accompanying script files to manage the workflow. The {targets} package is available on CRAN. The script files are available in the `R` folder of the replication package. The _targets.R file contains the workflow pipeline.
 
-3. Once the {targets} library is loaded, the project can be replicated by running the `tar_make()` function in the console.
+3. In addition to the targets package, the pipeline requires quarto and stan to be installed on the local machine. The `brms` package is a wrapper for stan/cmdstanr and is used to estimate the models. The `quarto` package is used to render the appendix. Quarto needs to be installed from it's own website (https://quarto.org/docs/download/) and cmstandr can be install from within R, but it's helpful to follow these instructions (https://mc-stan.org/cmdstanr/).
 
-4. We have a separate book chapter that drew on these data and analyses. There are several lines of code that apply to the book chapter that are not necessary for the replication of the paper. These lines of code are commented out in the _targets file.
+4. Once the {targets} library is loaded, the project can be replicated by running the `tar_make()` function in the console.
 
-5. There are *lots* of figures in the figures folder. Below are the correct relative paths and names for the figures in the paper, corresponding to each figure number.
+5. We have a separate book chapter that drew on these data and analyses. There are several lines of code that apply to the book chapter that are not necessary for the replication of the paper. These lines of code are commented out in the _targets file.
+
+6. There are *lots* of figures in the figures folder. Below are the correct relative paths and names for the figures in the paper, corresponding to each figure number.
 
   - Figure 1: Figures/views-us-troops-time.png
   - Figure 2: Figures/predicted-prob-combined.png
@@ -21,4 +23,4 @@ Replication Notes for MS# 240112436.R1 "At the Edge of War: Frontline Ally  Supp
   - Figure 7: Figures/contact-conditioning-contrasts-treatment-security:contactyesat5km-security:contactnoat100km.png
 
 
-6. I'd recommend running this on a machine with a decent amount of memory—maybe 32GB or more. The data visualization parts of the post-estimation stage can be memory intensive.
+7. I'd recommend running this on a machine with a decent amount of memory—maybe 32GB or more. The data visualization parts of the post-estimation stage can be memory intensive.

@@ -4,7 +4,7 @@ Replication Notes for MS# 240112436.R1 "At the Edge of War: Frontline Ally  Supp
 
 1. The easiest way to replicate the project is to clone the GitHub repository so that the necessary files and directories are copied locally. This will help to ensure continuity with relative file paths. The repo url is https://github.com/meflynn/Poland-Surveys
 
-2. The project relies primarily on the {targets} package and accompanying script files to manage the workflow. The {targets} package is available on CRAN. The script files are available in the `R` folder of the replication package.
+2. The project relies primarily on the {targets} package and accompanying script files to manage the workflow. The {targets} package is available on CRAN. The script files are available in the `R` folder of the replication package. The _targets.R file contains the workflow pipeline.
 
 3. Once the {targets} library is loaded, the project can be replicated by running the `tar_make()` function in the console.
 

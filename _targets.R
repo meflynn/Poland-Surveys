@@ -3,11 +3,16 @@
 # Then follow the manual to check and run the pipeline:
 #   https://books.ropensci.org/targets/walkthrough.html#inspect-the-pipeline # nolint
 
+# Install flynnprojects package
+devtools::install_github("meflynn/flynnprojects")
+
 # Load packages required to define the pipeline:
 library(targets)
 library(tidyverse)
 library(tarchetypes) # Load other packages as needed. # nolint
 library(here)
+library(sysfonts)
+library(showtext)
 library(quarto)
 library(future) # Load this here to tweak multicore/parallel processing settings
 
@@ -27,7 +32,7 @@ tar_option_set(
   packages = c("tibble", "tidyverse", "data.table", "brms", "sf", "tidybayes", "modelsummary", "cmdstanr",
                "marginaleffects", "flynnprojects", "viridis", "glue", "here", "kableExtra",
                "purrr", "furrr", "svglite", "tarchetypes", "quarto", "future", "ggdist", "tinytex",
-               "bayesplot", "patchwork", "glue", "here", "scales"), # packages that your targets need to run
+               "bayesplot", "patchwork", "glue", "here", "scales", "sysfonts"), # packages that your targets need to run
   format = "rds" # default storage format
   # Set other options as needed.
 )

@@ -1,4 +1,6 @@
 
+library(sysfonts)
+library(showtext)
 
 sysfonts::font_add_google("Oswald", family = "oswald")
 sysfonts::font_add_google("EB Garamond", family = "ebgaramond")

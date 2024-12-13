@@ -32,7 +32,7 @@ tar_option_set(
   packages = c("tibble", "tidyverse", "data.table", "brms", "sf", "tidybayes", "modelsummary", "cmdstanr",
                "marginaleffects", "flynnprojects", "viridis", "glue", "here", "kableExtra",
                "purrr", "furrr", "svglite", "tarchetypes", "quarto", "future", "ggdist", "tinytex",
-               "bayesplot", "patchwork", "glue", "here", "scales", "sysfonts"), # packages that your targets need to run
+               "bayesplot", "patchwork", "glue", "here", "scales", "sysfonts", "showtext"), # packages that your targets need to run
   format = "rds" # default storage format
   # Set other options as needed.
 )

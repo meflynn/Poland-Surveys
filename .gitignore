@@ -6,7 +6,6 @@
 .DS_Store
 *.pdf
 *.docx
-*.xlsx
 *.do
 *Contracts/
 *Presentations/

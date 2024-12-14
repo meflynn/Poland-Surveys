@@ -966,8 +966,8 @@ figure_province_dist_contrasts_f <- function(modelobject, group.effects) {
                                   aes(label = pd, y = 0.98, x = median),
                                   fill = "white",
                                   data = \(d) d |>
-                                    group_by(.category) |>
-                                    dplyr::summarise(pd = paste0("Pr(Direction) =", round(bayestestR::pd(.epred), 3)),
+                                    dplyr::group_by(.category) |>
+                                    dplyr::summarise(pd = paste0("Pr(Direction) =", round(bayestestR::pd(.epred)$pd, 3)),
                                                      median = median(.epred))
                                 ) +
                                 scale_y_continuous(expand = c(0.1,0.1)) +
@@ -1415,7 +1415,7 @@ figure_district_dist_contrasts_f <- function(modelobject, group.effects) {
                                    fill = "white",
                                    data = \(d) d |>
                                      group_by(.category) |>
-                                     dplyr::summarise(pd = paste0("Pr(Direction) =", round(bayestestR::pd(.epred), 3)),
+                                     dplyr::summarise(pd = paste0("Pr(Direction) =", round(bayestestR::pd(.epred)$pd, 3)),
                                                       median = median(.epred))
                                  ) +
                                  scale_y_continuous(expand = c(0.1,0.1)) +
@@ -1545,7 +1545,7 @@ figure_province_dist_contact_treatment_effect_f <- function(modelobject, group.e
                                    fill = "white",
                                    data = \(d) d |>
                                      group_by(.category) |>
-                                     dplyr::summarise(pd = paste0("Pr(Direction) =", round(bayestestR::pd(.epred), 3)),
+                                     dplyr::summarise(pd = paste0("Pr(Direction) =", round(bayestestR::pd(.epred)$pd, 3)),
                                                       median = median(.epred))
                                  ) +
                                  scale_y_continuous(expand = c(0.1,0.1)) +
@@ -1676,7 +1676,7 @@ figure_province_dist_contact_contrasts_f <- function(modelobject, group.effects)
                                    fill = "white",
                                    data = \(d) d |>
                                      group_by(.category) |>
-                                     dplyr::summarise(pd = paste0("Pr(Direction) =", round(bayestestR::pd(.epred), 3)),
+                                     dplyr::summarise(pd = paste0("Pr(Direction) =", round(bayestestR::pd(.epred)$pd, 3)),
                                                       median = median(.epred))
                                  ) +
                                  scale_y_continuous(expand = c(0.1,0.1)) +
@@ -1811,7 +1811,7 @@ figure_district_dist_contact_contrasts_f <- function(modelobject, group.effects)
                                    fill = "white",
                                    data = \(d) d |>
                                      group_by(.category) |>
-                                     dplyr::summarise(pd = paste0("Pr(Direction) =", round(bayestestR::pd(.epred), 3)),
+                                     dplyr::summarise(pd = paste0("Pr(Direction) =", round(bayestestR::pd(.epred)$pd, 3)),
                                                       median = median(.epred))
                                  ) +
                                  scale_y_continuous(expand = c(0.1,0.1)) +

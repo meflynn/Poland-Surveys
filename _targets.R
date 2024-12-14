@@ -32,7 +32,7 @@ tar_option_set(
   packages = c("tibble", "tidyverse", "data.table", "brms", "sf", "tidybayes", "modelsummary", "cmdstanr",
                "marginaleffects", "flynnprojects", "viridis", "glue", "here", "kableExtra",
                "purrr", "furrr", "svglite", "tarchetypes", "quarto", "future", "ggdist", "tinytex",
-               "bayesplot", "patchwork", "glue", "here", "scales", "sysfonts", "showtext"), # packages that your targets need to run
+               "bayesplot", "bayestestR", "patchwork", "glue", "here", "scales", "sysfonts", "showtext"), # packages that your targets need to run
   format = "rds" # default storage format
   # Set other options as needed.
 )
@@ -44,7 +44,7 @@ options(clustermq.scheduler = "multicore")
 # #. Memory calculated using 2000*1024^2 = 2097152000 where 2000 is number of
 # MB desired
 # Found here: https://stackoverflow.com/questions/40536067/how-to-adjust-future-global-maxsize
-options(future.globals.maxSize= 8097152000)
+options(future.globals.maxSize = 20971520000)
 
 # Set up future package for multicore processing.
 # This uses a nested multicore setup, so you can have four cores per model and

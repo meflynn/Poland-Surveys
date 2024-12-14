@@ -454,6 +454,8 @@ group.list <- list(coef.groups.1,
 ```{r table-output}
 #| include: false
 
+# Increase allowed memory amount
+options(future.globals.maxSize = 20971520000)
 
 # Create list of model groups
 modlist <- list(

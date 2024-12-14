@@ -56,8 +56,7 @@ clean_priors_prov_f <- function(priordata, modeldata) {
       dplyr::select(-duplicate) |>
       mutate(prior = ifelse(class == "b" & prior == '', "normal(0,1)", prior),
              prior = ifelse(class == "sd", "student_t(3, 0, 3)", prior),
-             prior = ifelse(class == "b" & coef == "Intercept", "student_t(3.5, 0, 3)", prior),
-             lb = ifelse(class == "sd", "0", '')) |>
+             prior = ifelse(class == "b" & coef == "Intercept", "student_t(3.5, 0, 3)", prior)) |>
       ungroup() |>
       mutate(across(everything(),
                     ~ replace_na(.x, ''))) |>
@@ -121,8 +120,7 @@ clean_priors_dist_f <- function(priordata, modeldata) {
     dplyr::select(-duplicate) |>
     mutate(prior = ifelse(class == "b" & prior == '', "normal(0,1)", prior),
            prior = ifelse(class == "sd", "student_t(3, 0, 3)", prior),
-           prior = ifelse(class == "b" & coef == "Intercept", "student_t(3.5, 0, 3)", prior),
-           lb = ifelse(class == "sd", "0", '')) |>
+           prior = ifelse(class == "b" & coef == "Intercept", "student_t(3.5, 0, 3)", prior)) |>
     ungroup() |>
     mutate(across(everything(),
                   ~ replace_na(.x, ''))) |>
@@ -166,7 +164,6 @@ model_0_bivariate_f <- function(modeldata, priordata) {
     .x = model_form_list,
     .f = ~ bf(
       .x,
-      decomp = "QR",
       family = categorical(link = "logit", refcat = "Neutral")
     )
   )

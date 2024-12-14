@@ -25,6 +25,7 @@ options(mc.cores = 4,
         mc.threads = 2,
         brms.backend = "cmdstanr")
 
+# Set seed for reproducibility
 set.seed(66502)
 
 # Set target options:
@@ -152,11 +153,11 @@ list(
                                                       group.effects = TRUE)),
 
 #  # Contrast Maps
-#  tar_target(model_1_contrast_map, figure_province_contrasts_map_f(model_1_province, group#.effects = TRUE)),
-#  tar_target(model_2_contrast_map, figure_district_contrasts_map_f(model_2_district, group#.effects = TRUE)),
+#  tar_target(model_1_contrast_map, figure_province_contrasts_map_f(model_1_province, group.effects = TRUE)),
+#  tar_target(model_2_contrast_map, figure_district_contrasts_map_f(model_2_district, group.effects = TRUE)),
 #
 #  # Test contrast
-#  #tar_target(contrast_test, figure_contrast_test_f(model_1_province, group.effects = TRUE, #response.cat = "Support")),
+#  #tar_target(contrast_test, figure_contrast_test_f(model_1_province, group.effects = TRUE, response.cat = "Support")),
 #
 #  # Build appendix
   tar_quarto(poland_appendix,

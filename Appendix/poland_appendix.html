@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -48,7 +48,7 @@ div.csl-indent {
 <script src="poland_appendix_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="poland_appendix_files/libs/quarto-html/anchor.min.js"></script>
 <link href="poland_appendix_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="poland_appendix_files/libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="poland_appendix_files/libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="poland_appendix_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="poland_appendix_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="poland_appendix_files/libs/bootstrap/bootstrap-973236bd072d72a04ee9cd82dcc9cb29.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -601,7 +601,7 @@ Treatment Group
 </section>
 <section id="model-tables" class="level2">
 <h2 class="anchored" data-anchor-id="model-tables">Model Tables</h2>
-<p>This section contains the tables for the models we run in our analysis. All of the models were run using <code>brms</code> package version 2.22.8 [<span class="citation" data-cites="Burkner2017">Bürkner (<a href="#ref-Burkner2017" role="doc-biblioref">2017</a>)</span>; <span class="citation" data-cites="Burkner2018">Bürkner (<a href="#ref-Burkner2018" role="doc-biblioref">2018</a>)</span>; Stan2023].</p>
+<p>This section contains the tables for the models we run in our analysis. All of the models were run using <code>brms</code> package version 2.22.0 [<span class="citation" data-cites="Burkner2017">Bürkner (<a href="#ref-Burkner2017" role="doc-biblioref">2017</a>)</span>; <span class="citation" data-cites="Burkner2018">Bürkner (<a href="#ref-Burkner2018" role="doc-biblioref">2018</a>)</span>; Stan2023].</p>
 <ol type="1">
 <li><a href="#tbl-bivariate" class="quarto-xref">Table&nbsp;2</a> shows the results of a multinomial logit model where we regress the outcome variable on the treatment group variable.</li>
 <li><a href="#tbl-base-model" class="quarto-xref">Table&nbsp;3</a> shows the results of our primary multinomial multilevel logit model. This model regresses the outcome response onto the treatment variable and several other predictor variables. Varying intercepts by province.</li>
@@ -6961,19 +6961,19 @@ Figure&nbsp;22: Contrasts between contact groups and distance for combined secur
 <td style="text-align: left;">default</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">gamma(1,1)</td>
+<td style="text-align: left;">student_t(3, 0, 3)</td>
 <td style="text-align: left;">sd</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">muDKDA</td>
 <td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">0</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">default</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">gamma(1,1)</td>
+<td style="text-align: left;">student_t(3, 0, 3)</td>
 <td style="text-align: left;">sd</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">province</td>
@@ -6985,7 +6985,7 @@ Figure&nbsp;22: Contrasts between contact groups and distance for combined secur
 <td style="text-align: left;">default</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">gamma(1,1)</td>
+<td style="text-align: left;">student_t(3, 0, 3)</td>
 <td style="text-align: left;">sd</td>
 <td style="text-align: left;">Intercept</td>
 <td style="text-align: left;">province</td>
@@ -7165,19 +7165,19 @@ Figure&nbsp;22: Contrasts between contact groups and distance for combined secur
 <td style="text-align: left;">default</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">gamma(1,1)</td>
+<td style="text-align: left;">student_t(3, 0, 3)</td>
 <td style="text-align: left;">sd</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">muOppose</td>
 <td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">0</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">default</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">gamma(1,1)</td>
+<td style="text-align: left;">student_t(3, 0, 3)</td>
 <td style="text-align: left;">sd</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">province</td>
@@ -7189,7 +7189,7 @@ Figure&nbsp;22: Contrasts between contact groups and distance for combined secur
 <td style="text-align: left;">default</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">gamma(1,1)</td>
+<td style="text-align: left;">student_t(3, 0, 3)</td>
 <td style="text-align: left;">sd</td>
 <td style="text-align: left;">Intercept</td>
 <td style="text-align: left;">province</td>
@@ -7369,19 +7369,19 @@ Figure&nbsp;22: Contrasts between contact groups and distance for combined secur
 <td style="text-align: left;">default</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">gamma(1,1)</td>
+<td style="text-align: left;">student_t(3, 0, 3)</td>
 <td style="text-align: left;">sd</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">muSupport</td>
 <td style="text-align: left;"></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">0</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">default</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">gamma(1,1)</td>
+<td style="text-align: left;">student_t(3, 0, 3)</td>
 <td style="text-align: left;">sd</td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">province</td>
@@ -7393,7 +7393,7 @@ Figure&nbsp;22: Contrasts between contact groups and distance for combined secur
 <td style="text-align: left;">default</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">gamma(1,1)</td>
+<td style="text-align: left;">student_t(3, 0, 3)</td>
 <td style="text-align: left;">sd</td>
 <td style="text-align: left;">Intercept</td>
 <td style="text-align: left;">province</td>

@@ -38,6 +38,7 @@ library(furrr)
 library(modelsummary)
 library(kableExtra)
 library(here)
+library(rstan)
 
 
 # Custom fonts
@@ -455,7 +456,7 @@ group.list <- list(coef.groups.1,
 #| include: false
 
 # Increase allowed memory amount
-options(future.globals.maxSize = 20971520000)
+options(future.globals.maxSize = 209715200000)
 
 # Create list of model groups
 modlist <- list(

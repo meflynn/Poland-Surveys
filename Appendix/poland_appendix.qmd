@@ -73,7 +73,7 @@ targets::tar_source()
 
 # Load various model objects
 tar_load(survey_clean)
-tar_load(priors_clean)
+tar_load(priors_prov_clean)
 tar_load(table_balance)
 tar_load(model_0_bivariate)
 tar_load(model_1_province)
@@ -826,7 +826,7 @@ The table below shows a table containing the priors used in our primary models. 
 
 ```{r prior-table}
 
-kableExtra::kbl(priors_clean,
+kableExtra::kbl(priors_prov_clean,
                 caption = "Priors used in choice models") |> 
   kableExtra::kable_styling(latex_options = c("scale_down", "striped", "repeat_header"),
                             full_width = TRUE,

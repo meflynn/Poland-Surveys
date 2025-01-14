@@ -120,7 +120,7 @@ list(
   tar_target(model_4_varying_effects,
              model_4_varying_effects_f(survey_clean, priors_prov_clean)),
   tar_target(model_5_ordered_response,
-             model_5_ordered_response_f(survey_clean, priors_clean)),
+             model_5_ordered_response_f(survey_clean, priors_prov_clean)),
   tar_target(model_6_contact,
              model_6_contact_f(survey_clean, priors_prov_clean)),
   tar_target(model_7_contact_int,

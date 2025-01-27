@@ -452,11 +452,11 @@ group.list <- list(coef.groups.1,
 
 ```
 
-```{r table-output}
+```{r table-setup}
 #| include: false
 
 # Increase allowed memory amount
-options(future.globals.maxSize = 209715200000)
+#options(future.globals.maxSize = 209715200000)
 
 # Create list of model groups
 modlist <- list(
@@ -472,14 +472,14 @@ modlist <- list(
 )
 
 # Name each nested model according to outcome variable distance.
-named.mod.list <- future_map(
+named.mod.list <- map(
   .x = modlist,
   .f = ~ set_names(.x, c("Distance: 100k", "Distance: 5k"))
 )
 
 # Create nested map function to apply custom tidy and glance function 
 # to all brms models and convert lists to modelsummary_list.
-named.mod.list.custom <- future_map(
+named.mod.list.custom <- map(
   .x = seq_along(named.mod.list),
   .f = ~ map(
     .x = named.mod.list[[.x]],
@@ -487,30 +487,107 @@ named.mod.list.custom <- future_map(
   )
 )
 
-# Create modelsummary tables of all models in custom list.
+```
+
+
+```{r table-output-1}
+# Create modelsummary tables.
+# We're going to do this in stages to prevent memory overload.
+# We'll use all models in custom list but only do a couple at a time.
 # Export this as a kableExtra object so I can apply grouping labels
-tables.out <- future_map2(
-  .x = seq_along(named.mod.list.custom),
-  .y = seq_along(named.mod.list),
-  .f = ~modelsummary::modelsummary(named.mod.list.custom[[.x]],
+# 
+# We also need to create new smaller named.mod.list and named.mod.list.custom
+# objects to pass to each function here so it's not repeating from the base list.
+# For some reason the initial pass that relied on indexing is only grabbing the first three elements
+# and not elements 4, 5, 6, etc.
+
+named.mod.list.custom.1 <- named.mod.list.custom[1:3]
+named.mod.list.1 <- named.mod.list[1:3]
+ 
+tables.out.1 <- map2(
+  .x = seq_along(named.mod.list.custom.1),
+  .y = seq_along(named.mod.list.1),
+  .f = ~modelsummary::modelsummary(named.mod.list.custom.1[[.x]],
                                    estimate = "estimate",
                                    statistic = "[{conf.low}, {conf.high}]",
                                    conf_level = 0.89,
                                    shape = term ~ model + group,
                                    coef_map = coef.names,
-                                   title = glue::glue("{names(named.mod.list[.y])}"),
+                                   title = glue::glue("{names(named.mod.list.1[.y])}"),
                                    fmt = fmt_decimal(digits = 3),
                                    output = "kableExtra") |> 
     kableExtra::kable_styling(bootstrap_options = "striped",
                               font_size = 8) 
 ) 
 
+```
+
+```{r table-output-2}
+# Create modelsummary tables.
+# We're going to do this in stages to prevent memory overload.
+# We'll use all models in custom list but only do a couple at a time.
+# Export this as a kableExtra object so I can apply grouping labels
+
+
+named.mod.list.custom.2 <- named.mod.list.custom[4:5]
+named.mod.list.2 <- named.mod.list[4:5]
+ 
+tables.out.2 <- map2(
+  .x = seq_along(named.mod.list.custom.2),
+  .y = seq_along(named.mod.list.2),
+  .f = ~modelsummary::modelsummary(named.mod.list.custom.2[[.x]],
+                                   estimate = "estimate",
+                                   statistic = "[{conf.low}, {conf.high}]",
+                                   conf_level = 0.89,
+                                   shape = term ~ model + group,
+                                   coef_map = coef.names,
+                                   title = glue::glue("{names(named.mod.list.2[.y])}"),
+                                   fmt = fmt_decimal(digits = 3),
+                                   output = "kableExtra") |> 
+    kableExtra::kable_styling(bootstrap_options = "striped",
+                              font_size = 8) 
+) 
+
+```
+
+```{r table-output-3}
+# Create modelsummary tables.
+# We're going to do this in stages to prevent memory overload.
+# We'll use all models in custom list but only do a couple at a time.
+# Export this as a kableExtra object so I can apply grouping labels
+
+named.mod.list.custom.3 <- named.mod.list.custom[6:8]
+named.mod.list.3 <- named.mod.list[6:8]
+ 
+tables.out.3 <- map2(
+  .x = seq_along(named.mod.list.custom.3),
+  .y = seq_along(named.mod.list.3),
+  .f = ~modelsummary::modelsummary(named.mod.list.custom.3[[.x]],
+                                   estimate = "estimate",
+                                   statistic = "[{conf.low}, {conf.high}]",
+                                   conf_level = 0.89,
+                                   shape = term ~ model + group,
+                                   coef_map = coef.names,
+                                   title = glue::glue("{names(named.mod.list.3[.y])}"),
+                                   fmt = fmt_decimal(digits = 3),
+                                   output = "kableExtra") |> 
+    kableExtra::kable_styling(bootstrap_options = "striped",
+                              font_size = 8) 
+) 
+
+```
+
+```{r table-output-grouping}
+
+# Combine the three individual table lists into a single list object.
+tables.out <- c(tables.out.1, tables.out.2, tables.out.3)
 
 # use map2() to apply the group labels/lists (.y) to the list of tables (.x)
-tables.out.grouped <- future_map2(
+tables.out.grouped <- map2(
   .x = seq_along(tables.out),
   .y = seq_along(group.list),
-  .f = ~ tables.out[[.x]] |> kableExtra::group_rows(index = setNames(rle(group.list[[.y]]$group)[[1]]*2, rle(group.list[[.y]]$group)[[2]]),
+  .f = ~ tables.out[[.x]] |> 
+    kableExtra::group_rows(index = setNames(rle(group.list[[.y]]$group)[[1]]*2, rle(group.list[[.y]]$group)[[2]]),
                                                     background = "deepskyblue")
 )
 
@@ -573,7 +650,7 @@ tables.out.grouped[[7]]
 #| tbl-cap: Multilevel multinomial logistic regressions with respondents grouped by province and district. These model the response as a function of the treatment variables and several predictor variables, with varying intercepts by province and by district. Here we interact the contact variable with the treatment variable to see if the effect of the treatment is conditioned by reported personal contact.
 #| label: tbl-contact-int-district
 
-tables.out.grouped[[7]]
+tables.out.grouped[[8]]
 
 ```
 

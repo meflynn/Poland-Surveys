@@ -804,7 +804,7 @@ figure_province_predprob_f <- function(modelobject, outcome.cats, group.effects)
                  model = str_extract(model, "\\d+km"),
                  model = gsub("(\\d)(km)", "\\1 \\2", model))
         ) |> # plot the results of the model objects
-        furrr::future_map(.f = ~ ggplot(data = .x |> filter(.category %in% outcome.cats), # Choose which outcome categories to include in plot
+        purrr::map(.f = ~ ggplot(data = .x |> filter(.category %in% outcome.cats), # Choose which outcome categories to include in plot
                                         aes(x = .epred)) +
                             facet_wrap(~ .category,
                                        ncol = 1) +
@@ -841,7 +841,7 @@ figure_province_predprob_f <- function(modelobject, outcome.cats, group.effects)
                                  title = glue::glue("{.x$model}"))
                           )
   # Generate list of plot names
-  plotnames <- furrr::future_map(.x = plotlist,
+  plotnames <- purrr::map(.x = plotlist,
                                  .f = ~ glue::glue("predicted-prob-{unique(.x$data$model)}.png"))
 
   # Save the plots while applying the plot names
@@ -914,7 +914,7 @@ figure_province_dist_contrasts_f <- function(modelobject, group.effects) {
   # add_predicted_draws() produces random draws from the posterior distribution
   # that take on the factor levels of the outcome variable from the original
   # model (i.e. Support, Oppose, etc.)
-  plotlist <- furrr::future_map(.x = seq_along(modelobject),
+  plotlist <- purrr::map(.x = seq_along(modelobject),
                                .f = ~ add_epred_draws(modelobject[[.x]],
                                                       newdata = newdataframe,
                                                       ndraws = 500,
@@ -940,7 +940,7 @@ figure_province_dist_contrasts_f <- function(modelobject, group.effects) {
 
   # Use the data frames from plotlist to create ggplot objects for each possible
   # value of the contrasts in plotgroups.
-  plotout <- furrr::future_map(.x = seq_along(plotgroups),
+  plotout <- purrr::map(.x = seq_along(plotgroups),
                               .f = ~ ggplot(data = plotlist |>
                                               filter(group_term == plotgroups[[.x]]),
                                             aes(x = .epred,
@@ -1015,7 +1015,7 @@ figure_province_dist_contrasts_f <- function(modelobject, group.effects) {
                    plotout[[6]], plotout[[13]],
                    plotout[[4]], plotout[[11]])
 
-  plots <- furrr::future_map(
+  plots <- purrr::map(
     .x = templist,
     .f = ~ {
       plot <- .x
@@ -1054,7 +1054,7 @@ figure_province_dist_contrasts_f <- function(modelobject, group.effects) {
   templist <- list(plotout[[1]], plotout[[14]], plotout[[23]], plotout[[28]]
                    )
 
-plots <- furrr::future_map(
+plots <- purrr::map(
   .x = templist,
   .f = ~ {
     plot <- .x
@@ -1130,7 +1130,7 @@ figure_province_contrasts_map_f <- function(modelobject, group.effects) {
   # add_predicted_draws() produces random draws from the posterior distribution
   # that take on the factor levels of the outcome variable from the original
   # model (i.e. Support, Oppose, etc.)
-  plotlist <- furrr::future_map(.x = seq_along(modelobject),
+  plotlist <- purrr::map(.x = seq_along(modelobject),
                                .f = ~ add_epred_draws(modelobject[[.x]],
                                                       newdata = newdataframe,
                                                       ndraws = 500,
@@ -1247,7 +1247,7 @@ figure_district_contrasts_map_f <- function(modelobject, group.effects) {
   # add_predicted_draws() produces random draws from the posterior distribution
   # that take on the factor levels of the outcome variable from the original
   # model (i.e. Support, Oppose, etc.)
-  plotlist <- furrr::future_map(.x = seq_along(modelobject),
+  plotlist <- purrr::map(.x = seq_along(modelobject),
                                .f = ~ add_epred_draws(modelobject[[.x]],
                                                       newdata = newdataframe,
                                                       ndraws = 500,
@@ -1363,7 +1363,7 @@ figure_district_dist_contrasts_f <- function(modelobject, group.effects) {
   # add_predicted_draws() produces random draws from the posterior distribution
   # that take on the factor levels of the outcome variable from the original
   # model (i.e. Support, Oppose, etc.)
-  plotlist <- furrr::future_map(.x = seq_along(modelobject),
+  plotlist <- purrr::map(.x = seq_along(modelobject),
                                 .f = ~ add_epred_draws(modelobject[[.x]],
                                                        newdata = newdataframe,
                                                        ndraws = 500,
@@ -1389,7 +1389,7 @@ figure_district_dist_contrasts_f <- function(modelobject, group.effects) {
 
   # Use the data frames from plotlist to create ggplot objects for each possible
   # value of the contrasts in plotgroups.
-  plotout <- furrr::future_map(.x = seq_along(plotgroups),
+  plotout <- purrr::map(.x = seq_along(plotgroups),
                                .f = ~ ggplot(data = plotlist |> filter(group_term == plotgroups[[.x]]),
                                              aes(x = .epred,
                                                  fill = after_stat(x > 0)
@@ -1493,7 +1493,7 @@ figure_province_dist_contact_treatment_effect_f <- function(modelobject, group.e
   # add_predicted_draws() produces random draws from the posterior distribution
   # that take on the factor levels of the outcome variable from the original
   # model (i.e. Support, Oppose, etc.)
-  plotlist <- furrr::future_map(.x = seq_along(modelobject),
+  plotlist <- purrr::map(.x = seq_along(modelobject),
                                 .f = ~ add_epred_draws(modelobject[[.x]],
                                                        newdata = newdataframe,
                                                        ndraws = 500,
@@ -1519,7 +1519,7 @@ figure_province_dist_contact_treatment_effect_f <- function(modelobject, group.e
 
   # Use the data frames from plotlist to create ggplot objects for each possible
   # value of the contrasts in plotgroups.
-  plotout <- furrr::future_map(.x = seq_along(plotgroups),
+  plotout <- purrr::map(.x = seq_along(plotgroups),
                                .f = ~ ggplot(data = plotlist |> filter(group_term == plotgroups[[.x]]),
                                              aes(x = .epred,
                                                  fill = after_stat(x > 0)
@@ -1624,7 +1624,7 @@ figure_province_dist_contact_contrasts_f <- function(modelobject, group.effects)
   # add_predicted_draws() produces random draws from the posterior distribution
   # that take on the factor levels of the outcome variable from the original
   # model (i.e. Support, Oppose, etc.)
-  plotlist <- furrr::future_map(.x = seq_along(modelobject),
+  plotlist <- purrr::map(.x = seq_along(modelobject),
                                .f = ~ add_epred_draws(modelobject[[.x]],
                                                       newdata = newdataframe,
                                                       ndraws = 500,
@@ -1650,7 +1650,7 @@ figure_province_dist_contact_contrasts_f <- function(modelobject, group.effects)
 
   # Use the data frames from plotlist to create ggplot objects for each possible
   # value of the contrasts in plotgroups.
-  plotout <- furrr::future_map(.x = seq_along(plotgroups),
+  plotout <- purrr::map(.x = seq_along(plotgroups),
                                .f = ~ ggplot(data = plotlist |> filter(group_term == plotgroups[[.x]]),
                                              aes(x = .epred,
                                                  fill = after_stat(x > 0)
@@ -1759,7 +1759,7 @@ figure_district_dist_contact_contrasts_f <- function(modelobject, group.effects)
   # add_predicted_draws() produces random draws from the posterior distribution
   # that take on the factor levels of the outcome variable from the original
   # model (i.e. Support, Oppose, etc.)
-  plotlist <- furrr::future_map(.x = seq_along(modelobject),
+  plotlist <- purrr::map(.x = seq_along(modelobject),
                                 .f = ~ add_epred_draws(modelobject[[.x]],
                                                        newdata = newdataframe,
                                                        ndraws = 500,
@@ -1785,7 +1785,7 @@ figure_district_dist_contact_contrasts_f <- function(modelobject, group.effects)
 
   # Use the data frames from plotlist to create ggplot objects for each possible
   # value of the contrasts in plotgroups.
-  plotout <- furrr::future_map(.x = seq_along(plotgroups),
+  plotout <- purrr::map(.x = seq_along(plotgroups),
                                .f = ~ ggplot(data = plotlist |> filter(group_term == plotgroups[[.x]]),
                                              aes(x = .epred,
                                                  fill = after_stat(x > 0)

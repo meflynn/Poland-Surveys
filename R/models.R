@@ -177,7 +177,7 @@ model_0_bivariate_f <- function(modeldata, priordata) {
   THIN <- 1
 
   # Create the list object that will hold the model results
-  model_out <- furrr::future_map(
+  model_out <- purrr::map(
     .x = seq_along(bayes_model_forms),
     .f = ~  brm(formula = bayes_model_forms[[.x]],
                 data = modeldata,
@@ -237,7 +237,7 @@ model_1_province_f <- function(modeldata, priordata) {
   THIN <- 1
 
   # Create the list object that will hold the model results
-  model_out <- furrr::future_map(
+  model_out <- purrr::map(
     .x = seq_along(bayes_model_forms),
     .f = ~ brm(formula = bayes_model_forms[[.x]],
                 data = modeldata,
@@ -294,7 +294,7 @@ model_2_district_f <- function(modeldata, priordata) {
   THIN <- 1
 
   # Create the list object that will hold the model results
-  model_out <- furrr::future_map(
+  model_out <- purrr::map(
     .x = seq_along(bayes_model_forms),
     .f = ~  brm(formula = bayes_model_forms[[.x]],
                 data = modeldata,
@@ -362,7 +362,7 @@ model_3_full_response_f <- function(modeldata, priordata) {
   THIN <- 1
 
   # Create the list object that will hold the model results
-  model_out <- furrr::future_map(
+  model_out <- purrr::map(
     .x = seq_along(bayes_model_forms),
     .f = ~  brm(formula = bayes_model_forms[[.x]],
                 data = modeldata,
@@ -420,7 +420,7 @@ model_4_varying_effects_f <- function(modeldata, priordata) {
   THIN <- 1
 
   # Create the list object that will hold the model results
-  model_out <- furrr::future_map(
+  model_out <- purrr::map(
     .x = seq_along(bayes_model_forms),
     .f = ~  brm(formula = bayes_model_forms[[.x]],
                 data = modeldata,
@@ -500,7 +500,7 @@ model_5_ordered_response_f <- function(modeldata, priordata) {
   THIN <- 1
 
   # Create the list object that will hold the model results
-  model_out <- furrr::future_map(
+  model_out <- purrr::map(
     .x = seq_along(bayes_model_forms),
     .f = ~  brm(formula = bayes_model_forms[[.x]],
                 data = modeldata.ordered,
@@ -562,7 +562,7 @@ model_6_contact_f <- function(modeldata, priordata) {
   THIN <- 1
 
   # Create the list object that will hold the model results
-  model_out <- furrr::future_map(
+  model_out <- purrr::map(
     .x = seq_along(bayes_model_forms),
     .f = ~  brm(formula = bayes_model_forms[[.x]],
                 data = modeldata,
@@ -621,7 +621,7 @@ model_7_contact_interaction_f <- function(modeldata, priordata) {
   THIN <- 1
 
   # Create the list object that will hold the model results
-  model_out <- furrr::future_map(
+  model_out <- purrr::map(
     .x = seq_along(bayes_model_forms),
     .f = ~  brm(formula = bayes_model_forms[[.x]],
                 data = modeldata,
@@ -682,7 +682,7 @@ model_8_contact_interaction_district_f <- function(modeldata, priordata) {
   THIN <- 1
 
   # Create the list object that will hold the model results
-  model_out <- furrr::future_map(
+  model_out <- purrr::map(
     .x = seq_along(bayes_model_forms),
     .f = ~  brm(formula = bayes_model_forms[[.x]],
                 data = modeldata,
